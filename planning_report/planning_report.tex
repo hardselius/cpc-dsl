@@ -35,19 +35,25 @@ interface.
 
 \section{Problem}
 
+Used by non-programmers
+allow/include all features offerd in the data-flow networks in Copernicus
+
+
+
 \section{Scope}
 
 An important part for us is to get a working solution since our result
-supposed to be used by the users of the system. The system input is
+supposed to be used by the users of Copernicus. The system input is
 currently in XML form, but our compiler could render using XML
-redundant. But as we mainly want a fully functional compiler, we will
-generate XML code. This way we will not need to study or re-write some
-of the code to change the input data of the system, excluding our
-compiler. We will add Python code generation if we have time to
-continue develop the solution, which is a solution without the
-unnecessary XML code generation step.
+redundant. As we mainly want a fully functional compiler though, we
+will generate XML code. This will save time and will enable us to
+focus on the more important parts of our project. If there is time, we
+will look into the possibility of bypassing the XML code
+generation. This is though a unnecessary objective.
 
-
+We will not focus on optimizing or removing redundant code. As we se
+it, the DSL will be used in such a fashion that the importance of
+optimization is limited.
 
 \section{Method}
 Our method for making the compiler is devided into five steps; study
