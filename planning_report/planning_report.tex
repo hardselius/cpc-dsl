@@ -97,8 +97,8 @@ grammar which represent our syntax defined in the previous step. The
 grammar will contain defenitions of statements, expressions, types,
 etc. We chose to use BNFC because we have experience using it and we
 have yet to decide which language we want to use when implementing the
-compilar. BNFC has support for the following languages: C, C++, C#,
-F#, Haskell, Java, OCamel.
+compilar. BNFC has support for the following languages: C, C++, C\#,
+F\#, Haskell, Java, OCamel.
 
 We have chosen not to write the compiler in Haskell, which we have the
 most experience in using. There are two reasons for this decision. The
@@ -109,17 +109,22 @@ second reason is that we want to learn and become more adept coders in
 other languages than Haskell before we graduate from Chalmers.
 
 \subsubsection{Type Checker}
-Some sort of type checking will be implemented to make our
-contribution a more powerfull tool for the users. It is hard to know
-at this point what kind of incorrect code is possible for a type
-checker to do to find, since we do not know anything about the
-language.
+Type checking will be implemented to make our contribution a more
+powerfull tool for the users. It is hard to know at this point what
+kind of incorrect code is possible for a type checker to do to find,
+since we do not know anything about the language. We will have in mind
+the possibilities for a type checker during the research phase.
+
+By now we will have chosen an implementation language, since the type
+checker is the first part written in that language.
 
 \subsubsection{Code Generation}
 Once we have a type checker we can start with the final part of the
 compiler, the code generator. The code generator will generate XML
-code which can be used directly as input for the current system
-without any complications.
+code which can be used directly as input for Copernicus without any
+complications. It is crucial during this part for us to fully
+understand the structure of the XML code describing data-flow
+networks.
 
 The optional additional part is to skip the XML code generation and
 generate Python code directly. As we understand it, the system does
