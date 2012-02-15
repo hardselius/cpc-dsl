@@ -35,9 +35,10 @@ interface.
 
 \section{Problem}
 
+
+
 Used by non-programmers
 allow/include all features offerd in the data-flow networks in Copernicus
-
 
 
 \section{Scope}
@@ -84,7 +85,7 @@ syntax by ourselves since we may miss important features which should
 be included. That is why we will show the draft to the developers to
 get their input and own design ideas. Working from this point with a
 continuous input from the developers will result in us creating a good
-syntax that both the developers and we are satisfied with.  The syntax
+syntax that both the developers and we are satisfied with. The syntax
 need to be clean and be clear and effective to implement.
 
 \subsection{Implementation}
@@ -104,7 +105,7 @@ We have chosen not to write the compiler in Haskell, which we have the
 most experience in using. There are two reasons for this decision. The
 first is to ensure that anyone can more easily take over and
 understand our code (or write a graphical interface) when we leave the
-project, since Java, C, C++, C# are more commonly known languages. The
+project, since Java, C, C++, C\# are more commonly known languages. The
 second reason is that we want to learn and become more adept coders in
 other languages than Haskell before we graduate from Chalmers.
 
@@ -121,18 +122,10 @@ checker is the first part written in that language.
 \subsubsection{Code Generation}
 Once we have a type checker we can start with the final part of the
 compiler, the code generator. The code generator will generate XML
-code which can be used directly as input for Copernicus without any
-complications. It is crucial during this part for us to fully
-understand the structure of the XML code describing data-flow
-networks.
-
-The optional additional part is to skip the XML code generation and
-generate Python code directly. As we understand it, the system does
-currently convert the XML code to Python code which makes this part
-not necessary but a better solution. If we would add this part we
-would have to re-write some of the current system to take Python code
-as input instead. By doing this step we would eliminate the redundant
-step of generating XML code, but it will also take more time.
+code which can be used directly as input for Copernicus. It is crucial
+during this part to fully understand the structure of the XML code
+describing data-flow networks. At this point we can start trying out
+our project with Copernicus as we add parts of the code generator.
 
 
 \section{Time Plan}
