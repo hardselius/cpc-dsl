@@ -1,7 +1,9 @@
 \documentclass[a4paper]{article}
 
-%\usepackage[latin1]{inputenc}
 \usepackage[utf8]{inputenc}
+
+\usepackage{tikz}
+\usepackage{gantt}
 
 \title{Planning report\\
   \large{Domain-specific language for high-level
@@ -113,5 +115,24 @@ step of generating XML code, but it will also take more time.
 
 
 \section{Time Plan}
+\begin{gantt}[
+    xunitlength=0.5cm,
+    fontsize=\small,
+    titlefontsize=\small,
+    drawledgerline=true]
+  {8}{18}
+  \begin{ganttitle}
+    \titleelement{weeks}{18}
+  \end{ganttitle}
+  \begin{ganttitle}
+    \numtitle{7}{1}{24}{1}
+  \end{ganttitle}
+  \ganttbar{research}{0}{4}
+  \ganttbar{design}{2}{4}
+  \ganttbar[pattern=crosshatch,color=red]{easter}{7}{1}
+  \ganttbar{implementation}{5}{8}
+  \ganttbar{report}{11}{5}
+  \ganttbar{presentation}{16}{2}
+\end{gantt}
 
 \end{document}
