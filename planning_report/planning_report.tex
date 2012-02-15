@@ -56,26 +56,12 @@ it, the DSL will be used in such a fashion that the importance of
 optimization is limited.
 
 \section{Method}
-Our method for making the compiler is devided into five steps; study
-input data, language syntax, parser, type checker and code
-generation. The code generation part includes the additional optional
-part describe in the scope section above. The last three parts are
-simply the standard three parts of a compiler, while the first two are
-part of designing the language to suit the users.
-
-We have not included an optimization step in the compiler due to the
-nature of the language. It is a language to describe dataflow
-networks, but not to execute any code segments. We may include some
-sort of optimization when we understand more of the project.
-
-We have chosen to write the compiler in Java instead of in Haskell,
-which we are more knowledgeable in. There are two reasons for this
-decision. The first is to ensure that more people can take over and
-understand our code when we leave the project, since Java is a more
-commonly known language than Haskell. The second reason is that we
-want to learn and become more adept Java coders before we graduate
-from Chalmers.
-
+Our method for making the DSL is devided into three steps; research,
+design, implementaion. We will have short daily meetings with our
+supervisors during the first period of the research step. We will
+discuss what we have done since the last meeting and what we will be
+doing until the next one. We will meet less often later on, since the
+first part is to make sure we get started and on the right track..
 
 \subsection{Research}
 Our first objective is to fully understand the structure of the input
@@ -104,8 +90,19 @@ been established. The first step is to write a parser for building
 abstract syntax trees. We will use BNFC which is a tool for generating
 a finished parser from BNF grammar. Our objective is to write a BNF
 grammar which represent our syntax defined in the previous step. The
-grammar will contain the defenition of statements, expressions, types,
-etc.
+grammar will contain defenitions of statements, expressions, types,
+etc. We chose to use BNFC because we have experience using it and we
+have yet to decide which language we want to use when implementing the
+compilar. BNFC has support for the following languages: C, C++, C#,
+F#, Haskell, Java, OCamel.
+
+We have chosen not to write the compiler in Haskell, which we have the
+most experience in using. There are two reasons for this decision. The
+first is to ensure that anyone can more easily take over and
+understand our code (or write a graphical interface) when we leave the
+project, since Java, C, C++, C# are more commonly known languages. The
+second reason is that we want to learn and become more adept coders in
+other languages than Haskell before we graduate from Chalmers.
 
 \subsubsection{Type Checker}
 Some sort of type checking will be implemented to make our
