@@ -37,22 +37,22 @@
   tasks, and inspect a task's progress while it is running.''
 \end{quotation}
 
-Copernicus is framework for managing large scale calculations and
-distributing the tasks over a large scale of workers. The system
-contains servers, workers and clients. The server distributes the
-tasks to workers and the client sends calculation requests to the
-server. The calculations, which are the input to Copernicus, are
-described using a dataflow-network model. The data-flow networks are
-basically instances of functions and their connections to each
-other. The data-flow networks are currently defined in the form of XML
-code. Since the developers of Copernicus aims for a more user-friendly
-experience, they want to replace the XML input with a domain-specific
-language.
+Copernicus is a framework for managing large scale calculations and
+the distribution of these computational tasks over a large scale of
+workers. The system contains servers, workers and clients. The server
+distributes the tasks to workers and the client sends calculation
+requests to the server. The calculations, which are the input to
+Copernicus, are described using a dataflow-network model. The
+data-flow networks are basically instances of functions and their
+connections to each other. The data-flow networks are currently
+defined in the form of XML code. Since the developers of Copernicus
+aims for a more user-friendly experience, they want to replace the XML
+input with a domain-specific language.
 
 \section{Aim}
 The goal of this project is the creation of a domain-specific language
 for describing input to the project Copernicus. Since the input to
-Copernicus can be decibel as data-flow network, the design of this
+Copernicus can be described as data-flow network, the design of this
 DSL should adhere that paradigm. Furthermore, the language should
 allow Copernicus plug-in libraries, and the internal network must be
 algorithmically expressible, to allow the user to query a full
