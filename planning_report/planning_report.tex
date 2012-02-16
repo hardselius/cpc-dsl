@@ -21,20 +21,28 @@
 
 \section{Background}
 
-bio-molecular simulations on supercomputers
+Bio-molecular simulation is an example of an applications which does
+not scale well with the potential of supercomputers with large amounts
+of cores, but many applications rely on sampling data. That is why the
+project Copernicus has started. Copernicus is framework for managing
+large calculations and distributing the tasks over a large scale of
+workers. The system contains workers, a server and a client. The
+server distributes the tasks to workors and the client sends
+calculation requests to the server. The calculations, which are the
+input to Copernicus, are described using dataflow networks. The
+dataflow networks are basically instanciated functions and their
+connections to eachohter. The dataflow networks are currently defined
+in the form of XML code.
 
-Copernicus
-
-Data-flow network
 
 \section{Aim}
 The goal of this project is the creation of a domain-specific language
 for describing input to the project Copernicus. Since the input to
-Copernicus can be descibed as data-flow network, the design of this
+Copernicus can be descibed as dataflow network, the design of this
 DSL should adhere that paradigm. Furthermore, the language should
 allow Copernicus plug-in libraries, and the internal network must be
 algorithmically expressible, to allow the user to query a full
-state. The language should be simple enough to describe data-flow
+state. The language should be simple enough to describe dataflow
 networks as plain code, but also designed with the possibility to
 easily add a graphical interface.
 
@@ -46,7 +54,7 @@ necessary programmers, which makes it important for the language to be
 simple and intuitive.
 
 The DSL should be fully functional which mean it must include all
-features and structures offered in the data-flow networks in
+features and structures offered in the dataflow networks in
 Copernicus. It should be possible to pipe the compiler to Copernicus,
 which means the output form the compiler should be in the same form as
 the input for Copernicus.
@@ -73,7 +81,7 @@ since the first part is to make sure we get started and on the right
 track.
 
 \subsection{Research}
-Our first objective is to reasearch languages describing data-flow
+Our first objective is to reasearch languages describing dataflow
 networks to get a good sense on how such languages are designed. This
 will serve as an inspiration to our DSL design.
 
@@ -131,7 +139,7 @@ Once we have a type checker we can start with the final part of the
 compiler, the code generator. The code generator will generate XML
 code which can be used directly as input for Copernicus. It is crucial
 during this part to fully understand the structure of the XML code
-describing data-flow networks. At this point we can start trying out
+describing dataflow networks. At this point we can start trying out
 our project with Copernicus as we add parts of the code generator.
 
 
