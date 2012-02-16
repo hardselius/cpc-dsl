@@ -20,20 +20,34 @@
 \newpage
 
 \section{Background}
+\begin{quotation}
+  ``Many applications for high-performance computing, including
+  bio-molecular simulations and materials science calculations, have
+  limited potential to achieve the strong scaling necessary to run on
+  modern supercomputers with 10000 cores or more. At the same time,
+  many applications of these simulations are statistical in nature:
+  they rely on sampling of many individual simulations or
+  trajectories\ldots
 
-Bio-molecular simulation is an example of an applications which does
-not scale well with the potential of supercomputers with large amounts
-of cores, but many applications rely on sampling data. That is why the
-project Copernicus has started. Copernicus is framework for managing
-large calculations and distributing the tasks over a large scale of
-workers. The system contains workers, a server and a client. The
-server distributes the tasks to workers and the client sends
-calculation requests to the server. The calculations, which are the
-input to Copernicus, are described using data-flow networks. The
-data-flow networks are basically instantiates functions and their
-connections to each other. The data-flow networks are currently defined
-in the form of XML code.
+  \ldots In response to this, we have created a framework for the
+  execution of large-scale sampling calculations: Copernicus. This
+  platform changes the focus away from managing individual simulations
+  and processing the results and expresses large multi-level jobs as
+  single tasks. The user can create and compose these computational
+  tasks, and inspect a task's progress while it is running.''
+\end{quotation}
 
+Copernicus is framework for managing large scale calculations and
+distributing the tasks over a large scale of workers. The system
+contains servers, workers and clients. The server distributes the
+tasks to workers and the client sends calculation requests to the
+server. The calculations, which are the input to Copernicus, are
+described using a dataflow-network model. The data-flow networks are
+basically instances of functions and their connections to each
+other. The data-flow networks are currently defined in the form of XML
+code. Since the developers of Copernicus aims for a more user-friendly
+experience, they want to replace the XML input with a domain-specific
+language.
 
 \section{Aim}
 The goal of this project is the creation of a domain-specific language
@@ -91,11 +105,11 @@ developers. We need to understand how the input data hierarchy works,
 how functions and sub nets are defined, etc.
 
 \subsection{Design}
-After, and probably during, the research period, we will start to
-define a language syntax. We expect to make a simple draft to show our
-ideas for a structure of the language. During syntax development, we
-will discuss our draft regularly with the Copernicus developers to
-avoid missing any important features.
+In the end of the research period, we will start to define a language
+syntax. We expect to make a simple draft to show our ideas for a
+structure of the language. During syntax development, we will discuss
+our draft regularly with the Copernicus developers to avoid missing
+any important features.
 
 Working from this point with a continuous input from the developers
 will result in us creating a good syntax that both the developers and
