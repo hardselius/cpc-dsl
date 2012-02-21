@@ -25,7 +25,7 @@ Component grompp ::
   out : File external gromacs::grompp.out.file
 
 
-Compontent add2 ::
+Component add2 ::
   in  : Float , Float
   out : Float
 
@@ -64,3 +64,7 @@ main ::
   C1 := someComp N1.out[0]
 
   return C1.out[0]
+
+
+
+
