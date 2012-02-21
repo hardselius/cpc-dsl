@@ -1,0 +1,55 @@
+
+import Some.Library.float
+import Some.Other.Library.gromacs
+
+
+
+Component add :: (Int, Int as sndArg) -> (Int, Int)
+  a := in[0] + sndArg
+  return (a, 0)
+
+
+
+
+
+ExternalComponent grompp :: ( File default "/path/to/file"
+                            , File as file2
+                            , File )
+                            -> 
+                            ( File )
+  in[0] >> gromacs::grompp.in.conf
+  file2 >> gromacs::grompp.in.top
+  in[2] >> gromacs::grompp.in.mdp
+  return gromacs::grompp.out.file
+
+
+
+
+
+Compontent add2 :: (Float, Float) -> (Float)
+  out[0] = float::add in[0] in[1]
+
+
+
+
+
+
+ExternalComponent add :: (Float, Float) -> (Float)
+ in[0]	:= float::add.a
+ in[1]	:= float::add.b
+ out[0] := float::add.c
+
+
+
+
+Network net1 :: (int, string, type) -> (int out)
+  C1 := comp1
+  C2 := comp2
+
+  C1(_,in[1],in[2])
+  C2(C1.out[0])
+  return C2.out[0]
+
+
+
+....
