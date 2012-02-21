@@ -47,9 +47,20 @@ Network net1 ::
   in  : Int, Int, Int, Int
   out : Int
 
+  N1 = net2 ...
+
   -- comment
   C1 := add in[0] in[1]
   C2 := add in[2] _
   C3 := mul C1.out[0] C2.out[0]
 
   return C2.out[0]
+
+main ::
+  in  : Int, Int, Int, Int
+  out : Int
+
+  N1 := net1 in[0] ... in [3]
+  C1 := someComp N1.out[0]
+
+  return C1.out[0]
