@@ -4,19 +4,23 @@ import Some.Other.Library.gromacs
 
 
 
-Component add :: (Int, Int as sndArg) -> (Int, Int)
+Component add :: 
+  in  : Int           default 0
+      , Int as sndArg default 0
+  out : Int
+
   a := in[0] + sndArg
-  return (a, 0)
+  return a
 
 
 
 
+ExternalComponent grompp :: 
+  in  : File default "/path/to/file"
+      , File as file2
+      , File
+  out : File
 
-ExternalComponent grompp :: ( File default "/path/to/file"
-                            , File as file2
-                            , File )
-                            -> 
-                            ( File )
   in[0] >> gromacs::grompp.in.conf
   file2 >> gromacs::grompp.in.top
   in[2] >> gromacs::grompp.in.mdp
@@ -25,31 +29,28 @@ ExternalComponent grompp :: ( File default "/path/to/file"
 
 
 
+Compontent add2 ::
+  in  : Float , Float
+  out : Float
 
-Compontent add2 :: (Float, Float) -> (Float)
   out[0] = float::add in[0] in[1]
 
 
 
 
-
-
-ExternalComponent add :: (Float, Float) -> (Float)
- in[0]	:= float::add.a
- in[1]	:= float::add.b
- out[0] := float::add.c
-
+Component add ::
+  in  : Float external float::add.a
+      , Float external float::add.b
+  out : Float external float::add.c
 
 
 
-Network net1 :: (int, string, type) -> (int out)
-  C1 := comp1
-  C2 := comp2
+Network net1 ::
+  in  : Int, Int, Int, Int
+  out : Int
 
-  C1(_,in[1],in[2])
-  C2(C1.out[0])
+  C1 := add in[0] in[1]
+  C2 := add in[2] _
+  C3 := mul C1.out[0] C2.out[0]
+
   return C2.out[0]
-
-
-
-....
