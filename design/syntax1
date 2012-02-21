@@ -15,18 +15,14 @@ Component add ::
 
 
 
-ExternalComponent grompp :: 
+Component grompp ::
   in  : File default "/path/to/file"
+             external gromacs::grompp.in.conf
+             as conf
       , File as file2
-      , File
-  out : File
-
-  in[0] >> gromacs::grompp.in.conf
-  file2 >> gromacs::grompp.in.top
-  in[2] >> gromacs::grompp.in.mdp
-  return gromacs::grompp.out.file
-
-
+             external gromacs::grompp.in.top
+      , File external gromacs::grompp.in.mdp
+  out : File external gromacs::grompp.out.file
 
 
 Compontent add2 ::
@@ -37,7 +33,9 @@ Compontent add2 ::
 
 
 
-
+--| Description
+-- in: a comment on a, b comment on b
+-- out: c
 Component add ::
   in  : Float external float::add.a
       , Float external float::add.b
@@ -49,6 +47,7 @@ Network net1 ::
   in  : Int, Int, Int, Int
   out : Int
 
+  -- comment
   C1 := add in[0] in[1]
   C2 := add in[2] _
   C3 := mul C1.out[0] C2.out[0]
