@@ -1,0 +1,15 @@
+Function fAdd
+  in  Float a
+     ,Float b
+  out Float q
+  external float::add
+           in.a = a
+           in.b = b
+
+Function fMul
+  in  Float a
+     ,Float b
+  out Float q
+  external float::mul
+           in.a = a
+           in.b = b

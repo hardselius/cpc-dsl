@@ -1,0 +1,21 @@
+import funclib
+
+Component add
+  in  Float a default 0
+     ,Float b
+  out Float q
+  q = fAdd a b
+
+
+Coomponent mul
+  in  Float a
+     ,Float b
+  out Float q
+  q = fMul a b
+
+
+Component apply
+  in  Fun  f
+     ,List l
+  out f.type q
+  q = f l

@@ -1,0 +1,34 @@
+import funclib
+import complib
+
+Componen addMul
+  in  Float a
+     ,Float b
+     ,Float c
+  out Float q
+  x = fAdd a b
+  q = fMul x c
+
+
+Component addMul2
+  in  Float a
+     ,Float b
+     ,Float c
+  out Float q
+  subnet = nAddMul a b c
+  q = subnet.q
+
+
+Network nAddMul
+  in  Float a
+     ,Float b
+     ,Float c
+  out Float q
+
+  c1 := add a b
+  c2 := mul c1.q c
+
+  c3 := add _ c2.q
+  c4 := apply fAdd [c3.q,0]
+
+  q = c4.q
