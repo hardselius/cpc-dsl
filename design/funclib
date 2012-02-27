@@ -8,6 +8,6 @@ Function fAdd         ''add function defenition''
 
 Function fMul                          ''add function defenition''
   extfun float::mul in.a, in.b, out.q  ''external pyhton function float::add''
-  in  Float a = in.a                   ''connect input a to in.a''
+  in  Float a = extfun.in.a                   ''connect input a to in.a''
      ,Float b = in.b                   ''connect input b to in.b''
   out Float q = out.q                  ''connect output q to q''
