@@ -1,15 +1,13 @@
-Function fAdd
-  in  Float a
-     ,Float b
-  out Float q
-  external float::add
-           in.a = a
-           in.b = b
+Function fAdd         ''add function defenition''
+  in  Float a         ''input a''
+     ,Float b         ''input b''
+  out Float q         ''output q''
+  external float::add ''external pyhton function float::add''
+           in.a = a   ''connect float::add.in.a to a''
+           in.b = b   ''connect float::add.in.b to b''
 
-Function fMul
-  in  Float a
-     ,Float b
-  out Float q
-  external float::mul
-           in.a = a
-           in.b = b
+Function fMul                          ''add function defenition''
+  extfun float::mul in.a, in.b, out.q  ''external pyhton function float::add''
+  in  Float a = in.a                   ''connect input a to in.a''
+     ,Float b = in.b                   ''connect input b to in.b''
+  out Float q = out.q                  ''connect output q to q''

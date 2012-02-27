@@ -1,10 +1,10 @@
 import funclib
 
-Component add
-  in  Float a default 0
-     ,Float b
-  out Float q
-  q = fAdd a b
+Component add           ''uses function fAdd: q = a+b''
+  in  Float a default 0 ''input a has default value 0''
+     ,Float b           ''input b''
+  out Float q           ''output q''
+  q = fAdd a b          ''q = a+b''
 
 
 Coomponent mul
