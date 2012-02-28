@@ -16,18 +16,17 @@ reserved = {
     'Component' : 'COMPONENT',
     'in'        : 'IN',
     'out'       : 'OUT',
-    'default'   : 'DEFAULT'
+    'default'   : 'DEFAULT',
 
     # Function
 
     # Network
 
+    # Types
+    'File'      : 'FILE',
+    'Float'     : 'FLOAT',
+    'Int'       : 'INT'
     }
-
-types = (
-    'INT', 'FLOAT', 'STRING', 'FILE'
-    # list, array
-    )
 
 tokens = types + (
     # Literals
@@ -41,12 +40,10 @@ tokens = types + (
     # (=)
     'EQUALS',
 
-    # Substitution
-    # (:=)
+    # Substitution :=
     'SUBST',
 
-    # Connection
-    # (<-)
+    # Connection <-
     'CONNECTION',
 
     # Delimeters
@@ -57,21 +54,30 @@ tokens = types + (
     'COMMA', 'PERIOD', 'SEMI', 'COLON', 'DOUBLECOLON'
     )
 
+# Ignored characters
+t_ignore = ' \t\x0c'
+
+# Literals
+
+
 # Assignment operators
-t_EQUALS      = r'='
+t_EQUALS       = r'='
+
+# Substitution
+t_SUBSTITUTION = r':='
 
 # Connection
-t_CONNECTION  = r'<-'
+t_CONNECTION   = r'<-'
 
 # Delimeters
-t_LPAREN      = r'\('
-t_RPAREN      = r'\)'
-t_LBRACKET    = r'\['
-t_RBRACKET    = r'\]'
-t_LBRACE      = r'\{'
-t_RBRACE      = r'\}'
-t_COMMA       = r','
-t_PERIOD      = r'\.'
-r_SEMI        = r';'
-r_COLON       = r':'
-r_DOUBLECOLON = r'::'
+t_LPAREN       = r'\('
+t_RPAREN       = r'\)'
+t_LBRACKET     = r'\['
+t_RBRACKET     = r'\]'
+t_LBRACE       = r'\{'
+t_RBRACE       = r'\}'
+t_COMMA        = r','
+t_PERIOD       = r'\.'
+r_SEMI         = r';'
+r_COLON        = r':'
+r_DOUBLECOLON  = r'::'
