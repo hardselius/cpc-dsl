@@ -42,7 +42,7 @@ tokens = (
     'EQUALS',
 
     # Substitution :=
-    'SUBST',
+    'SUBSTITUTION',
 
     # Connection <-
     'CONNECTION',
@@ -90,10 +90,30 @@ t_LBRACE       = r'\{'
 t_RBRACE       = r'\}'
 t_COMMA        = r','
 t_PERIOD       = r'\.'
-r_SEMI         = r';'
-r_COLON        = r':'
-r_DOUBLECOLON  = r'::'
+t_SEMI         = r';'
+t_COLON        = r':'
+t_DOUBLECOLON  = r'::'
 
 def t_newline(t):
     r'\n'
     t.lexer.lineno += len(t.value)
+
+
+
+
+def test(s):
+    lex.lex()
+    lex.input(s)
+    while 1:
+        tok = lex.token()
+        if not tok: break
+        print tok
+
+
+def t_error(t):
+    print "Illegal character %s" % repr(t.value[0])
+    t.lexer.skip(1)
+
+lexer = lex.lex()
+#if __name__ == "__main__":
+#    lex.runmain(lexer)
