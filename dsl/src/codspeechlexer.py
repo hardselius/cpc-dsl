@@ -68,7 +68,7 @@ t_ignore = ' \t\x0c'
 
 # Literals
 @TOKEN(identifier)
-def t_ID:
+def t_ID(t):
     t.type = reserved.get(t.value,"ID")
     return t
 
