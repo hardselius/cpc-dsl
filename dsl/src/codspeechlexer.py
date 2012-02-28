@@ -28,7 +28,7 @@ reserved = {
     'Int'       : 'INT'
     }
 
-tokens = types + (
+tokens = (
     # Literals
     # (identifier, integer constant, float constant, string constant)
     'ID', 'TYPEID', 'ICONST', 'FCONST', 'SCONST',
