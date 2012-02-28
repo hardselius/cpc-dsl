@@ -56,11 +56,11 @@ tokens = (
     )
 
 # Complex REs
-digit = r'([0-9])'
-lowercase = r'([a-z])'
-uppercase = r'([A-Z])'
-nondigit = r'([_A-Za-z])'
-identifier = r'(' + lowercase + r'(' digit + r'|' + nondigit + r')*)'
+digit      = r'([0-9])'
+lowercase  = r'([a-z])'
+uppercase  = r'([A-Z])'
+nondigit   = r'([_A-Za-z])'
+identifier = r'(' + lowercase + r'(' + digit + r'|' + nondigit + r')*)'
 
 
 # Ignored characters
