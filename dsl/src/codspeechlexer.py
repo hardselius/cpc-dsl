@@ -29,10 +29,10 @@ reserved = {
     'Int'       : 'INT'
     }
 
-tokens = (
+tokens = [
     # Literals
     # (identifier, integer constant, float constant, string constant)
-    'ID', 'TYPEID', 'ICONST', 'FCONST', 'SCONST',
+    'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST',
 
     # Operators
     # ()
@@ -53,24 +53,35 @@ tokens = (
     'LBRACKET', 'RBRACKET',
     'LBRACE', 'RBRACE',
     'COMMA', 'PERIOD', 'SEMI', 'COLON', 'DOUBLECOLON'
-    )
+    ] + reserved.values()
 
 # Complex REs
-digit      = r'([0-9])'
-lowercase  = r'([a-z])'
-uppercase  = r'([A-Z])'
-nondigit   = r'([_A-Za-z])'
-identifier = r'(' + lowercase + r'(' + digit + r'|' + nondigit + r')*)'
-
+digit     = r'([0-9])'
+lowercase = r'([a-z])'
+uppercase = r'([A-Z])'
+nondigit  = r'([_A-Za-z])'
+ident     = r'(' + lowercase + r'(' + digit + r'|' + nondigit + r')*)'
+typeident = r'(' + uppercase + r'(' + digit + r'|' + nondigit + r')*)'
 
 # Ignored characters
 t_ignore = ' \t\x0c'
 
 # Literals
-@TOKEN(identifier)
+@TOKEN(ident)
 def t_ID(t):
     t.type = reserved.get(t.value,"ID")
     return t
+
+@TOKEN(typeident)
+def t_TYPEID(t):
+    t.type = reserved.get(t.value,"TYPE")
+    return t
+
+#def t_ICONST(t):
+#def t_FCONST(t):
+#def t_SCONST(t):
+
+
 
 # Assignment operators
 t_EQUALS       = r'='
