@@ -62,6 +62,8 @@ uppercase = r'([A-Z])'
 nondigit  = r'([_A-Za-z])'
 ident     = r'(' + lowercase + r'(' + digit + r'|' + nondigit + r')*)'
 typeident = r'(' + uppercase + r'(' + digit + r'|' + nondigit + r')*)'
+litint    = r'\d+'
+litfloat  = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
 
 # Ignored characters
 t_ignore = ' \t\x0c'
@@ -77,10 +79,17 @@ def t_TYPEID(t):
     t.type = reserved.get(t.value,"TYPE")
     return t
 
-#def t_ICONST(t):
-#def t_FCONST(t):
-#def t_SCONST(t):
+@TOKEN(litfloat)
+def t_FCONST(t):
+    t.value = float(t.value)
+    return t
 
+@TOKEN(litint)
+def t_ICONST(t):
+    t.value = int(t.value)
+    return t
+
+t_SCONST = r'\"([^\\\n]|(\\.))*?\"'
 
 
 # Assignment operators
@@ -109,8 +118,18 @@ def t_newline(t):
     r'\n'
     t.lexer.lineno += len(t.value)
 
+def t_error(t):
+    print "Illegal character %s" % repr(t.value[0])
+    t.lexer.skip(1)
+
+lexer = lex.lex()
 
 
+
+
+# ------------------------------------------------------------------
+# some tests
+# ------------------------------------------------------------------
 
 def test(s):
     lex.lex()
@@ -118,13 +137,5 @@ def test(s):
     while 1:
         tok = lex.token()
         if not tok: break
-        print tok
-
-
-def t_error(t):
-    print "Illegal character %s" % repr(t.value[0])
-    t.lexer.skip(1)
-
-lexer = lex.lex()
-#if __name__ == "__main__":
-#    lex.runmain(lexer)
+        print tok.type
+        print tok.value
