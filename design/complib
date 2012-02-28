@@ -7,12 +7,24 @@ Component add           ''uses function fAdd: q = a+b''
   q = fAdd a b          ''q = a+b''
 
 
-Coomponent mul
-  in  Float a
-     ,Float b
-  out Float q
-  q = fMul a b
+Component mul
+  in  ( Float a
+      , Float b )
+  out ( Float q )
+  {
+  c1 := fMul a b
+  q1 <- c1.out.q1
+  q2 <- c1.out.q2
+  # or
+  out.q1 out.q2 <- fMul in.a in.b
 
+  Network net
+    in  ()
+    out ()
+    {
+
+    }
+  }
 
 Component apply
   in  Fun  f
