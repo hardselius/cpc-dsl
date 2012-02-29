@@ -18,6 +18,8 @@ reserved = {
 
     # Component, Function, Network
     'Component' : 'COMPONENT',
+    'Function'  : 'FUNCTION',
+    'Network'   : 'NETWORK'
     'in'        : 'IN',
     'out'       : 'OUT',
     'default'   : 'DEFAULT',
