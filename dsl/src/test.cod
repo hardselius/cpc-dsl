@@ -1,0 +1,7 @@
+Component add
+  in  Int x, Int y
+  out Int q
+  {
+  q = c
+  a = b
+  }
