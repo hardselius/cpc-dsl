@@ -11,6 +11,9 @@ sys.path.insert(0,"../..")
 import ply.lex as lex
 from ply.lex import TOKEN
 
+# Lexer states
+states = (('desc','exclusive'),)
+
 # Reserved words
 reserved = {
     # Module stuff
@@ -94,10 +97,11 @@ def t_ICONST(t):
 def t_SCONST(t):
     return t
 
-@TOKEN(description)
-def t_DESCRIPTION(t):
-    pass
-    #return t
+#@TOKEN(description)
+#def t_DESCRIPTION(t):
+#    r'\{-(.|\n)*-\}'
+##   pass
+#    return t
 
 # Assignment operators
 t_EQUALS       = r'='
@@ -125,6 +129,27 @@ def t_newline(t):
     r'\n'
     t.lexer.lineno += len(t.value)
 
+def t_start_desc(t):
+    r'\{-'
+    t.lexer.descstart = t.lexpos
+    t.lexer.push_state('desc')
+
+def t_desc_contents(t):
+    r'(.|\n)+(?=-\})'
+
+def t_desc_end(t):
+    r'-\}'
+    t.type = 'DESCRIPTION'
+    t.value = t.lexer.lexdata[t.lexer.descstart+2:t.lexpos]
+    t.lexer.pop_state()
+    t.lexer.lineno += t.value.count('\n')
+    return t
+
+t_desc_ignore = ''
+
+def t_desc_error(t):
+    raise RuntimeError
+
 def t_error(t):
     print "Illegal character %s" % repr(t.value[0])
     t.lexer.skip(1)
@@ -146,3 +171,4 @@ def test(s):
         if not tok: break
         print tok.type
         print tok.value
+
