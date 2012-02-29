@@ -13,15 +13,14 @@ from ply.lex import TOKEN
 
 # Reserved words
 reserved = {
-    # Componet
+    # Module stuff
+    'import'    : 'IMPORT',
+
+    # Component, Function, Network
     'Component' : 'COMPONENT',
     'in'        : 'IN',
     'out'       : 'OUT',
     'default'   : 'DEFAULT',
-
-    # Function
-
-    # Network
 
     # Types
     'File'      : 'FILE',
@@ -53,16 +52,16 @@ tokens = [
     ] + reserved.values()
 
 # Complex REs
-digit     = r'([0-9])'
-lowercase = r'([a-z])'
-uppercase = r'([A-Z])'
-nondigit  = r'([_A-Za-z])'
-string    = r'([^\\\n]|(\\.))*?'
-ident     = r'(' + lowercase + r'(' + digit + r'|' + nondigit + r')*)'
-typeident = r'(' + uppercase + r'(' + digit + r'|' + nondigit + r')*)'
-litint    = r'\d+'
-litfloat  = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
-litstring = r'\"' + string + r'\"'
+digit       = r'([0-9])'
+lowercase   = r'([a-z])'
+uppercase   = r'([A-Z])'
+nondigit    = r'([_A-Za-z])'
+string      = r'([^\\\n]|(\\.))*?'
+ident       = r'(' + lowercase + r'(' + digit + r'|' + nondigit + r')*)'
+typeident   = r'(' + uppercase + r'(' + digit + r'|' + nondigit + r')*)'
+litint      = r'\d+'
+litfloat    = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
+litstring   = r'\"' + string + r'\"'
 description = r'(\{-)' + string + r'(-\})'
 
 # Ignored characters
@@ -95,7 +94,8 @@ def t_SCONST(t):
 
 @TOKEN(description)
 def t_DESCRIPTION(t):
-    return t
+    pass
+    # return t
 
 # Assignment operators
 t_EQUALS       = r'='
