@@ -30,29 +30,26 @@ reserved = {
     }
 
 tokens = [
-    # Literals
-    # (identifier, integer constant, float constant, string constant)
-    'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST',
+    # Literals: identifier, integer constant, float constant, string
+    # constant
+    'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST', 'DESCRIPTION',
 
-    # Operators
-    # ()
+    # Operators:
 
-    # Assignments
-    # (=)
+    # Assignments: =
     'EQUALS',
 
-    # Substitution :=
+    # Substitution: :=
     'SUBSTITUTION',
 
-    # Connection <-
+    # Connection: <-
     'CONNECTION',
 
-    # Delimeters
-    # ( ) [ ] { } , . ; : ::
+    # Delimeters: ( ) [ ] { } , . ; : ::
     'LPAREN', 'RPAREN',
     'LBRACKET', 'RBRACKET',
     'LBRACE', 'RBRACE',
-    'COMMA', 'PERIOD', 'SEMI', 'COLON', 'DOUBLECOLON'
+    'COMMA', 'PERIOD', 'SEMI', 'COLON', 'DOUBLECOLON',
     ] + reserved.values()
 
 # Complex REs
@@ -60,10 +57,13 @@ digit     = r'([0-9])'
 lowercase = r'([a-z])'
 uppercase = r'([A-Z])'
 nondigit  = r'([_A-Za-z])'
+string    = r'([^\\\n]|(\\.))*?'
 ident     = r'(' + lowercase + r'(' + digit + r'|' + nondigit + r')*)'
 typeident = r'(' + uppercase + r'(' + digit + r'|' + nondigit + r')*)'
 litint    = r'\d+'
 litfloat  = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
+litstring = r'\"' + string + r'\"'
+description = r'(\{-)' + string + r'(-\})'
 
 # Ignored characters
 t_ignore = ' \t\x0c'
@@ -89,8 +89,13 @@ def t_ICONST(t):
     t.value = int(t.value)
     return t
 
-t_SCONST = r'\"([^\\\n]|(\\.))*?\"'
+@TOKEN(litstring)
+def t_SCONST(t):
+    return t
 
+@TOKEN(description)
+def t_DESCRIPTION(t):
+    return t
 
 # Assignment operators
 t_EQUALS       = r'='
