@@ -12,7 +12,7 @@ names = {}
 
 def p_program(p):
   'program : stmt_list'
-  p[0] = p[1]
+  p[0] = [p[1]]
 
 ################################################################################
 # Statements
@@ -20,8 +20,10 @@ def p_program(p):
 def p_stmt(p):
   '''stmt : stmt_block
           | stmt_component
+          | stmt_network
           | stmt_connect
-          | stmt_assign'''
+          | stmt_assign
+          | stmt_import'''
   p[0] = p[1]
 
 def p_stmt_block(p):
@@ -38,14 +40,18 @@ def p_stmt_list(p):
   if len(p) == 2:
     p[0] = [p[1]]
   else:
-    p[0] = [p[2]] + p[1]
+    p[0] = p[1] + [p[2]]
 
 def p_stmt_import(p):
   'stmt_import : IMPORT expr_path'
   p[0] = ['IMPORT',p[2]]
 
+def p_stmt_network(p):
+  'stmt_network : NETWORK expr_id expr_params expr_params stmt_block'
+  p[0] = ['NETWORK',p[2],p[3],p[4],p[5]]
+
 def p_stmt_component(p):
-  'stmt_component : COMPONENT expr_id expr_args expr_args stmt_block'
+  'stmt_component : COMPONENT expr_id expr_params expr_params stmt_block'
   p[0] = ['COMPONENT',p[2],p[3],p[4],p[5]]
 
 def p_stmt_connect(p):
@@ -67,8 +73,8 @@ def p_stmt_assign(p):
 #  'expr_component : expr_idlist'
 #  p[0] = p[1]
 
-def p_args(p):
-  '''expr_args : IN  expr_decllist
+def p_params(p):
+  '''expr_params : IN  expr_decllist
                | OUT expr_decllist'''
   p[0] = [p[1],p[2]]
 
@@ -78,7 +84,7 @@ def p_expr_decllist(p):
   if len(p) == 2:
     p[0] = [p[1]]
   else:
-    p[0] = [p[3]] + p[1]
+    p[0] = p[1] + [p[3]]
 
 def p_expr_decl(p):
   '''expr_decl : type expr_id
@@ -98,7 +104,7 @@ def p_expr_path(p):
   if len(p) == 2:
     p[0] = [p[1]]
   else:
-    p[0] = [p[3]] + p[1]  
+    p[0] = p[1] + [p[3]]
 
 def p_expr_idlist(p):
   '''expr_idlist : expr_id
@@ -106,7 +112,7 @@ def p_expr_idlist(p):
   if len(p) == 2:
     p[0] = [p[1]]
   else:
-    p[0] = [p[2]] + p[1]  
+    p[0] = p[1] + [p[2]]
 
 def p_expr_id(p):
   'expr_id : ID'

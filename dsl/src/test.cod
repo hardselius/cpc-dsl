@@ -1,9 +1,14 @@
-import ply.OMG
+import a.b
+import c.d
 
-Component add
-  in  Int x, Int y
-  out Int q
+Component c
+  in  Int a
+  out Int b
   {
-  q <- c
-  a <- b
+    Network n
+      in Int a
+      out Int b
+      {
+        a = b c
+      }
   }
