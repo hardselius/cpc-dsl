@@ -23,7 +23,8 @@ def p_stmt(p):
           | stmt_network
           | stmt_connect
           | stmt_assign
-          | stmt_import'''
+          | stmt_import
+          | stmt_function'''
   p[0] = p[1]
 
 def p_stmt_block(p):
@@ -53,6 +54,10 @@ def p_stmt_network(p):
 def p_stmt_component(p):
   'stmt_component : COMPONENT expr_id expr_params expr_params stmt_block'
   p[0] = ['COMPONENT',p[2],p[3],p[4],p[5]]
+
+def p_stmt_function(p):
+  'stmt_function : FUNCTION expr_idlist'
+  p[0] = ['FUNC',p[2]]
 
 def p_stmt_connect(p):
   'stmt_connect : expr_id CONNECTION expr_id'
