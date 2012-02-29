@@ -97,7 +97,7 @@ def t_SCONST(t):
 @TOKEN(description)
 def t_DESCRIPTION(t):
     pass
-    # return t
+    #return t
 
 # Assignment operators
 t_EQUALS       = r'='
