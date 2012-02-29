@@ -52,7 +52,7 @@ def p_stmt_network(p):
   p[0] = ['NETWORK',p[2],p[3],p[4],p[5]]
 
 def p_stmt_component(p):
-  'stmt_component : COMPONENT expr_id expr_params expr_params stmt_block'
+  'stmt_component : COMPONENT expr_id expr_desc expr_params expr_params stmt_block'
   p[0] = ['COMPONENT',p[2],p[3],p[4],p[5]]
 
 def p_stmt_function(p):
@@ -123,9 +123,10 @@ def p_expr_id(p):
   'expr_id : ID'
   p[0] = ['ID',p[1]]
 
-#def p_expr_desc(p):
-#  'expr_desc : DESCRIPTION'
-#  p[0] = ['DESC',p[1]]
+def p_expr_desc(p):
+  '''expr_desc : DESCRIPTION
+               | '''
+  if len(p) == 2: p[0] = ['DESC',p[1]]
 
 def p_type(p):
   '''type : FILE
