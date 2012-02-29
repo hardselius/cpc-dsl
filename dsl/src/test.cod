@@ -5,6 +5,7 @@ Component c
   in  Int a
   out Int b
   {
+    c = a b c
     Network n
       in Int a
       out Int b
