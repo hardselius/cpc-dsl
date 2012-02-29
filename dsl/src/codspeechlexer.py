@@ -76,7 +76,7 @@ def t_ID(t):
     return t
 
 @TOKEN(typeident)
-def t_TYPEID(t):
+def t_TYPE(t):
     t.type = reserved.get(t.value,"TYPE")
     return t
 
