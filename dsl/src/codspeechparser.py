@@ -10,6 +10,10 @@ precedence = ()
 
 names = {}
 
+def p_program(p):
+  'program : stmt_list'
+  p[0] = p[1]
+
 ################################################################################
 # Statements
 
@@ -35,6 +39,10 @@ def p_stmt_list(p):
     p[0] = [p[1]]
   else:
     p[0] = [p[2]] + p[1]
+
+def p_stmt_import(p):
+  'stmt_import : IMPORT expr_path'
+  p[0] = ['IMPORT',p[2]]
 
 def p_stmt_component(p):
   'stmt_component : COMPONENT expr_id expr_args expr_args stmt_block'
@@ -84,6 +92,14 @@ def p_expr_const(p):
                 | SCONST'''
   p[0] = p[1]
 
+def p_expr_path(p):
+  '''expr_path : expr_id
+               | expr_path PERIOD expr_id'''
+  if len(p) == 2:
+    p[0] = [p[1]]
+  else:
+    p[0] = [p[3]] + p[1]  
+
 def p_expr_idlist(p):
   '''expr_idlist : expr_id
                  | expr_idlist expr_id'''
@@ -96,9 +112,9 @@ def p_expr_id(p):
   'expr_id : ID'
   p[0] = ['ID',p[1]]
 
-def p_expr_desc(p):
-  'expr : DESCRIPTION'
-  p[0] = ['DESC',p[1]]
+#def p_expr_desc(p):
+#  'expr_desc : DESCRIPTION'
+#  p[0] = ['DESC',p[1]]
 
 def p_type(p):
   '''type : FILE
