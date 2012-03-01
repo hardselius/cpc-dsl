@@ -16,23 +16,31 @@ import re
 # Lexer states
 states = (('desc','exclusive'),)
 
+
+
+# ------------------------------------------------------------------
+# Tokens
+# ------------------------------------------------------------------
+
 # Reserved words
 reserved = {
     # Module stuff
     'import'    : 'IMPORT',
 
-    # Component, Function, Network
-    'Component' : 'COMPONENT',
-    'Function'  : 'FUNCTION',
-    'Network'   : 'NETWORK',
-    'in'        : 'IN',
-    'out'       : 'OUT',
-    'default'   : 'DEFAULT',
+    # Component, Controller, Network, Atom
+    'Component'  : 'COMPONENT',
+    'Controller' : 'CONTROLLER',
+    'Network'    : 'NETWORK',
+    'Atom'       : 'ATOM',
+    'in'         : 'IN',
+    'out'        : 'OUT',
+    'default'    : 'DEFAULT',
 
     # Types
     'File'      : 'FILE',
     'Float'     : 'FLOAT',
-    'Int'       : 'INT'
+    'Int'       : 'INT',
+    'newtype'   : 'NEWTYPE'
     }
 
 tokens = [
@@ -40,7 +48,8 @@ tokens = [
     # constant
     'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST', 'DESCRIPTION',
 
-    # Operators:
+    # Operators: + - * / %
+    'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MOD',
 
     # Assignments: =
     'EQUALS',
@@ -56,20 +65,34 @@ tokens = [
     'LBRACKET', 'RBRACKET',
     'LBRACE', 'RBRACE',
     'COMMA', 'PERIOD', 'SEMI', 'COLON', 'DOUBLECOLON',
+
+    # Other:
+    'ATOMOPTION'
     ] + reserved.values()
 
-# Complex REs
-digit       = r'([0-9])'
+
+# ------------------------------------------------------------------
+# Regular Expressions
+# ------------------------------------------------------------------
+
+digits      = r'([0-9])'
 lowercase   = r'([a-z])'
 uppercase   = r'([A-Z])'
+letters     = r'([A-Za-z])'
 nondigit    = r'([_A-Za-z])'
 string      = r'([^\\\n]|(\\.))*?'
-ident       = r'(' + lowercase + r'(' + digit + r'|' + nondigit + r')*)'
-typeident   = r'(' + uppercase + r'(' + digit + r'|' + nondigit + r')*)'
+ident       = r'(' + lowercase + r'(' + digits + r'|' + nondigit + r')*)'
+typeident   = r'(' + uppercase + r'(' + digits + r'|' + nondigit + r')*)'
 litint      = r'\d+'
 litfloat    = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
 litstring   = r'\"' + string + r'\"'
 description = r'(\{-)' + string + r'(-\})'
+atomoption  = r'<(?P<opt>' + letters + r'+)>'
+
+
+# ------------------------------------------------------------------
+# Token rules
+# ------------------------------------------------------------------
 
 # Ignored characters
 t_ignore = ' \t\x0c'
@@ -99,12 +122,6 @@ def t_ICONST(t):
 def t_SCONST(t):
     return t
 
-#@TOKEN(description)
-#def t_DESCRIPTION(t):
-#    r'\{-(.|\n)*-\}'
-##   pass
-#    return t
-
 # Assignment operators
 t_EQUALS       = r'='
 
@@ -126,6 +143,14 @@ t_PERIOD       = r'\.'
 t_SEMI         = r';'
 t_COLON        = r':'
 t_DOUBLECOLON  = r'::'
+
+# Other
+@TOKEN(atomoption)
+def t_ATOMOPTION(t):
+    t.type = 'ATOMOPTION'
+    m = re.search(atomoption, t.value)
+    t.value = m.group('opt')
+    return t
 
 def t_newline(t):
     r'\n'
