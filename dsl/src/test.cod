@@ -1,8 +1,9 @@
 import a.b
 import c.d
 
-Component c
+Component c      '''dfg OLIG \n Odfg'''
   in  Int a
+     ,Int b
   out Int b
   {
     c = a b c
