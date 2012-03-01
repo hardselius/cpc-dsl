@@ -140,12 +140,13 @@ def t_desc_contents(t):
 def t_desc_end(t):
     r'-\}'
     t.type = 'DESCRIPTION'
-    t.value = t.lexer.lexdata[t.lexer.descstart+2:t.lexpos]
+    desc = t.lexer.lexdata[t.lexer.descstart+2:t.lexpos]
+    t.value = re.sub(r'\n( )( )*', '\n', desc)
     t.lexer.pop_state()
     t.lexer.lineno += t.value.count('\n')
     return t
 
-t_desc_ignore = ''
+t_desc_ignore = ' '
 
 def t_desc_error(t):
     raise RuntimeError
@@ -171,4 +172,5 @@ def test(s):
         if not tok: break
         print tok.type
         print tok.value
+        print tok.lexer.lineno
 
