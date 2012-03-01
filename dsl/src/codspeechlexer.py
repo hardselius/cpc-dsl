@@ -14,7 +14,7 @@ from ply.lex import TOKEN
 import re
 
 # Lexer states
-states = (('desc','exclusive'),)
+states = (('doc','exclusive'),)
 
 
 
@@ -46,7 +46,7 @@ reserved = {
 tokens = [
     # Literals: identifier, integer constant, float constant, string
     # constant
-    'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST', 'DESCRIPTION',
+    'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST', 'DOCSTRING',
 
     # Operators: + - * / %
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MOD',
@@ -156,26 +156,26 @@ def t_newline(t):
     r'\n'
     t.lexer.lineno += len(t.value)
 
-def t_start_desc(t):
-    r'\{-'
-    t.lexer.descstart = t.lexpos
-    t.lexer.push_state('desc')
+def t_start_doc(t):
+    r'\'\'\''
+    t.lexer.docstart = t.lexpos
+    t.lexer.push_state('doc')
 
-def t_desc_contents(t):
-    r'(.|\n)+(?=-\})'
+def t_doc_contents(t):
+    r'[^\\\']+(?=\'\'\')'
 
-def t_desc_end(t):
-    r'-\}'
-    t.type = 'DESCRIPTION'
-    desc = t.lexer.lexdata[t.lexer.descstart+2:t.lexpos]
-    t.value = re.sub(r'\n( )*', '\n', desc)
+def t_doc_end(t):
+    r'\'\'\''
+    t.type = 'DOCSTRING'
+    doc = t.lexer.lexdata[t.lexer.docstart+3:t.lexpos]
+    t.value = re.sub(r'\n( )*', '\n', doc)
     t.lexer.pop_state()
     t.lexer.lineno += t.value.count('\n')
     return t
 
-t_desc_ignore = ' '
+t_doc_ignore = ' '
 
-def t_desc_error(t):
+def t_doc_error(t):
     raise RuntimeError
 
 def t_error(t):
