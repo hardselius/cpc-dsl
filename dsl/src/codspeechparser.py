@@ -8,11 +8,11 @@ tokens = codspeechlexer.tokens
 
 precedence = ()
 
-names = {}
+################################################################################
 
 def p_program(p):
   'program : stmt_list'
-  p[0] = [p[1]]
+  p[0] = ['PROGRAM',p[1]]
 
 ################################################################################
 # Statements
@@ -20,20 +20,18 @@ def p_program(p):
 def p_stmt(p):
   '''stmt : stmt_block
           | stmt_component
-          | stmt_network
           | stmt_connect
           | stmt_assign
-          | stmt_import
-          | stmt_function'''
+          | stmt_import'''
   p[0] = p[1]
 
 def p_stmt_block(p):
   '''stmt_block : LBRACE stmt_list RBRACE
                 | LBRACE RBRACE'''
   if len(p) == 4:
-    p[0] = ['BLOCK',p[2]]
+    p[0] = p[2]
   else:
-    p[0] = ['BLOCK',[]]
+    p[0] = []
 
 def p_stmt_list(p):
   '''stmt_list : stmt
@@ -48,16 +46,23 @@ def p_stmt_import(p):
   p[0] = ['IMPORT',p[2]]
 
 def p_stmt_network(p):
-  'stmt_network : NETWORK expr_id expr_params expr_params stmt_block'
-  p[0] = ['NETWORK',p[2],p[3],p[4],p[5]]
+  '''stmt_network : NETWORK stmt_block
+                  | NETWORK CONTROLLER stmt_block stmt_block'''
+  if len(p) == 3:
+    p[0] = ['NETWORK',[],[],p[2]]
+  else:
+    p[0] = ['NETWORK','CONTROLLER',p[3],p[4]]
 
 def p_stmt_component(p):
-  'stmt_component : COMPONENT expr_id expr_desc expr_params expr_params stmt_block'
-  p[0] = ['COMPONENT',p[2],p[3],p[4],p[5]]
+  '''stmt_component : COMPONENT expr_id expr_desc expr_params \
+                      expr_params stmt_network
+                    | COMPONENT expr_id expr_desc expr_params \
+                      expr_params stmt_atom'''
+  p[0] = ['COMPONENT',p[2],p[3],p[4],p[5],p[6]]
 
-def p_stmt_function(p):
-  'stmt_function : FUNCTION expr_idlist'
-  p[0] = ['FUNC',p[2]]
+def p_stmt_atom(p):
+  'stmt_atom : ATOM ATOMOPTION stmt_block'
+  p[0] = ['ATOM','ATOMOPTION',p[2]]
 
 def p_stmt_connect(p):
   'stmt_connect : expr_id CONNECTION expr_id'
@@ -70,18 +75,11 @@ def p_stmt_assign(p):
 ################################################################################
 # Expressions
 
-#def p_expr(p):
-#  'expr : expr_idlist'
-#  p[0] = p[1]
-
-#def p_expr_component(p):
-#  'expr_component : expr_idlist'
-#  p[0] = p[1]
-
 def p_params(p):
-  '''expr_params : IN  expr_decllist
-               | OUT expr_decllist'''
-  p[0] = [p[1],p[2]]
+  '''expr_params : IN  LPAREN expr_decllist RPAREN
+                 | OUT LPAREN expr_decllist RPAREN
+                 |'''
+  if len(p) == 5: p[0] = [p[1],p[3]]
 
 def p_expr_decllist(p):
   '''expr_decllist : expr_decl
@@ -121,7 +119,7 @@ def p_expr_idlist(p):
 
 def p_expr_id(p):
   'expr_id : ID'
-  p[0] = ['ID',p[1]]
+  p[0] = p[1]
 
 def p_expr_desc(p):
   '''expr_desc : DESCRIPTION
@@ -132,7 +130,7 @@ def p_type(p):
   '''type : FILE
           | FLOAT
           | INT'''
-  p[0] = ['TYPE',p[1]]
+  p[0] = p[1]
 
 ################################################################################
 
@@ -152,9 +150,5 @@ def parse(data):
 def test():
   f = open('test.cod')
   x = f.read()
-  print(x + '\n')
   p = parse(x)
-  print(p)
   return p
-
-test()
