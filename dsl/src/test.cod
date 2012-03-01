@@ -1,7 +1,7 @@
 import a.b
 import c.d
 
-Component c      {-dfg OLIG 
+Component c      {-dfg OLIG
                    Odfg-}
   in  Int a
      ,Int b

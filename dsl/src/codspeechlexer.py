@@ -11,6 +11,8 @@ sys.path.insert(0,"../..")
 import ply.lex as lex
 from ply.lex import TOKEN
 
+import re
+
 # Lexer states
 states = (('desc','exclusive'),)
 
@@ -141,7 +143,7 @@ def t_desc_end(t):
     r'-\}'
     t.type = 'DESCRIPTION'
     desc = t.lexer.lexdata[t.lexer.descstart+2:t.lexpos]
-    t.value = re.sub(r'\n( )( )*', '\n', desc)
+    t.value = re.sub(r'\n( )*', '\n', desc)
     t.lexer.pop_state()
     t.lexer.lineno += t.value.count('\n')
     return t
