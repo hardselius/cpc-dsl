@@ -135,7 +135,7 @@ def t_start_desc(t):
     t.lexer.push_state('desc')
 
 def t_desc_contents(t):
-    r'(.|\n|(?:(( )( )+)))+(?=-\})'
+    r'(.|\n)+(?=-\})'
 
 def t_desc_end(t):
     r'-\}'
