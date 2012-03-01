@@ -1,17 +1,12 @@
-import a.b
-import c.d
-
-Component c      {-dfg OLIG
-                   Odfg-}
-  in  Int a
-     ,Int b
-  out Int b
+Component c1      {-dfg OLIG-}
+  in  ( Float a
+      , Int   d )
+  out ( Float b
+      , Float c )
+  Network 
+  Controller {}
   {
-    c = a b c
-    Network n
-      in Int a
-      out Int b
-      {
-        a = b c
-      }
+    b <- a
+    e = c1 a d
   }
+
