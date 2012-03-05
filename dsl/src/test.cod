@@ -1,4 +1,4 @@
-Component c1      {-dfg OLIG-}
+Component c1      '''dfg OLIG'''
   in  ( Float a
       , Int   d )
   out ( Float b

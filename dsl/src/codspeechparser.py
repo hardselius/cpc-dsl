@@ -54,9 +54,9 @@ def p_stmt_network(p):
     p[0] = ['NETWORK','CONTROLLER',p[3],p[4]]
 
 def p_stmt_component(p):
-  '''stmt_component : COMPONENT expr_id expr_desc expr_params \
+  '''stmt_component : COMPONENT expr_id expr_doc expr_params \
                       expr_params stmt_network
-                    | COMPONENT expr_id expr_desc expr_params \
+                    | COMPONENT expr_id expr_doc expr_params \
                       expr_params stmt_atom'''
   p[0] = ['COMPONENT',p[2],p[3],p[4],p[5],p[6]]
 
@@ -121,10 +121,10 @@ def p_expr_id(p):
   'expr_id : ID'
   p[0] = p[1]
 
-def p_expr_desc(p):
-  '''expr_desc : DESCRIPTION
+def p_expr_doc(p):
+  '''expr_doc : DOCSTRING
                | '''
-  if len(p) == 2: p[0] = ['DESC',p[1]]
+  if len(p) == 2: p[0] = ['DOC',p[1]]
 
 def p_type(p):
   '''type : FILE
