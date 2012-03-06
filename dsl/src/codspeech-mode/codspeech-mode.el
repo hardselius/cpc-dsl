@@ -22,13 +22,10 @@
 
 (defvar codspeech-font-lock-keywords 
   (list
-    '("/\#[^/]*?\#/" . font-lock-comment-face)
     '("\#[^\\\n]*" . font-lock-comment-face)
     '("'''.*?'''" . font-lock-string-face)
     '("\<[^>]*?\>" . font-lock-preprocessor-face)
     '("\\<\\(import\\|Component\\|Network\\|Controller\\|Atom\\)\\>" . font-lock-keyword-face)
-;    '("\\('\\w*'\\)" . font-lock-variable-name-face)
-;    '("\\<\\(out\\|in\\)\\>" . font-lock-constant-face)
     '("[A-Z][a-zA-Z]*" . font-lock-type-face)
     '("Component \\([a-z][a-zA-Z0-9]*\\)" . (1 font-lock-function-name-face)))
   "Default highlighting expressions for codspeech mode")
@@ -44,17 +41,9 @@
 
 (defvar codspeech-mode-syntax-table
   (let ((st (make-syntax-table)))
-
-  (modify-syntax-entry ?_ "w" st)
-
-;  (modify-syntax-entry ?/# "<" st)
-;  (modify-syntax-entry ?#/ ">" st)
-
-;  (modify-syntax-entry ?/ ". 14" st)
-;  (modify-syntax-entry ?# ". 23" st)
-
-;  (modify-syntax-entry ?' "\"" st)
-
+    (modify-syntax-entry ?_ "w" st)
+    (modify-syntax-entry ?/ ". 14" st)
+    (modify-syntax-entry ?# ". 23" st)
   st)
   "Syntax table for codspeech-mode")
 
