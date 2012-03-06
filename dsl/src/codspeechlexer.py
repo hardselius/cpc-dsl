@@ -14,7 +14,8 @@ from ply.lex import TOKEN
 import re
 
 # Lexer states
-states = (('doc','exclusive'),)
+states = (('doc','exclusive'),
+          )
 
 
 
@@ -67,7 +68,7 @@ tokens = [
     'COMMA', 'PERIOD', 'SEMI', 'COLON', 'DOUBLECOLON',
 
     # Other:
-    'ATOMOPTION'
+    'ATOMOPTION', 'COMMENT'
     ] + reserved.values()
 
 
@@ -91,7 +92,7 @@ atomoption  = r'<(?P<opt>' + letters + r'+)>'
 
 
 # ------------------------------------------------------------------
-# Token rules
+# default tokenizer
 # ------------------------------------------------------------------
 
 # Ignored characters
@@ -144,23 +145,52 @@ t_SEMI         = r';'
 t_COLON        = r':'
 t_DOUBLECOLON  = r'::'
 
-# Other
+
+#  Other
+# option for atom env. <option>
 @TOKEN(atomoption)
 def t_ATOMOPTION(t):
     t.type = 'ATOMOPTION'
-    m = re.search(atomoption, t.value)
-    t.value = m.group('opt')
+    t.value = re.search(atomoption, t.value).group('opt')
     return t
 
+# multline comments (### comment ###)
+def t_comment(t):
+    r'\#\#\#(.|\n)*?\#\#\#'
+    t.type = 'COMMENT'
+    t.lexer.lineno += t.value.count('\n')
+    pass
+
+# single line comment (# comment)
+def t_comment2(t):
+    r'\#[^\\\n]*'
+    t.type = 'COMMENT'
+    pass
+
 def t_newline(t):
-    r'\n'
+    r'\n+'
     t.lexer.lineno += len(t.value)
 
+def t_error(t):
+    print "Illegal character %s" % repr(t.value[0])
+    t.lexer.skip(1)
+
+# ------------------------------
+# conditional lexing triggers
+# ------------------------------
+
+# docstring
 def t_start_doc(t):
     r'\'\'\''
     t.lexer.docstart = t.lexpos
     t.lexer.push_state('doc')
 
+
+
+
+# ------------------------------------------------------------------
+# docstring lexer environment
+# ------------------------------------------------------------------
 def t_doc_contents(t):
     r'[^\\\']+(?=\'\'\')'
 
@@ -178,11 +208,26 @@ t_doc_ignore = ' '
 def t_doc_error(t):
     raise RuntimeError
 
-def t_error(t):
-    print "Illegal character %s" % repr(t.value[0])
-    t.lexer.skip(1)
 
+
+
+# ------------------------------------------------------------------
+# create lexer
+# ------------------------------------------------------------------
 lexer = lex.lex()
+
+
+
+
+# ------------------------------------------------------------------
+# useful functions
+# ------------------------------------------------------------------
+def find_column(input,token):
+    last_cr = input.rfind('\n',0,token.lexpos)
+    if last_cr < 0:
+        last_cr = 0
+    colno = (token.lexpos - last_cr) + 1
+    return colno
 
 
 
@@ -199,5 +244,5 @@ def test(s):
         if not tok: break
         print tok.type
         print tok.value
-        print tok.lexer.lineno
+        print tok.lineno
 
