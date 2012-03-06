@@ -16,4 +16,4 @@ Component c1      '''dfg OLIG'''
 Component c3      ''' C '''
   in  ()
   out ()
-##  Network {} ##
+  Network {}
