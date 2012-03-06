@@ -13,22 +13,37 @@ tokens = codspeechlexer.tokens
 # Envorinment
 
 env = [{}]
+error = 0
 
 def pop():
   env.pop()
 
 def put():
-  env.append({})
+  env.append(copy.copy(env[len(env)-1]))
 
 def add(ident,type):
-  env[len(env)-1][ident] = type
+  if varExist(ident):
+     return True
+  else:
+    env[len(env)-1][ident] = type
+    return False
 
 def type(ident):
   return env[len(env)-1][ident]
 
+def varExist(var):
+  return env[len(env)-1].has_key(var)
+
 ################################################################################
 
+def addArg(arg):
+  if add(arg[1],arg[0]):
+    print "REFERENCE ERROR[variable already exists] at line %s: %s" \
+          % (arg[2],arg[1])
+    error = 1
+
 def typecheck(t):
+  global error
   if t == []:
     pass
 
@@ -36,48 +51,56 @@ def typecheck(t):
     map(typecheck,t[1])
 
   elif t[0] == 'NETWORK':
+    typecheck(t[1])
     map(typecheck,t[2])
-    map(typecheck,t[3])
 
   elif t[0] == 'COMPONENT':
-    add(t[1],[t[3][1],t[4][1]])
+    add(t[1],[t[3],t[4]])
     put()
-    add(t[1],[t[3][1],t[4][1]])
-    typecheck(t[3])
-    typecheck(t[4])
+    map(addArg,t[3])
+    map(addArg,t[4])
     typecheck(t[5])
     pop()
 
-  elif t[0] == 'in':
-    map(lambda x:add(x[1],x[0]),t[1])
-
-  elif t[0] == 'out':
-    map(lambda x:add(x[1],x[0]),t[1])
-
   elif t[0] == 'ASSIGN':
     try:
-      add(t[1],type(t[2][0]))
+      if add(t[1],type(t[2][0])):
+         print "REFERENCE ERROR[variable already exists] at line %s: %s" \
+               % (t[3],t[1])
+         error = 1
       t[2].pop(0)
       args = type(t[1])[0]
       for i in range(len(t[2])):
         if type(t[2][i]) != args[i][0]:
-          print "Type error: %s:%s , %s:%s" \
-                % (t[2][i],type(t[2][i]),args[i][1],args[i][0])
+          print "TYPE ERROR[assignment] at line %s: %s:%s, %s:%s" \
+                % (t[3],t[2][i],type(t[2][i]),args[i][1],args[i][0])
+          error = 1
     except KeyError:
-      print "Variable not found: %s" % sys.exc_value
+      print "REFERENCE ERROR[variable not found] at line %s: %s" \
+            % (t[3],sys.exc_value)
+      error = 1
 
   elif t[0] == 'CONNECT':
     try:
       if type(t[1]) != type(t[2]):
-        print("POOP")
+        print "TYPE ERROR[connection] at line %s: %s:%s, %s:%s" \
+              % (t[3],t[1],type(t[1]),t[2],type(t[2]))
+        error = 1
     except KeyError:
-      print "Variable not found: %s" % sys.exc_value
+      print "REFERENCE ERROR[variable not found] at line %s: %s" \
+            % (t[3],sys.exc_value)
+      error = 1
 
   elif t[0] == 'ATOM':
     pass
 
   elif t[0] == 'CONTROLLER':
-    pass
+    try:
+      add(t[2],type(t[1]))
+    except KeyError:
+      print "REFERENCE ERROR[variable not found] at line %s: %s" \
+            % (t[3],sys.exc_value)
+      error = 1
 
   else:
     pass
@@ -86,8 +109,9 @@ def typecheck(t):
 def test():
   t = codspeechparser.test()
   print t
-  print '\n'
-  typecheck(t)
-  print env
+  print ""
+  if t != None:
+    typecheck(t)
+    if error == 0: print env
 
 test()
