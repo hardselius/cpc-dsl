@@ -154,9 +154,9 @@ def t_ATOMOPTION(t):
     t.value = re.search(atomoption, t.value).group('opt')
     return t
 
-# multline comments (### comment ###)
+# multline comments (/# comment #/)
 def t_comment(t):
-    r'\#\#\#(.|\n)*?\#\#\#'
+    r'/\#(.|\n)*?\#/'
     t.type = 'COMMENT'
     t.lexer.lineno += t.value.count('\n')
     pass
