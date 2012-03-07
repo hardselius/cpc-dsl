@@ -13,6 +13,7 @@ Component c1      '''dfg OLIG'''
   { b <- a
     temp = c2 }
 
+
 Component c3      ''' C '''
   in  ()
   out ()
