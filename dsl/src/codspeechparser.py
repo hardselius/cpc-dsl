@@ -8,10 +8,10 @@
 import sys
 sys.path.insert(0,"../..")
 
-import codspeechlexer
+import codspeechlexer as lex
 import ply.yacc as yacc
 
-tokens = codspeechlexer.tokens
+tokens = lex.tokens
 
 precedence = ()
 
@@ -20,11 +20,19 @@ precedence = ()
 # ------------------------------------------------------------------
 
 def p_program(p):
-  'program : import_statements component_declarations'
-  p[0] = ['PROGRAM',p[1],p[2]]
+  '''program : import_statements component_declarations
+             | import_statements
+             | component_declarations
+             | '''
+  if len(p) == 3:
+    p[0] = ['PROGRAM',p[1],p[2]]
+  elif len(p) == 2:
+    p[0] = ['PROGRAM',p[1]]
+  else:
+    p[0] = []
 
 def p_program_error(p):
-  'program_error : error'
+  'program : error'
   p[0] = None
   p.parser.error = 1
 
@@ -53,7 +61,7 @@ def p_package_path(p):
   if len(p) == 2:
     p[0] = [p[1]]
   else:
-    p[0] = p[1] + [p[2]]
+    p[0] = p[1] + [p[3]]
 
 def p_package_identifier(p):
   'package_identifier : ID'
@@ -83,7 +91,7 @@ def p_component_declaration(p):
                              in_parameters \
                              out_parameters \
                              atom_statement'''
-  p[0] = ['COMPONENT',p[2],p[3],[4],p[5],p[6]]
+  p[0] = ['COMPONENT',p[2],p[3],p[4],p[5],p[6]]
 
 
 
@@ -141,18 +149,24 @@ def p_out_parameters(p):
 def p_parameter_list(p):
   '''parameter_list : parameter
                     | parameter_list COMMA parameter'''
-  if len(p) == 2:
-    p[0] = [p[1]]
-  else:
+  if len(p) == 4:
     p[0] = p[1] + [p[3]]
+  else:
+    p[0] = [p[1]]
+
+
 
 def p_parameter(p):
   '''parameter : type identifier
                | type identifier DEFAULT constant'''
-  if len(p) == 5:
+  if len(p) == 3:
     p[0] = [p[1],p[2]]
   else:
     p[0] = [p[1],p[2],'DEFAULT',p[4]]
+
+#def p_parameter_error(p):
+#  '''parameter : type error'''
+#  print "Syntax error ", p.lineno(1)
 
 
 
@@ -219,8 +233,8 @@ def p_ident(p):
   p[0] = ['IDENT',p[1]]
 
 def p_assignment(p):
-  'assignment : identifier EQUALS expression_list'
-  p[0] = ['ASSIGNMENT',p[1],p[3]]
+  'assignment : identifier EQUALS identifier expression_list'
+  p[0] = ['ASSIGNMENT',p[1],p[3],p[4]]
 
 
 
@@ -233,11 +247,13 @@ def p_type(p):
   '''type : FILE
           | FLOAT
           | INT
-          | NEWTYPE'''
+          | TYPE'''
   p[0] = p[1]
 
 
-
+def p_type_error(p):
+  'type : error'
+  print col_row(p[1]), "syntax error:", p[1].value, "not a type"
 
 # ------------------------------------------------------------------
 # docstring
@@ -262,19 +278,30 @@ def p_identifier(p):
   'identifier : ID'
   p[0] = p[1]
 
-
+def p_identifier_error(p):
+  'identifier : error'
+  print col_row(p[1]), "syntax error"
 
 # ------------------------------------------------------------------
 # lulz
 # ------------------------------------------------------------------
 
+
+def col_row(token):
+  ln  = token.lineno
+  col = lex.find_column(token.lexer.lexdata,token)
+  return "[" + str(ln) + ":" + str(col) + "]" + "\t"
+
+
+
 def p_error(p):
-    if not p:
-        print "SYNTAX ERROR AT EOF"
+  if not p:
+    print "SYNTAX ERROR AT EOF"
 
 parser = yacc.yacc()
 
 def parse(data):
+  lex.lexer.lineno = 1
   parser.error = 0
   p = parser.parse(data)
   if parser.error: return None
@@ -284,6 +311,7 @@ def test():
   f = open('test.cod')
   x = f.read()
   p = parse(x)
+  parser.restart()
   return p
 
 

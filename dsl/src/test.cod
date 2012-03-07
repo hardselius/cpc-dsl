@@ -1,7 +1,10 @@
+import foo.bar
+
 Component c2      '''dfg'''
-  in  ( Float a )
+  in  ( float Aa )
   out ( Int   b )
   Atom <SHIT> {}
+
 
 Component c1      '''dfg OLIG'''
   in  ( Float a
@@ -11,7 +14,8 @@ Component c1      '''dfg OLIG'''
   Network
   Controller c2 contr
   { b <- a
-    temp = c2 }
+    temp = c2 foo, bar
+    temp2 = c3 foo, bar }
 
 
 Component c3      ''' C '''

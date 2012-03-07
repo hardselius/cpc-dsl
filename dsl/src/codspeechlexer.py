@@ -226,7 +226,7 @@ def find_column(input,token):
     last_cr = input.rfind('\n',0,token.lexpos)
     if last_cr < 0:
         last_cr = 0
-    colno = (token.lexpos - last_cr) + 1
+    colno = (token.lexpos - len(str(token.value)) - last_cr) + 1
     return colno
 
 
