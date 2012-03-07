@@ -51,7 +51,8 @@ def typecheck(t):
     pass
 
   elif t[0] == 'PROGRAM':
-    map(typecheck,t[1])
+#    map(typecheck,t[1])
+    map(typecheck,t[2])
 
   elif t[0] == 'NETWORK':
     typecheck(t[1])
@@ -65,7 +66,7 @@ def typecheck(t):
     typecheck(t[5])
     pop()
 
-  elif t[0] == 'ASSIGN':
+  elif t[0] == 'ASSIGNMENT':
     try:
       if add(t[1],type(t[2][0])):
          print "REFERENCE ERROR[variable already exists] at line %s: %s" \
@@ -112,9 +113,9 @@ def typecheck(t):
 def test():
   t = codspeechparser.test()
   print t
-  print ""
-  if t != None:
-    typecheck(t)
-    if error == 0: print env
+#  print ""
+#  if t != None:
+#    typecheck(t)
+#    if error == 0: print env
 
 test()
