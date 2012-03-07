@@ -1,8 +1,9 @@
+
 import foo.bar
 
-Component c2      '''dfg'''
-  in  ( float Aa )
-  out ( Int   b )
+Component APA      '''dfg'''
+  in  (Float a )
+  out (int b)
   Atom <SHIT> {}
 
 
