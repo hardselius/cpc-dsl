@@ -68,16 +68,20 @@ def typecheck(t):
 
   elif t[0] == 'ASSIGNMENT':
     try:
-      if add(t[1],type(t[2][0])):
+      if add(t[1],type(t[2])):
          print "REFERENCE ERROR[variable already exists] at line %s: %s" \
-               % (t[3],t[1])
+               % (t[4],t[1])
          error = 1
-      t[2].pop(0)
       args = type(t[1])[0]
-      for i in range(len(t[2])):
-        if type(t[2][i]) != args[i][0]:
-          print "TYPE ERROR[assignment] at line %s: %s:%s, %s:%s" \
-                % (t[3],t[2][i],type(t[2][i]),args[i][1],args[i][0])
+      for i in range(len(t[3])):
+        if i < len(args):
+          if type(t[3][i][1]) != args[i][0]:
+            print "TYPE ERROR[assignment] at line %s: %s:%s, %s:%s" \
+                  % (t[4],t[3][i][1],type(t[3][i][1]),args[i][1],args[i][0])
+            error = 1
+        else:
+          print "REFERENCE ERROR[input out of bounds] at line ?: %s" \
+                % t[3][i][1]
           error = 1
     except KeyError:
       print "REFERENCE ERROR[variable not found] at line %s: %s" \
@@ -113,9 +117,9 @@ def typecheck(t):
 def test():
   t = codspeechparser.test()
   print t
-#  print ""
-#  if t != None:
-#    typecheck(t)
-#    if error == 0: print env
+  print ""
+  if t != None:
+    typecheck(t)
+    if error == 0: print env
 
 test()
