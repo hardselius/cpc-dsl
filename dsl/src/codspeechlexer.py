@@ -68,7 +68,7 @@ tokens = [
     'COMMA', 'PERIOD', 'SEMI', 'COLON', 'DOUBLECOLON',
 
     # Other:
-    'ATOMOPTION', 'COMMENT'
+    'ATOMOPTION', 'COMMENT', 'CR'
     ] + reserved.values()
 
 
@@ -167,9 +167,10 @@ def t_comment2(t):
     t.type = 'COMMENT'
     pass
 
-def t_newline(t):
+def t_CR(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
+    return t
 
 def t_error(t):
     print "Illegal character %s" % repr(t.value[0])
