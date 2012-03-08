@@ -75,11 +75,11 @@ def p_component_declarations(p):
     p[0] = p[1] + [p[2]]
 
 def p_component_declaration(p):
-  '''component_declaration : COMPONENT identifier docstring\
+  '''component_declaration : COMPONENT ident docstring\
                              in_parameters \
                              out_parameters \
                              network_statement
-                           | COMPONENT identifier docstring\
+                           | COMPONENT ident docstring\
                              in_parameters \
                              out_parameters \
                              atom_statement'''
@@ -99,7 +99,7 @@ def p_network_statement(p):
     p[0] = ['NETWORK',p[2],p[3]]
 
 def p_network_controller(p):
-  'network_controller : CONTROLLER identifier identifier'
+  'network_controller : CONTROLLER ident ident'
   p[0] = ['CONTROLLER',p[2],p[3]]
 
 
@@ -141,8 +141,8 @@ def p_parameter_list(p):
     p[0] = [p[1]]
 
 def p_parameter(p):
-  '''parameter : type identifier
-               | type identifier DEFAULT constant'''
+  '''parameter : type ident
+               | type ident DEFAULT constant'''
   if len(p) == 3:
     p[0] = [p[1],p[2]]
   else:
@@ -175,7 +175,7 @@ def p_statement(p):
   p[0] = p[1]
 
 def p_connection(p):
-  'connection : identifier CONNECTION identifier'
+  'connection : ident CONNECTION ident'
   p[0] = ['CONNECTION',p[1],p[3]]
 
 
@@ -206,11 +206,10 @@ def p_constant(p):
 
 def p_ident(p):
   'ident : ID'
-  print row_col(p)
-  p[0] = ['IDENT',p[1]]
+  p[0] = ['IDENT',p[1],(row_col(p.lineno(1),p.lexpos(1),p.lexer.lexdata))]
 
 def p_assignment(p):
-  'assignment : identifier EQUALS identifier expression_list'
+  'assignment : ident EQUALS ident expression_list'
   p[0] = ['ASSIGNMENT',p[1],p[3],p[4]]
 
 
@@ -240,15 +239,6 @@ def p_docstring(p):
 
 
 # ------------------------------------------------------------------
-# identifiers
-# ------------------------------------------------------------------
-
-def p_identifier(p):
-  'identifier : ID'
-  p[0] = p[1]
-
-
-# ------------------------------------------------------------------
 # error
 # ------------------------------------------------------------------
 
@@ -263,15 +253,25 @@ def p_error(p):
 # lulz
 # ------------------------------------------------------------------
 
-def find_column(input,token):
-    last_cr = input.rfind('\n',0,token.lexpos)
-    colno = (token.lexpos - last_cr) - 1
-    return colno
-
-def row_col(token):
-  row = token.lineno
-  col = find_column(token.lexer.lexdata,token)
+def row_col(*args):
+  if len(args) == 3:
+    row, lexpos, lexdata = args
+    col = find_column(lexdata,lexpos)
+  elif len(args) == 1:
+    t, = args
+    if not t:
+      return None
+    else:
+      row = t.lineno
+      col = find_column(t.lexer.lexdata,t.lexpos)
+  else:
+    return None
   return (row,col)
+
+def find_column(input,lexpos):
+    last_cr = input.rfind('\n',0,lexpos)
+    colno = (lexpos - last_cr) - 1
+    return colno
 
 def syntaxerror(token):
   row, col = row_col(token)
