@@ -206,6 +206,7 @@ def p_constant(p):
 
 def p_ident(p):
   'ident : ID'
+  print row_col(p)
   p[0] = ['IDENT',p[1]]
 
 def p_assignment(p):
