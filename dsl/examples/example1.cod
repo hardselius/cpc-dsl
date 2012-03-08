@@ -13,10 +13,10 @@ Component c1      '''dfg OLIG'''
   out ( Float b
       , Float c )
   Network
-  Controller c2 contr
+  Controller apa contr
   { b <- a
-    temp = c2 foo, bar
-    temp2 = c3 foo, bar }
+    temp = apa a
+    temp2 = c1 a, d }
 
 
 Component c3      ''' C '''

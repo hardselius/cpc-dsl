@@ -9,10 +9,17 @@ def test(testfile):
   x = f.read()
   ast = parser.parse(x)
   parser.parser.restart()
-  print ast
-  print ""
   if ast != None:
+    print "Abstrac syntax tree:"
+    print ast
+    print ""
     env = tc.typecheck(ast)
-    if env != None: print env
+    if env != None:
+      print "Context:"
+      print env
+    else:
+      print "No context was generated."
+  else:
+    print "No abstract syntax tree was generated."
 
 test('../examples/example1.cod')

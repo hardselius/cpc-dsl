@@ -3,15 +3,9 @@ import copy
 import sys
 sys.path.insert(0,"../..")
 
-import codspeechlexer
-import codspeechparser
-import ply.yacc as yacc
-
-tokens = codspeechlexer.tokens
-
-#-------------------------------------------------------------------------------
-# Envorinment
-#-------------------------------------------------------------------------------
+#---------------------------------------------------------------------
+# Environment
+#---------------------------------------------------------------------
 
 env = [{}]
 error = 0
@@ -23,27 +17,30 @@ def put():
   env.append(copy.copy(env[len(env)-1]))
 
 def add(ident,type):
-  if varExist(ident):
-     return True
+  global error
+  if varExist(ident[1]):
+     print "%s REFERENCE ERROR[variable already exists]: %s" \
+           % (ident[2],ident[1])
+     error = 1
   else:
-    env[len(env)-1][ident] = type
+    env[len(env)-1][ident[1]] = type
     return False
 
 def type(ident):
-  return env[len(env)-1][ident]
+  global error
+  try:
+    return env[len(env)-1][ident[1]]
+  except KeyError:
+    print "%s REFERENCE ERROR[variable not found]: %s" \
+          % (ident[2],ident[1])
+    error = 1
 
 def varExist(var):
   return env[len(env)-1].has_key(var)
 
-#-------------------------------------------------------------------------------
+#---------------------------------------------------------------------
 # Type Check
-#-------------------------------------------------------------------------------
-
-def addArg(arg):
-  if add(arg[1],arg[0]):
-    print "REFERENCE ERROR[variable already exists] at line %s: %s" \
-          % (arg[2],arg[1])
-    error = 1
+#---------------------------------------------------------------------
 
 def typecheck(t):
   global error
@@ -54,8 +51,9 @@ def typecheck(t):
 
   # Program: check import, components
   elif t[0] == 'PROGRAM':
-#    map(typecheck,t[1])
+    map(typecheck,t[1])
     map(typecheck,t[2])
+    if error == 0: return env
 
   # Network: check controller, network block
   elif t[0] == 'NETWORK':
@@ -66,45 +64,34 @@ def typecheck(t):
   elif t[0] == 'COMPONENT':
     add(t[1],[t[3],t[4]])
     put()
-    map(addArg,t[3])
-    map(addArg,t[4])
+    map(lambda x:add(x[1],x[0]),t[3]+t[4])
     typecheck(t[5])
     pop()
 
   # Assignment: check component, argument
   elif t[0] == 'ASSIGNMENT':
-    try:
-      if add(t[1],type(t[2])):
-         print "REFERENCE ERROR[variable already exists] at line %s: %s" \
-               % (t[4],t[1])
-         error = 1
-      args = type(t[1])[0]
+    add(t[1],type(t[2]))
+    if error == 0:
+      args = type(t[2])[0]
       for i in range(len(t[3])):
         if i < len(args):
-          if type(t[3][i][1]) != args[i][0]:
-            print "TYPE ERROR[assignment] at line %s: %s:%s, %s:%s" \
-                  % (t[4],t[3][i][1],type(t[3][i][1]),args[i][1],args[i][0])
+          if type(t[3][i]) != args[i][0]:
+            print "%s TYPE ERROR[assignment]: %s:%s, %s:%s" \
+                  % (t[3][i][2],t[3][i][1],type(t[3][i])    \
+                               ,args[i][1],args[i][0])
             error = 1
         else:
-          print "REFERENCE ERROR[input out of bounds] at line ?: %s" \
-                % t[3][i][1]
+          print "%s REFERENCE ERROR[input out of bounds]: %s" \
+                % (t[3][i][2],t[3][i][1])
           error = 1
-    except KeyError:
-      print "REFERENCE ERROR[variable not found] at line %s: %s" \
-            % (t[3],sys.exc_value)
-      error = 1
 
   # Connection: check variables
   elif t[0] == 'CONNECTION':
-    try:
-      if type(t[1]) != type(t[2]):
-        print "TYPE ERROR[connection] at line %s: %s:%s, %s:%s" \
-              % (t[3],t[1],type(t[1]),t[2],type(t[2]))
+    if type(t[1]) != type(t[2]):
+      if error == 0:
+        print "%s TYPE ERROR[connection]: %s:%s, %s:%s" \
+              % (t[1][2],t[1][1],type(t[1]),t[2][1],type(t[2]))
         error = 1
-    except KeyError:
-      print "REFERENCE ERROR[variable not found] at line %s: %s" \
-            % (t[3],sys.exc_value)
-      error = 1
 
   # Atom: check FUNCTION DEFINITION
   elif t[0] == 'ATOM':
@@ -116,24 +103,8 @@ def typecheck(t):
 
   # Controller: check variable, component
   elif t[0] == 'CONTROLLER':
-    try:
-      add(t[2],type(t[1]))
-    except KeyError:
-      print "REFERENCE ERROR[variable not found] at line %s: %s" \
-            % (t[3],sys.exc_value)
-      error = 1
+    add(t[2],type(t[1]))
 
   # Something is missing
   else:
     pass
-
-
-def test():
-  t = codspeechparser.test()
-  print t
-  print ""
-  if t != None:
-    typecheck(t)
-    if error == 0: print env
-
-test()
