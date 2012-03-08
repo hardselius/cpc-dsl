@@ -47,17 +47,22 @@ def addArg(arg):
 
 def typecheck(t):
   global error
+
+  # Nothing to check
   if t == []:
     pass
 
+  # Program: check import, components
   elif t[0] == 'PROGRAM':
 #    map(typecheck,t[1])
     map(typecheck,t[2])
 
+  # Network: check controller, network block
   elif t[0] == 'NETWORK':
     typecheck(t[1])
     map(typecheck,t[2])
 
+  # Component: check paramaters, network/atom
   elif t[0] == 'COMPONENT':
     add(t[1],[t[3],t[4]])
     put()
@@ -66,6 +71,7 @@ def typecheck(t):
     typecheck(t[5])
     pop()
 
+  # Assignment: check component, argument
   elif t[0] == 'ASSIGNMENT':
     try:
       if add(t[1],type(t[2])):
@@ -88,7 +94,8 @@ def typecheck(t):
             % (t[3],sys.exc_value)
       error = 1
 
-  elif t[0] == 'CONNECT':
+  # Connection: check variables
+  elif t[0] == 'CONNECTION':
     try:
       if type(t[1]) != type(t[2]):
         print "TYPE ERROR[connection] at line %s: %s:%s, %s:%s" \
@@ -99,9 +106,15 @@ def typecheck(t):
             % (t[3],sys.exc_value)
       error = 1
 
+  # Atom: check FUNCTION DEFINITION
   elif t[0] == 'ATOM':
     pass
 
+  # Import: check path
+  elif t[0] == 'IMPORT':
+    pass
+
+  # Controller: check variable, component
   elif t[0] == 'CONTROLLER':
     try:
       add(t[2],type(t[1]))
@@ -110,6 +123,7 @@ def typecheck(t):
             % (t[3],sys.exc_value)
       error = 1
 
+  # Something is missing
   else:
     pass
 

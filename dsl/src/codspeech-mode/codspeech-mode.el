@@ -23,10 +23,10 @@
 (defvar codspeech-font-lock-keywords 
   (list
     '("\#[^\\\n]*" . font-lock-comment-face)
-    '("'''.*?'''" . font-lock-string-face)
+    '("'''\\(.\\|\n\\)*?'''" . font-lock-string-face)
     '("\<[^>]*?\>" . font-lock-preprocessor-face)
     '("\\<\\(import\\|Component\\|Network\\|Controller\\|Atom\\)\\>" . font-lock-keyword-face)
-    '("[A-Z][a-zA-Z]*" . font-lock-type-face)
+    '("\\<\\([A-Z][a-zA-Z]*\\)" . font-lock-type-face)
     '("Component \\([a-z][a-zA-Z0-9]*\\)" . (1 font-lock-function-name-face)))
   "Default highlighting expressions for codspeech mode")
 
@@ -34,6 +34,36 @@
 ;; indent?
 ;;------------------------------------------------------------------------------
 
+(defun codspeech-indent-line ()
+  "Indent current line as codspeech code."
+  (interactive)
+  (beginning-of-line)
+  (if (bobp)
+	  (indent-line-to 0)		   ; First line is always non-indented
+	(let ((not-indented t) cur-indent)
+	  (if (looking-at "^[ ]*[})]") ; If the line we are looking at is the end of a block, then decrease the indentation
+		  (progn
+			(save-excursion
+			  (forward-line -1)
+			  (setq cur-indent (- (current-indentation) default-tab-width)))
+			(if (< cur-indent 0) ; We can't indent past the left margin
+				(setq cur-indent 0)))
+		(save-excursion
+		  (while not-indented ; Iterate backwards until we find an indentation hint
+			(forward-line -1)
+			(if (looking-at "^[ ]*[)}]") ; This hint indicates that we need to indent at the level of the END_ token
+				(progn
+				  (setq cur-indent (current-indentation))
+				  (setq not-indented nil))
+			  (if (looking-at "^[ ]*\\(Component\\|Atom\\|Network\\|in\\|out\\)") ; This hint indicates that we need to indent an extra level
+				  (progn
+					(setq cur-indent (+ (current-indentation) default-tab-width)) ; Do the actual indenting
+					(setq not-indented nil))
+				(if (bobp)
+					(setq not-indented nil)))))))
+	  (if cur-indent
+		  (indent-line-to cur-indent)
+		(indent-line-to 0))))) ; If we didn't see an indentation hint, then allow no indentation
 
 ;;------------------------------------------------------------------------------
 ;; Syntax table
@@ -41,7 +71,7 @@
 
 (defvar codspeech-mode-syntax-table
   (let ((st (make-syntax-table)))
-    (modify-syntax-entry ?_ "w" st)
+;    (modify-syntax-entry ?_ "w" st)
     (modify-syntax-entry ?/ ". 14" st)
     (modify-syntax-entry ?# ". 23" st)
   st)
@@ -60,7 +90,7 @@
 
   (set (make-local-variable 'font-lock-defaults) '(codspeech-font-lock-keywords))
 
-;;  (set (make-local-variable 'indent-line-function) 'codspeech-indent-line)
+  (set (make-local-variable 'indent-line-function) 'codspeech-indent-line)
 
   (setq major-mode 'codspeech-mode)
   (setq mode-name "CodSpeech")
