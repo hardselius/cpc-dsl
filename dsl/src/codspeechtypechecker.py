@@ -42,6 +42,10 @@ def varExist(var):
 # Type Check
 #---------------------------------------------------------------------
 
+#def addParam(io,param):
+#  param[1].insert(1,io+'.'+param[1].pop(1))
+#  add(param[1],param[0])
+
 def typecheck(t):
   global error
 
@@ -64,7 +68,10 @@ def typecheck(t):
   elif t[0] == 'COMPONENT':
     add(t[1],[t[3],t[4]])
     put()
-    map(lambda x:add(x[1],x[0]),t[3]+t[4])
+    map(lambda x:add(x[1],x[0]),t[3])
+    map(lambda x:add(x[1],x[0]),t[4])
+#    map(lambda x:addParam('in',x),t[3])
+#    map(lambda x:addParam('out',x),t[4])
     typecheck(t[5])
     pop()
 
