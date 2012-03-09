@@ -10,12 +10,15 @@ sys.path.insert(0,"../..")
 env = [{}]
 error = 0
 
+# Close scope
 def pop():
   env.pop()
 
+# Open new scope
 def put():
   env.append(copy.copy(env[len(env)-1]))
 
+# Add (Iden,Type) to the environment
 def add(ident,type):
   global error
   if varExist(ident[1]):
@@ -26,6 +29,7 @@ def add(ident,type):
     env[len(env)-1][ident[1]] = type
     return False
 
+# Return the type of an Ident
 def type(ident):
   global error
   try:
@@ -35,6 +39,7 @@ def type(ident):
           % (ident[2],ident[1])
     error = 1
 
+# Returns if variable exists in environment
 def varExist(var):
   return env[len(env)-1].has_key(var)
 
