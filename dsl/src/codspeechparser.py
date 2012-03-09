@@ -119,8 +119,61 @@ def p_component_declaration(p):
   			  out_parameters            cr\
 			  atom_statement
   """
-
   p[0] = ['COMPONENT',p[2],p[3],p[4],p[5],p[6]]
+
+
+# ------------------------------------------------------------------
+# parameter lists
+# ------------------------------------------------------------------
+
+def p_in_parameters(p):
+  """
+  in_parameters : IN lparen parameter_list rparen
+                | IN LPAREN opt_cr RPAREN
+  """
+
+  if len(p) == 5:
+    p[0] = p[3]
+  else:
+    p[0] = []
+
+def p_out_parameters(p):
+  """
+  out_parameters : OUT lparen parameter_list rparen
+                 | OUT LPAREN opt_cr RPAREN
+  """
+
+  if len(p) == 5:
+    p[0] = p[3]
+  else:
+    p[0] = []
+
+def p_parameter_list(p):
+  """
+  parameter_list : parameter
+                 | parameter_list COMMA parameter
+  """
+  if len(p) == 2:
+    p[0] = [p[1]]
+  else:
+    p[0] = p[1] + [p[3]]
+
+def p_parameter(p):
+  """
+  parameter : type ident
+            | type ident DEFAULT constant
+  """
+
+  if len(p) == 3:
+    p[0] = [p[1],p[2]]
+  else:
+    p[0] = [p[1],p[2],'DEFAULT',p[4]]
+
+def p_param_sep(p):
+  """
+  param_sep : opt_cr COMMA opt_cr
+  """
+  pass
 
 
 # ------------------------------------------------------------------
@@ -153,54 +206,6 @@ def p_atom_statement(p):
   atom_statement : ATOM ATOMOPTION statement_block
   """
   p[0] = ['ATOM',p[2],p[3]]
-
-
-# ------------------------------------------------------------------
-# parameter lists
-# ------------------------------------------------------------------
-
-def p_in_parameters(p):
-  """
-  in_parameters : IN LPAREN parameter_list RPAREN
-                | IN LPAREN RPAREN
-  """
-
-  if len(p) == 5:
-    p[0] = p[3]
-  else:
-    p[0] = []
-
-def p_out_parameters(p):
-  """
-  out_parameters : OUT LPAREN parameter_list RPAREN
-                 | OUT LPAREN RPAREN
-  """
-
-  if len(p) == 5:
-    p[0] = p[3]
-  else:
-    p[0] = []
-
-def p_parameter_list(p):
-  """
-  parameter_list : parameter opt_cr
-                 | parameter_list COMMA parameter opt_cr
-  """
-  if len(p) == 3:
-    p[0] = [p[1]]
-  else:
-    p[0] = p[1] + [p[3]]
-
-def p_parameter(p):
-  """
-  parameter : type ident
-            | type ident DEFAULT constant
-  """
-
-  if len(p) == 3:
-    p[0] = [p[1],p[2]]
-  else:
-    p[0] = [p[1],p[2],'DEFAULT',p[4]]
 
 
 # ------------------------------------------------------------------
@@ -355,6 +360,18 @@ def p_lbrace(p):
 def p_rbrace(p):
   """
   rbrace : opt_cr RBRACE
+  """
+  pass
+
+def p_lparen(p):
+  """
+  lparen : LPAREN opt_cr
+  """
+  pass
+
+def p_rparen(p):
+  """
+  rparen : opt_cr RPAREN
   """
   pass
 
