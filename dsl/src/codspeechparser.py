@@ -63,7 +63,7 @@ def p_program(p):
 def p_import_statements(p):
   """
   import_statements : import_statement
-                    | import_statements cr import_statement
+                    | import_statements import_sep import_statement
   """
   if len(p) == 2:
     p[0] = [p[1]]
@@ -92,6 +92,20 @@ def p_package_identifier(p):
   """
   p[0] = p[1]
 
+def p_import_sep(p):
+  """
+  import_sep : cr
+             | import_sep cr
+             | import_sep empty
+  """
+  pass
+
+def p_linebreak(p):
+  """
+  linebreak : cr
+  | linebreak empty
+  """
+  pass
 
 # ------------------------------------------------------------------
 # Component declarations
@@ -226,7 +240,7 @@ def p_statement_block(p):
 def p_statement_list(p):
   """
   statement_list : statement
-                 | statement_list break statement
+                 | statement_list statement_sep statement
   """
 
   if len(p) == 2:
@@ -319,7 +333,7 @@ def p_type(p):
 def p_docstring(p):
   """
   docstring : DOCSTRING cr
-            |
+            | empty
   """
   if len(p) == 2:
     p[0] = p[1]
@@ -328,7 +342,7 @@ def p_docstring(p):
 
 
 # ------------------------------------------------------------------
-# new line
+# special productions
 # ------------------------------------------------------------------
 
 def p_cr(p):
@@ -340,14 +354,14 @@ def p_cr(p):
 def p_opt_cr(p):
   """
   opt_cr : cr
-              |
+         | empty
   """
   pass
 
-def p_break(p):
+def p_statement_sep(p):
   """
-  break : SEMI
-        | CR
+  statement_sep : SEMI
+                | CR
   """
   pass
 
@@ -372,6 +386,12 @@ def p_lparen(p):
 def p_rparen(p):
   """
   rparen : opt_cr RPAREN
+  """
+  pass
+
+def p_empty(p):
+  """
+  empty :
   """
   pass
 

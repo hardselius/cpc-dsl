@@ -1,6 +1,5 @@
 import foo.bar
-
-
+/#
 Component apa      '''dfg'''
   in  () #(Float a )
   out (Int b)
@@ -24,3 +23,4 @@ Component c3      ''' C '''
   out ()
   Network {}
 #/
+import monkey.doodey
