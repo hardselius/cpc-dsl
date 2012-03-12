@@ -16,8 +16,8 @@ Component c1      '''dfg OLIG'''
   Network
   Controller apa contr
   { b <- a
-    temp = apa a
-    temp2 = c1 a, d }
+    temp = apa temp.in.a
+    temp2 = c1 in.a, in.d }
 #/
 
 Component c3      ''' C '''

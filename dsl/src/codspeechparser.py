@@ -1,19 +1,9 @@
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # codspeechparser.py
 #
 # A parser for Codspeech
-# ------------------------------------------------------------------------------
-
-
-
-# ------------------------------------------------------------------------------
-# TODO:
-#
-# Fix parameter lists to parse in a similar way as statement lists
-#
-# ------------------------------------------------------------------------------
-
+# ----------------------------------------------------------------------
 
 
 import sys
@@ -27,9 +17,9 @@ tokens = lex.tokens
 precedence = ()
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Program
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def p_entrypoint(p):
   """
@@ -40,11 +30,12 @@ def p_entrypoint(p):
   else:
     p[0] = p[1]
 
+
 def p_program(p):
   """
-  program : import_statement_list cr component_declaration_list opt_cr
-          | import_statement_list opt_cr
-          | component_declaration_list opt_cr
+  program : import_stmt_list cr component_decl_list opt_cr
+          | import_stmt_list opt_cr
+          | component_decl_list opt_cr
           | empty
   """
   if len(p) == 5:
@@ -55,25 +46,27 @@ def p_program(p):
     p[0] = []
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # import statements
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-def p_import_statement_list(p):
+def p_import_stmt_list(p):
   """
-  import_statement_list : import_statement
-                        | import_statement_list cr import_statement
+  import_stmt_list : import_stmt
+                   | import_stmt_list cr import_stmt
   """
   if len(p) == 2:
     p[0] = [p[1]]
   else:
     p[0] = p[1] + [p[3]]
 
-def p_import_statement(p):
+
+def p_import_stmt(p):
   """
-  import_statement : IMPORT package_path
+  import_stmt : IMPORT package_path
   """
   p[0] = ['IMPORT', p[2]]
+
 
 def p_package_path(p):
   """
@@ -85,64 +78,56 @@ def p_package_path(p):
   else:
     p[0] = p[1] + [p[3]]
 
+
 def p_package_identifier(p):
   """
   package_identifier : ID
   """
   p[0] = p[1]
 
-#def p_import_sep(p):
-#  """
-#  import_sep : cr
-#             | import_sep cr
-#             | import_sep empty
-#  """
-#  pass
 
-#def p_linebreak(p):
-#  """
-#  linebreak : cr
-#  | linebreak empty
-#  """
-#  pass
-
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Component declarations
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-def p_component_declarations(p):
+def p_component_decl_list(p) :
   """
-  component_declaration_list : component_declaration
-                             | component_declaration_list cr component_declaration
+  component_decl_list : component_decl
+                      | component_decl_list cr component_decl
   """
-
   if len(p) == 2:
     p[0] = [p[1]]
   else:
     p[0] = p[1] + [p[3]]
 
-def p_component_declaration(p):
+
+def p_component_decl(p):
   """
-  component_declaration : COMPONENT ident docstring \
-                          in_parameters             \
-			  out_parameters            \
-			  network_statement
-                        | COMPONENT ident docstring \
-  			  in_parameters             \
-  			  out_parameters            \
-			  atom_statement
+  component_decl : COMPONENT ident docstring in_params out_params network_stmt
+                 | COMPONENT ident docstring in_params out_params atom_stmt
   """
   p[0] = ['COMPONENT',p[2],p[3],p[4],p[5],p[6]]
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # parameter lists
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-def p_in_parameters(p):
+def p_in_params(p):
   """
-  in_parameters : IN lparen parameter_list rparen cr
-                | IN no_parameters cr
+  in_params : IN lparen param_list rparen cr
+            | IN no_params cr
+  """
+  if len(p) == 6:
+    p[0] = p[3]
+  else:
+    p[0] = []
+
+
+def p_out_params(p):
+  """
+  out_params : OUT lparen param_list rparen cr
+             | OUT no_params cr
   """
 
   if len(p) == 6:
@@ -150,43 +135,35 @@ def p_in_parameters(p):
   else:
     p[0] = []
 
-def p_out_parameters(p):
-  """
-  out_parameters : OUT lparen parameter_list rparen cr
-                 | OUT no_parameters cr
-  """
 
-  if len(p) == 6:
-    p[0] = p[3]
-  else:
-    p[0] = []
-
-def p_parameter_list(p):
+def p_param_list(p):
   """
-  parameter_list : parameter
-                 | parameter_list param_sep parameter
+  param_list : param
+             | param_list param_sep param
   """
   if len(p) == 2:
     p[0] = [p[1]]
   else:
     p[0] = p[1] + [p[3]]
 
-def p_no_parameters(p):
+
+def p_no_params(p):
   """
-  no_parameters : LPAREN opt_cr RPAREN
+  no_params : LPAREN opt_cr RPAREN
   """
   pass
 
-def p_parameter(p):
-  """
-  parameter : type ident
-            | type ident DEFAULT constant
-  """
 
+def p_param(p):
+  """
+  param : type ident
+        | type ident DEFAULT constant
+  """
   if len(p) == 3:
     p[0] = [p[1],p[2]]
   else:
     p[0] = [p[1],p[2],'DEFAULT',p[4]]
+
 
 def p_param_sep(p):
   """
@@ -195,19 +172,20 @@ def p_param_sep(p):
   pass
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # network statements
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-def p_network_statement(p):
+def p_network_stmt(p):
   """
-  network_statement : NETWORK statement_block
-                    | NETWORK opt_cr network_controller statement_block
+  network_stmt : NETWORK stmt_block
+               | NETWORK opt_cr network_controller stmt_block
   """
   if len(p) == 3:
     p[0] = ['NETWORK',[],p[2]]
   else:
     p[0] = ['NETWORK',p[3],p[4]]
+
 
 def p_network_controller(p):
   """
@@ -216,82 +194,92 @@ def p_network_controller(p):
   p[0] = ['CONTROLLER',p[2],p[3]]
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # atom statement
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-def p_atom_statement(p):
+def p_atom_stmt(p):
   """
-  atom_statement : ATOM ATOMOPTION statement_block
+  atom_stmt : ATOM ATOMOPTION stmt_block
   """
   p[0] = ['ATOM',p[2],p[3]]
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # statements
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-def p_statement_block(p):
+def p_stmt_block(p):
   """
-  statement_block : opt_cr lbrace statement_list rbrace
-                  | opt_cr LBRACE opt_cr RBRACE
+  stmt_block : opt_cr lbrace stmt_list rbrace
+             | opt_cr LBRACE opt_cr RBRACE
   """
-
   if len(p) == 5:
     p[0] = p[3]
   else:
     p[0] = []
 
-def p_statement_list(p):
-  """
-  statement_list : statement
-                 | statement_list statement_sep statement
-  """
 
+# statement list
+def p_stmt_list(p):
+  """
+  stmt_list : stmt
+            | stmt_list stmt_sep stmt
+  """
   if len(p) == 2:
     p[0] = [p[1]]
   else:
     p[0] = p[1] + [p[3]]
 
-def p_statement(p):
-  """
-  statement : connection
-            | expression
-  """
 
+# Statement
+def p_stmt(p):
+  """
+  stmt : connection
+       | sass
+       | expr
+  """
   p[0] = p[1]
+
 
 def p_connection(p):
   """
   connection : ident CONNECTION ident
   """
-
   p[0] = ['CONNECTION',p[1],p[3]]
 
 
-# ------------------------------------------------------------------------------
+# statement assignment
+def p_sass(p):
+  """
+  sass : ident EQUALS ident param_ref_list
+  """
+  p[0] = ['ASSIGNMENT',p[1],p[3],p[4]]
+
+
+
+# ----------------------------------------------------------------------
 # expressions
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-def p_expression_list(p):
+def p_expr_list(p):
   """
-  expression_list : expression
-                  | expression_list COMMA expression
+  expr_list : expr
+            | expr_list COMMA expr
   """
-
   if len(p) == 2:
     p[0] = [p[1]]
   else:
     p[0] = p[1] + [p[3]]
 
-def p_expression(p):
+def p_expr(p):
   """
-  expression : constant
-             | ident
-             | assignment
+  expr : constant
+       | ident
+       | param_ref
   """
-
   p[0] = p[1]
+
 
 def p_constant(p):
   """
@@ -299,27 +287,43 @@ def p_constant(p):
            | ICONST
            | SCONST
   """
-
   p[0] = [p.type,p[1]]
+
 
 def p_ident(p):
   """
   ident : ID
   """
-
   p[0] = ['IDENT',p[1],(row_col(p.lineno(1),p.lexpos(1),p.lexer.lexdata))]
 
-def p_assignment(p):
+
+def p_param_ref(p):
   """
-  assignment : ident EQUALS ident expression_list
+  param_ref : IN PERIOD ident
+            | ident PERIOD IN PERIOD ident
+            | OUT PERIOD ident
+            | ident PERIOD OUT PERIOD ident
   """
+  if len(p) == 4:
+    p[0] = [p[1],p[3]]
+  else:
+    p[0] = [p[1],p[3],p[5]]
 
-  p[0] = ['ASSIGNMENT',p[1],p[3],p[4]]
+
+def p_param_ref_list(p):
+  """
+  param_ref_list : param_ref
+                 | param_ref_list COMMA param_ref
+  """
+  if len(p) == 2:
+    p[0] = [p[1]]
+  else:
+    p[0] = p[1] + [p[3]]
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # types
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def p_type(p):
   """
@@ -331,9 +335,9 @@ def p_type(p):
   p[0] = p[1]
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # docstring
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def p_docstring(p):
   """
@@ -346,9 +350,9 @@ def p_docstring(p):
     p[0] = []
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # special productions
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def p_cr(p):
   """
@@ -364,9 +368,9 @@ def p_opt_cr(p):
   """
   pass
 
-def p_statement_sep(p):
+def p_stmt_sep(p):
   """
-  statement_sep : SEMI
+  stmt_sep : SEMI
                 | cr
   """
   pass
@@ -402,9 +406,9 @@ def p_empty(p):
   pass
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # error
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def p_error(p):
   if not p:
@@ -413,9 +417,9 @@ def p_error(p):
     syntaxerror(p)
 
 
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # lulz
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 def row_col(*args):
   if len(args) == 3:
