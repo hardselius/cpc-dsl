@@ -1,0 +1,31 @@
+import foo.bar
+
+
+Component apa      '''dfg'''
+  in  (Float a )
+  out (Int b)
+  Atom <SHIT> {}
+
+
+/#
+Component c1      '''dfg OLIG'''
+  in  ( Float a
+      , Int   d )
+  out ( Float b
+      , Float c )
+  Network
+  Controller apa contr
+  { b <- a
+<<<<<<< HEAD
+    temp = apa a, d
+    temp2 = c3 foo, bar }
+=======
+    temp = apa a
+    temp2 = c1 a, d }
+>>>>>>> 60cd42c564e2b14d402b8d3b251b00bd250fec09
+
+Component c3      ''' C '''
+  in  ()
+  out ()
+  Network {}
+#/
