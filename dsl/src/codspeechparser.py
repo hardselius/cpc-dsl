@@ -61,6 +61,7 @@ def p_import_stmt_list(p):
     p[0] = p[1] + [p[3]]
 
 
+# Import statements
 def p_import_stmt(p):
   """
   import_stmt : IMPORT package_path
@@ -90,6 +91,9 @@ def p_package_identifier(p):
 # Component declarations
 # ----------------------------------------------------------------------
 
+
+# A list of components consists of either a single component or
+# several components separated by newlines.
 def p_component_decl_list(p) :
   """
   component_decl_list : component_decl
@@ -101,18 +105,32 @@ def p_component_decl_list(p) :
     p[0] = p[1] + [p[3]]
 
 
+# A component declaratation consists of the component header and
+# either a network statement or an atom statement.
 def p_component_decl(p):
   """
-  component_decl : COMPONENT ident docstring in_params out_params network_stmt
-                 | COMPONENT ident docstring in_params out_params atom_stmt
+  component_decl : COMPONENT component_header network_stmt
+                 | COMPONENT component_header atom_stmt
   """
-  p[0] = ['COMPONENT',p[2],p[3],p[4],p[5],p[6]]
+  p[0] = ['COMPONENT'] + p[2] + [p[3]]
+
+
+# A component header consists of the the name of the component, a
+# doctring and the i/o parameters.
+def p_component_header(p):
+  """
+  component_header : ident docstring in_params out_params
+  """
+  p[0] = [p[1],p[2],p[3],p[4]]
 
 
 # ----------------------------------------------------------------------
 # parameter lists
 # ----------------------------------------------------------------------
 
+
+# The in-parameters consists of either a non-empty list of parameters
+# or no parameters at all.
 def p_in_params(p):
   """
   in_params : IN lparen param_list rparen cr
@@ -124,6 +142,8 @@ def p_in_params(p):
     p[0] = []
 
 
+# The otu-parameters consists of either a non-empty list of parameters
+# or no parameters at all.
 def p_out_params(p):
   """
   out_params : OUT lparen param_list rparen cr
@@ -136,6 +156,8 @@ def p_out_params(p):
     p[0] = []
 
 
+# Either a single parameter or a list of parameters separated by ','
+# and possibly on separate lines.
 def p_param_list(p):
   """
   param_list : param
@@ -147,6 +169,8 @@ def p_param_list(p):
     p[0] = p[1] + [p[3]]
 
 
+# An empty parenthesis. The left and right parenthesis may be on
+# different lines.
 def p_no_params(p):
   """
   no_params : LPAREN opt_cr RPAREN
@@ -154,6 +178,8 @@ def p_no_params(p):
   pass
 
 
+# A parameter is either just a type and an ident or extended with a
+# default value.
 def p_param(p):
   """
   param : type ident
@@ -165,6 +191,8 @@ def p_param(p):
     p[0] = [p[1],p[2],'DEFAULT',p[4]]
 
 
+# Parameters are separated by an arbitrary number of new lines, a
+# comma and an arbitrary number of new lines.
 def p_param_sep(p):
   """
   param_sep : opt_cr COMMA opt_cr
@@ -176,6 +204,10 @@ def p_param_sep(p):
 # network statements
 # ----------------------------------------------------------------------
 
+
+# A networks statement consists of either a network and a statement
+# block, or a network with an associated network controller and a
+# statement block.
 def p_network_stmt(p):
   """
   network_stmt : NETWORK stmt_block
@@ -187,6 +219,7 @@ def p_network_stmt(p):
     p[0] = ['NETWORK',p[3],p[4]]
 
 
+# A network controller is a component and the controller alias?
 def p_network_controller(p):
   """
   network_controller : CONTROLLER ident ident
@@ -198,6 +231,9 @@ def p_network_controller(p):
 # atom statement
 # ----------------------------------------------------------------------
 
+
+# An atom consist of an atom option descrbing what the following atom
+# block contains.
 def p_atom_stmt(p):
   """
   atom_stmt : ATOM ATOMOPTION stmt_block
@@ -209,6 +245,8 @@ def p_atom_stmt(p):
 # statements
 # ----------------------------------------------------------------------
 
+
+# A statement block contains a list of statements enclosed in braces.
 def p_stmt_block(p):
   """
   stmt_block : opt_cr lbrace stmt_list rbrace
@@ -220,11 +258,11 @@ def p_stmt_block(p):
     p[0] = []
 
 
-# statement list
+# A list of single statements on separate lines.
 def p_stmt_list(p):
   """
   stmt_list : stmt
-            | stmt_list stmt_sep stmt
+            | stmt_list cr stmt
   """
   if len(p) == 2:
     p[0] = [p[1]]
@@ -232,7 +270,7 @@ def p_stmt_list(p):
     p[0] = p[1] + [p[3]]
 
 
-# Statement
+# Statement types.
 def p_stmt(p):
   """
   stmt : connection
@@ -242,6 +280,7 @@ def p_stmt(p):
   p[0] = p[1]
 
 
+# Connections.
 def p_connection(p):
   """
   connection : ident CONNECTION ident
@@ -249,7 +288,7 @@ def p_connection(p):
   p[0] = ['CONNECTION',p[1],p[3]]
 
 
-# statement assignment
+# Assignment.
 def p_sass(p):
   """
   sass : ident EQUALS ident param_ref_list
@@ -262,6 +301,8 @@ def p_sass(p):
 # expressions
 # ----------------------------------------------------------------------
 
+
+# Expression list.
 def p_expr_list(p):
   """
   expr_list : expr
@@ -272,6 +313,8 @@ def p_expr_list(p):
   else:
     p[0] = p[1] + [p[3]]
 
+
+# Expressions.
 def p_expr(p):
   """
   expr : constant
@@ -281,6 +324,7 @@ def p_expr(p):
   p[0] = p[1]
 
 
+# Constants or literals.
 def p_constant(p):
   """
   constant : FCONST
@@ -290,6 +334,7 @@ def p_constant(p):
   p[0] = [p.type,p[1]]
 
 
+# Idents.
 def p_ident(p):
   """
   ident : ID
@@ -297,11 +342,13 @@ def p_ident(p):
   p[0] = ['IDENT',p[1],(row_col(p.lineno(1),p.lexpos(1),p.lexer.lexdata))]
 
 
+# A parameter reference references either the component it's stated
+# in, or a component from an earlier assignment.
 def p_param_ref(p):
   """
   param_ref : IN PERIOD ident
-            | ident PERIOD IN PERIOD ident
             | OUT PERIOD ident
+            | ident PERIOD IN PERIOD ident
             | ident PERIOD OUT PERIOD ident
   """
   if len(p) == 4:
@@ -310,6 +357,8 @@ def p_param_ref(p):
     p[0] = [p[1],p[3],p[5]]
 
 
+# Lists of parameter references, used by assignments, are comma
+# separated.
 def p_param_ref_list(p):
   """
   param_ref_list : param_ref
@@ -325,6 +374,8 @@ def p_param_ref_list(p):
 # types
 # ----------------------------------------------------------------------
 
+
+# The different types of the language.
 def p_type(p):
   """
   type : FILE
@@ -339,6 +390,8 @@ def p_type(p):
 # docstring
 # ----------------------------------------------------------------------
 
+
+# Docstrings. Used for documentation.
 def p_docstring(p):
   """
   docstring : DOCSTRING cr
@@ -354,6 +407,8 @@ def p_docstring(p):
 # special productions
 # ----------------------------------------------------------------------
 
+
+# A non-empty sequence of new lines.
 def p_cr(p):
   """
   cr : CR
@@ -361,6 +416,8 @@ def p_cr(p):
   """
   pass
 
+
+# A sequence of new lines which may be empty.
 def p_opt_cr(p):
   """
   opt_cr : cr
@@ -368,37 +425,39 @@ def p_opt_cr(p):
   """
   pass
 
-def p_stmt_sep(p):
-  """
-  stmt_sep : SEMI
-                | cr
-  """
-  pass
 
+# A left brace succeeded by optional new lines
 def p_lbrace(p):
   """
   lbrace : LBRACE opt_cr
   """
   pass
 
+# A right brace preceded by optional new lines.
 def p_rbrace(p):
   """
   rbrace : opt_cr RBRACE
   """
   pass
 
+
+# A left parenthesis succeeded by optional new lines.
 def p_lparen(p):
   """
   lparen : LPAREN opt_cr
   """
   pass
 
+
+# A right parenthesis preceded by opional new lines.
 def p_rparen(p):
   """
   rparen : opt_cr RPAREN
   """
   pass
 
+
+# An empty production.
 def p_empty(p):
   """
   empty :
@@ -410,6 +469,8 @@ def p_empty(p):
 # error
 # ----------------------------------------------------------------------
 
+
+# Catches erroneous productions.
 def p_error(p):
   if not p:
     print "SYNTAX ERROR AT EOF"
