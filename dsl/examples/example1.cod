@@ -1,12 +1,13 @@
 import foo.bar
-/#
+import monkey.doodey
+
+
 Component apa      '''dfg'''
-  in  () #(Float a )
+  in  (Int a)
   out (Int b)
   Atom <SHIT> {}
+#/
 
-
-/#
 Component c1      '''dfg OLIG'''
   in  ( Float a
       , Int   d )
@@ -17,10 +18,10 @@ Component c1      '''dfg OLIG'''
   { b <- a
     temp = apa a
     temp2 = c1 a, d }
+#/
 
 Component c3      ''' C '''
   in  ()
   out ()
   Network {}
 #/
-import monkey.doodey

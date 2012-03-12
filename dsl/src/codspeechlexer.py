@@ -168,7 +168,7 @@ def t_comment2(t):
     pass
 
 def t_CR(t):
-    r'\n+'
+    r'\n'
     t.lexer.lineno += len(t.value)
     return t
 
@@ -231,13 +231,17 @@ lexer = lex.lex()
 # some tests
 # ------------------------------------------------------------------
 
-def test(s):
+example1 = '../examples/example1.cod'
+
+def test(path):
+    f = open(path)
+    s = f.read()
+
     lex.lex()
+    lexer.lineno = 1
     lex.input(s)
     while 1:
         tok = lex.token()
         if not tok: break
-        print tok.type
-        print tok.value
-        print tok.lineno
+        print tok
 

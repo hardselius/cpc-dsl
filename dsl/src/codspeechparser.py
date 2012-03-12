@@ -1,18 +1,18 @@
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # codspeechparser.py
 #
 # A parser for Codspeech
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # TODO:
 #
 # Fix parameter lists to parse in a similar way as statement lists
 #
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 
@@ -27,14 +27,13 @@ tokens = lex.tokens
 precedence = ()
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Program
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_entrypoint(p):
   """
-  entrypoint : cr program
-             | program
+  entrypoint : opt_cr program
   """
   if len(p) == 3:
     p[0] = p[2]
@@ -43,10 +42,10 @@ def p_entrypoint(p):
 
 def p_program(p):
   """
-  program : import_statements cr component_declarations opt_cr
-          | import_statements opt_cr
-          | component_declarations opt_cr
-          |
+  program : import_statement_list cr component_declaration_list opt_cr
+          | import_statement_list opt_cr
+          | component_declaration_list opt_cr
+          | empty
   """
   if len(p) == 5:
     p[0] = ['PROGRAM',p[1],p[3]]
@@ -56,14 +55,14 @@ def p_program(p):
     p[0] = []
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # import statements
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-def p_import_statements(p):
+def p_import_statement_list(p):
   """
-  import_statements : import_statement
-                    | import_statements import_sep import_statement
+  import_statement_list : import_statement
+                        | import_statement_list cr import_statement
   """
   if len(p) == 2:
     p[0] = [p[1]]
@@ -92,29 +91,29 @@ def p_package_identifier(p):
   """
   p[0] = p[1]
 
-def p_import_sep(p):
-  """
-  import_sep : cr
-             | import_sep cr
-             | import_sep empty
-  """
-  pass
+#def p_import_sep(p):
+#  """
+#  import_sep : cr
+#             | import_sep cr
+#             | import_sep empty
+#  """
+#  pass
 
-def p_linebreak(p):
-  """
-  linebreak : cr
-  | linebreak empty
-  """
-  pass
+#def p_linebreak(p):
+#  """
+#  linebreak : cr
+#  | linebreak empty
+#  """
+#  pass
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Component declarations
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_component_declarations(p):
   """
-  component_declarations : component_declaration
-                         | component_declarations cr component_declaration
+  component_declaration_list : component_declaration
+                             | component_declaration_list cr component_declaration
   """
 
   if len(p) == 2:
@@ -124,40 +123,40 @@ def p_component_declarations(p):
 
 def p_component_declaration(p):
   """
-  component_declaration : COMPONENT ident docstring cr\
-                          in_parameters             cr\
-			  out_parameters            cr\
+  component_declaration : COMPONENT ident docstring \
+                          in_parameters             \
+			  out_parameters            \
 			  network_statement
-                        | COMPONENT ident docstring cr\
-  			  in_parameters             cr\
-  			  out_parameters            cr\
+                        | COMPONENT ident docstring \
+  			  in_parameters             \
+  			  out_parameters            \
 			  atom_statement
   """
   p[0] = ['COMPONENT',p[2],p[3],p[4],p[5],p[6]]
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # parameter lists
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_in_parameters(p):
   """
-  in_parameters : IN lparen parameter_list rparen
-                | IN LPAREN opt_cr RPAREN
+  in_parameters : IN lparen parameter_list rparen cr
+                | IN no_parameters cr
   """
 
-  if len(p) == 5:
+  if len(p) == 6:
     p[0] = p[3]
   else:
     p[0] = []
 
 def p_out_parameters(p):
   """
-  out_parameters : OUT lparen parameter_list rparen
-                 | OUT LPAREN opt_cr RPAREN
+  out_parameters : OUT lparen parameter_list rparen cr
+                 | OUT no_parameters cr
   """
 
-  if len(p) == 5:
+  if len(p) == 6:
     p[0] = p[3]
   else:
     p[0] = []
@@ -165,12 +164,18 @@ def p_out_parameters(p):
 def p_parameter_list(p):
   """
   parameter_list : parameter
-                 | parameter_list COMMA parameter
+                 | parameter_list param_sep parameter
   """
   if len(p) == 2:
     p[0] = [p[1]]
   else:
     p[0] = p[1] + [p[3]]
+
+def p_no_parameters(p):
+  """
+  no_parameters : LPAREN opt_cr RPAREN
+  """
+  pass
 
 def p_parameter(p):
   """
@@ -190,9 +195,9 @@ def p_param_sep(p):
   pass
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # network statements
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_network_statement(p):
   """
@@ -211,9 +216,9 @@ def p_network_controller(p):
   p[0] = ['CONTROLLER',p[2],p[3]]
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # atom statement
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_atom_statement(p):
   """
@@ -222,18 +227,18 @@ def p_atom_statement(p):
   p[0] = ['ATOM',p[2],p[3]]
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # statements
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_statement_block(p):
   """
-  statement_block : lbrace statement_list rbrace
-                  | LBRACE opt_cr RBRACE
+  statement_block : opt_cr lbrace statement_list rbrace
+                  | opt_cr LBRACE opt_cr RBRACE
   """
 
-  if len(p) == 4:
-    p[0] = p[2]
+  if len(p) == 5:
+    p[0] = p[3]
   else:
     p[0] = []
 
@@ -264,9 +269,9 @@ def p_connection(p):
   p[0] = ['CONNECTION',p[1],p[3]]
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # expressions
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_expression_list(p):
   """
@@ -312,9 +317,9 @@ def p_assignment(p):
   p[0] = ['ASSIGNMENT',p[1],p[3],p[4]]
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # types
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_type(p):
   """
@@ -326,28 +331,29 @@ def p_type(p):
   p[0] = p[1]
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # docstring
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_docstring(p):
   """
   docstring : DOCSTRING cr
             | empty
   """
-  if len(p) == 2:
+  if len(p) == 3:
     p[0] = p[1]
   else:
     p[0] = []
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # special productions
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_cr(p):
   """
   cr : CR
+     | cr CR
   """
   pass
 
@@ -361,7 +367,7 @@ def p_opt_cr(p):
 def p_statement_sep(p):
   """
   statement_sep : SEMI
-                | CR
+                | cr
   """
   pass
 
@@ -396,9 +402,9 @@ def p_empty(p):
   pass
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # error
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def p_error(p):
   if not p:
@@ -407,9 +413,9 @@ def p_error(p):
     syntaxerror(p)
 
 
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # lulz
-# ------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def row_col(*args):
   if len(args) == 3:
