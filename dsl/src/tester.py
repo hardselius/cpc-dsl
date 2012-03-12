@@ -31,4 +31,8 @@ def test(testfile):
   else:
     print "No abstract syntax tree was generated."
 
+<<<<<<< HEAD
+test('../examples/example2.cod')
+=======
 #test('../examples/example1.cod')
+>>>>>>> 07ddb6be80a81b8de6f3ad8e757b359617552c38
