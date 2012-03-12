@@ -283,7 +283,7 @@ def p_stmt(p):
 # Connections.
 def p_connection(p):
   """
-  connection : ident CONNECTION ident
+  connection : param_ref CONNECTION param_ref
   """
   p[0] = ['CONNECTION',p[1],p[3]]
 

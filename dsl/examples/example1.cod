@@ -15,7 +15,7 @@ Component c1      '''dfg OLIG'''
       , Float c )
   Network
   Controller apa contr
-  { b <- a
+  { out.b <- in.a
     temp = apa temp.in.a
     temp2 = c1 in.a, in.d }
 #/
