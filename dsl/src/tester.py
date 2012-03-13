@@ -28,6 +28,7 @@ def test(testfile):
   global pctx
   f = open(testfile)
   x = f.read()
+  cslex.lexer.lineno = 1
   ast = csparse.parse(x)
   csparse.parser.restart()
   if ast != None:
