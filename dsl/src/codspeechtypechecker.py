@@ -33,23 +33,37 @@ def add(ident,type):
 def type(ident):
   global error
   try:
-    return env[len(env)-1][ident[1]]
+    if len(ident) == 1:
+      return env[len(env)-1][ident[0][1]]
+    elif len(ident) == 2:
+      return env[len(env)-1][ident[0]][ident[1][1]]
+    else:
+      return typeParams(env[len(env)-1][ident[0][1]][ident[1]],ident[2][1])
   except KeyError:
     print "%s REFERENCE ERROR[variable not found]: %s" \
-          % (ident[2],ident[1])
+          % (ident[2],ident[len(ident)-1])
     error = 1
+
+def typeParams(params,p):
+  for x in params:
+    if x[1][1] == p: return x[0]
 
 # Returns if variable exists in environment
 def varExist(var):
   return env[len(env)-1].has_key(var)
 
+def addParam(io,param):
+  global error
+  if env[len(env)-1][io].has_key(param[1][1]):
+    print "%s REFERENCE ERROR[variable already exists]: %s" \
+          % (param[1][2],param[1][1])
+    error = 1
+  else:
+    env[len(env)-1][io][param[1][1]] = param[0]
+
 #---------------------------------------------------------------------
 # Type Check
 #---------------------------------------------------------------------
-
-#def addParam(io,param):
-#  param[1].insert(1,io+'.'+param[1].pop(1))
-#  add(param[1],param[0])
 
 def typecheck(t):
   global error
@@ -71,35 +85,38 @@ def typecheck(t):
 
   # Component: check paramaters, network/atom
   elif t[0] == 'COMPONENT':
-    add(t[1],[t[3],t[4]])
+    add(t[1],{'in':t[3],'out':t[4]})
     put()
-    map(lambda x:add(x[1],x[0]),t[3])
-    map(lambda x:add(x[1],x[0]),t[4])
-#    map(lambda x:addParam('in',x),t[3])
-#    map(lambda x:addParam('out',x),t[4])
+    add(['IDENT','in'],{})
+    add(['IDENT','out'],{})
+    map(lambda x:addParam('in',x),t[3])
+    map(lambda x:addParam('out',x),t[4])
     typecheck(t[5])
     pop()
 
   # Assignment: check component, argument
   elif t[0] == 'ASSIGNMENT':
-    add(t[1],type(t[2]))
+    add(t[1],type([t[2]]))
     if error == 0:
-      args = type(t[2])[0]
+      args = type([t[2]])['in']
       for i in range(len(t[3])):
         if i < len(args):
           if type(t[3][i]) != args[i][0]:
             print "%s TYPE ERROR[assignment]: %s:%s, %s:%s" \
-                  % (t[3][i][2],t[3][i][1],type(t[3][i])    \
-                               ,args[i][1],args[i][0])
+                  % (t[3][i][len(t[3][i])-1][2] \
+                    ,t[3][i][len(t[3][i])-1][1] \
+                    ,type(t[3][i]) \
+                    ,args[i][1][1],args[i][0])
             error = 1
         else:
           print "%s REFERENCE ERROR[input out of bounds]: %s" \
-                % (t[3][i][2],t[3][i][1])
+                % (t[3][i][len(t[3][i])-1][2] \
+                  ,t[3][i][len(t[3][i])-1][1])
           error = 1
 
   # Connection: check variables
   elif t[0] == 'CONNECTION':
-    if type(t[1]) != type(t[2]):
+    if type([t[1]]) != type([t[2]]):
       if error == 0:
         print "%s TYPE ERROR[connection]: %s:%s, %s:%s" \
               % (t[1][2],t[1][1],type(t[1]),t[2][1],type(t[2]))
@@ -115,7 +132,7 @@ def typecheck(t):
 
   # Controller: check variable, component
   elif t[0] == 'CONTROLLER':
-    add(t[2],type(t[1]))
+    add(t[2],type([t[1]]))
 
   # Something is missing
   else:

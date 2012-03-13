@@ -3,21 +3,20 @@ import foo.bar
 
 Component apa      '''dfg'''
   in  (Float a )
-  out (Int b)
+  out (Float b)
   Atom <SHIT> {}
 
 Component c1      '''dfg OLIG'''
   in  ( Float a
-      , Int   d )
-  out ( Float b
-      , Float c )
+      , Int   c )
+  out ( Float b )
   Network
   Controller apa contr
-  { b <- a
-    temp = apa a
-    temp2 = c1 a, d }
+  { out.b <- in.a
+    temp = apa in.a 
+    temp2 = apa temp.out.b }
 
-Component c3      ''' C '''
-  in  ()
-  out ()
-  Network {}
+#Component c3      ''' C '''
+#  in  ()
+#  out ()
+#  Network {}
