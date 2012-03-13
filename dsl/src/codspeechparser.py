@@ -9,10 +9,10 @@
 import sys
 sys.path.insert(0,"../..")
 
-import codspeechlexer as lex
+import codspeechlexer as cslex
 import ply.yacc as yacc
 
-tokens = lex.tokens
+tokens = cslex.tokens
 
 precedence = ()
 
@@ -515,7 +515,7 @@ def syntaxerror(token):
 parser = yacc.yacc()
 
 def parse(data):
-  lex.lexer.lineno = 1
+  cslex.lexer.lineno = 1
   parser.error = 0
   p = parser.parse(data)
   if parser.error: return None
