@@ -4,28 +4,42 @@ sys.path.insert(0,"../..")
 import codspeechlexer as cslex
 import codspeechparser as csparse
 import codspeechtypechecker as cstype
+import copy
 
 example1 = '../examples/example1.cod'
 
-#def tokenize(file):
-#  f = open(file)
-#  r = f.read()
+past = False
+pctx = False
 
+args = copy.copy(sys.argv)
+args.pop(0)
+
+for arg in args:
+  if arg == 'ast':
+    past = True
+  elif arg == 'ctx':
+    pctx = True
+  else:
+    print arg + ": Unkown option will be ignored"
 
 
 def test(testfile):
+  global past
+  global pctx
   f = open(testfile)
   x = f.read()
   ast = csparse.parse(x)
   csparse.parser.restart()
   if ast != None:
-    print "Abstrac syntax tree:"
-    print ast
-    print ""
+    if past:
+      print "Abstrac syntax tree:"
+      print ast
+      print ""
     env = cstype.typecheck(ast)
     if env != None:
-      print "Context:"
-      print env
+      if pctx:
+        print "Context:"
+        print env
     else:
       print "No context was generated."
   else:
