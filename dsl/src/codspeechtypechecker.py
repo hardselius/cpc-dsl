@@ -38,12 +38,14 @@ def type(ident):
     elif len(ident) == 2:
       return env[len(env)-1][ident[0]][ident[1][1]]
     else:
-      return typeParams(env[len(env)-1][ident[0][1]][ident[1]],ident[2][1])
+      return typeParams(env[len(env)-1][ident[0][1]][ident[1]] \
+                       ,ident[2][1])
   except KeyError:
     print "%s REFERENCE ERROR[variable not found]: %s" \
-          % (ident[2],ident[len(ident)-1])
+          % (ident[len(ident)-1][2],ident[len(ident)-1][1])
     error = 1
 
+# Returns type of a parameter 'p' from a list of parameters
 def typeParams(params,p):
   for x in params:
     if x[1][1] == p: return x[0]
@@ -116,10 +118,12 @@ def typecheck(t):
 
   # Connection: check variables
   elif t[0] == 'CONNECTION':
-    if type([t[1]]) != type([t[2]]):
+    if type(t[1]) != type(t[2]):
       if error == 0:
         print "%s TYPE ERROR[connection]: %s:%s, %s:%s" \
-              % (t[1][2],t[1][1],type(t[1]),t[2][1],type(t[2]))
+              % (t[2][len(t[2])-1][2]                   \
+                ,t[1][len(t[1])-1][1],type(t[1])     \
+                ,t[2][len(t[2])-1][1],type(t[2]))
         error = 1
 
   # Atom: check FUNCTION DEFINITION
