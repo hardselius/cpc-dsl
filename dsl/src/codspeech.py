@@ -19,7 +19,6 @@ def get_tokens(path):
             break
         print t
 
-
 def get_ast(path):
     f = open(path)
     s = f.read()
