@@ -1,28 +1,24 @@
-import foo.bar
+import float
 
+Component add      '''adds'''
+  in  ( Float a
+      , Float b )
+  out ( Float q )
+  Atom <float> add
 
-Component apa      '''dfg'''
-  in  (Float a )
-  out (Float b)
-  Atom <SHIT.for.brains> crap
+Component mul      '''multiplies'''
+  in  ( Float a
+      , Float b )
+  out ( Float q )
+  Atom <float> mul
 
-Component c1      '''dfg OLIG'''
-  in  ( Float a      , Int   c )
-  out ( Float b )
+Component addmul      '''Test function that adds and multiplies'''
+  in  ( Float a
+      , Float b
+      , Float c )
+  out ( Float q )
   Network
-  Controller apa contr
-  { out.b <- in.c
-    temp = apa in.a 
-    temp2 = apa temp.out.b }
-
-/#
-Component test
-  in ()
-  out ()
-  Network {}
-#/
-
-#Component c3      ''' C '''
-#  in  ()
-#  out ()
-#  Network {}
+  { cAdd = add in.a, in.b
+    cMul = mul cAdd.out.q, in.c
+#    out.q <- cMul.out.q
+  }

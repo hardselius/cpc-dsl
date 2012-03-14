@@ -112,7 +112,10 @@ def toXML(t):
     endNet()
 
   elif t[0] == 'COMPONENT':
-    startFun(t[1][1],"network")
+    if t[5][0] == 'NETWORK':
+      startFun(t[1][1],"network")
+    else:
+      startFun(t[1][1],"external")
     putDesc(t[2])
     startInput()
     map(lambda x:putParam(x[1][1],x[0]),t[3])
@@ -128,12 +131,13 @@ def toXML(t):
     for i in range(len(t[3])):
       putConnection(showIdent(t[3][i]) \
                    ,showIdent([['',t[2][1]],'in',ctx[t[2][1]]['in'][i]]))
+    f.write("\n")
 
   elif t[0] == 'CONNECTION':
     putConnection(showIdent(t[1]),showIdent(t[2]))
 
   elif t[0] == 'ATOM':
-    pass
+    putController(t[1],showIdent([t[2]]))
 
   elif t[0] == 'CONTROLLER':
     pass
@@ -147,7 +151,6 @@ def showIdent(i):
     return i[0][1]
   elif len(i) == 2:
     x = i.pop(0)
-    return x + "." + showIdent(i)
+    return "self:ext_" + x + "." + showIdent(i)
   else:
-    x = i.pop(0)
-    return x[1] + "." + showIdent(i)
+    return i[0][1] + ":" + i[1] + "." + i[2][1]
