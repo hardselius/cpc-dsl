@@ -53,20 +53,21 @@ def endOutput():
   unind()
   f.write(indent + "</outputs>\n")
 
-def putParam(id,type,desc = None):
-  if desc == None:
-    f.write(indent + "<field type=\"" + type.lower() \
-                   + "\" id=\"" + id + "\"/>\n")
+def putParam(param):
+  if param[2] == []:
+    f.write(indent + "<field type=\"" + param[0].lower() \
+                   + "\" id=\"" + param[1][1] + "\"/>\n")
   else:
-    f.write(indent + "<field type=\"" + type.lower() \
-                   + "\" id=\"" + id + "\">\n")
+    f.write(indent + "<field type=\"" + param[0].lower() \
+                   + "\" id=\"" + param[1][1] + "\">\n")
     ind()
-    putDesc(desc)
+    putDesc(param[2])
     unind()
     f.write(indent + "</field>\n")
 
 def putDesc(desc):
-  f.write(indent + "<desc>" + desc + "</desc>\n")
+  if desc != []:
+    f.write(indent + "<desc>" + desc + "</desc>\n")
 
 def putController(module,fun):
   f.write(indent + "<controller function=\"cpc.lib." \
@@ -122,10 +123,10 @@ def toXML(t):
       startFun(t[1][1],"python-extended")
     putDesc(t[2])
     startInput()
-    map(lambda x:putParam(x[1][1],x[0]),t[3])
+    map(putParam,t[3])
     endInput()
     startOutput()
-    map(lambda x:putParam(x[1][1],x[0]),t[4])
+    map(putParam,t[4])
     endOutput()
     toXML(t[5])
     endFun()
