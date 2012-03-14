@@ -48,12 +48,13 @@ def type(ident):
 # Returns type of a parameter 'p' from a list of parameters
 def typeParams(params,p):
   for x in params:
-    if x[1][1] == p: return x[0]
+    if x[1] == p: return x[0]
 
 # Returns if variable exists in environment
 def varExist(var):
   return env[len(env)-1].has_key(var)
 
+# Add parameter to input/output record
 def addParam(io,param):
   global error
   if env[len(env)-1][io].has_key(param[1][1]):
@@ -87,7 +88,8 @@ def typecheck(t):
 
   # Component: check paramaters, network/atom
   elif t[0] == 'COMPONENT':
-    add(t[1],{'in':t[3],'out':t[4]})
+    pType = lambda x: [x[0],x[1][1]]
+    add(t[1],{'in':map(pType,t[3]),'out':map(pType,t[4])})
     put()
     add(['IDENT','in'],{})
     add(['IDENT','out'],{})
@@ -128,10 +130,6 @@ def typecheck(t):
 
   # Atom: check FUNCTION DEFINITION
   elif t[0] == 'ATOM':
-    pass
-
-  # Import: check path
-  elif t[0] == 'IMPORT':
     pass
 
   # Controller: check variable, component

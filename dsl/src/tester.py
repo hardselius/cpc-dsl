@@ -4,6 +4,7 @@ sys.path.insert(0,"../..")
 import codspeechlexer as cslex
 import codspeechparser as csparse
 import codspeechtypechecker as cstype
+import codspeechtoxml as xml
 import copy
 
 example1 = '../examples/example1.cod'
@@ -41,6 +42,8 @@ def test(testfile):
       if pctx:
         print "Context:"
         print env
+      xml.ctx = env[0]
+      xml.toXML(ast)
     else:
       print "No context was generated."
   else:
