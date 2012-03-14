@@ -68,7 +68,7 @@ tokens = [
     'COMMA', 'PERIOD', 'SEMI', 'COLON', 'DOUBLECOLON',
 
     # Other:
-    'ATOMOPTION', 'COMMENT', 'CR'
+    'COMMENT', 'CR', 'MODULE'
     ] + reserved.values()
 
 
@@ -88,7 +88,8 @@ litint      = r'\d+'
 litfloat    = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
 litstring   = r'\"' + string + r'\"'
 description = r'(\{-)' + string + r'(-\})'
-atomoption  = r'<(?P<opt>' + letters + r'+)>'
+modulename  = r'(' + nondigit + r'(.' + nondigit + r')*' +  r')'
+atommodule  = r'<( )*(?P<opt>' + modulename + r'+)( )*>'
 
 
 # ------------------------------------------------------------------
@@ -123,6 +124,11 @@ def t_ICONST(t):
 def t_SCONST(t):
     return t
 
+# Modulename
+@TOKEN(modulename)
+def t_MODULE(t):
+    return t
+
 # Assignment operators
 t_EQUALS       = r'='
 
@@ -148,10 +154,10 @@ t_DOUBLECOLON  = r'::'
 
 #  Other
 # option for atom env. <option>
-@TOKEN(atomoption)
-def t_ATOMOPTION(t):
-    t.type = 'ATOMOPTION'
-    t.value = re.search(atomoption, t.value).group('opt')
+@TOKEN(atommodule)
+def t_atommodule(t):
+    t.type = 'MODULE'
+    t.value = re.search(atommodule, t.value).group('opt')
     return t
 
 # multline comments (/# comment #/)
@@ -231,7 +237,7 @@ lexer = lex.lex()
 # some tests
 # ------------------------------------------------------------------
 
-example1 = '../examples/example1.cod'
+example2 = '../examples/example2.cod'
 
 def test(path):
     f = open(path)
