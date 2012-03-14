@@ -120,9 +120,9 @@ def p_component_decl(p):
 # doctring and the i/o parameters.
 def p_component_header(p):
     """
-    component_header : ident docstring in_params out_params
+    component_header : ident docstring cr in_params out_params
     """
-    p[0] = [p[1],p[2],p[3],p[4]]
+    p[0] = [p[1],p[2],p[4],p[5]]
 
 
 # ----------------------------------------------------------------------
@@ -182,13 +182,13 @@ def p_no_params(p):
 # default value.
 def p_param(p):
     """
-    param : type ident
-          | type ident DEFAULT constant
+    param : type ident docstring
+          | type ident DEFAULT constant docstring
     """
-    if len(p) == 3:
-        p[0] = [p[1],p[2]]
+    if len(p) == 4:
+        p[0] = [p[1],p[2],p[3]]
     else:
-        p[0] = [p[1],p[2],'DEFAULT',p[4]]
+        p[0] = [p[1],p[2],'DEFAULT',p[4],p[5]]
 
 
 # Parameters are separated by an arbitrary number of new lines, a
@@ -400,7 +400,7 @@ def p_type(p):
 # Docstrings. Used for documentation.
 def p_docstring(p):
     """
-    docstring : DOCSTRING cr
+    docstring : DOCSTRING
               | empty
     """
     if len(p) == 3:

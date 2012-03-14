@@ -7,52 +7,49 @@ import codspeechparser as csparse
 lexer  = cslex.lex.lex(module=cslex)
 parser = csparse.yacc.yacc(module=csparse)
 
-cslex.lex.
-
 
 def read_input(filepath):
-  f = open(filepath)
-  s = f.read()
-  return s
+    f = open(filepath)
+    s = f.read()
+    return s
 
 def get_tokens(code):
-  lexer.
-  lexer.lineno = 1
-  lexer.input(code)
-  while 1:
-    t = lexer.token()
-    if not t:
-      break
-      print '\t' + str(t)
+    lexer.lineno = 1
+    lexer.input(code)
+    while 1:
+        t = lexer.token()
+        if not t:
+            break
+            print '\t' + str(t)
 
 def get_ast(code):
-  lexer.lineno = 1
-  parser.error = 0
-  p = parser.parse(code)
-  if parser.error:
-    return None
-  return p
+    lexer.lineno = 1
+    parser.error = 0
+    p = parser.parse(code)
+    if parser.error:
+        return None
+        return p
 
 
 import optparse
 
 def main(*args):
-  cmdparser = optparse.OptionParser(usage='%prog [options] <arg1>',
-                                    prog = 'codspeech')
-  cmdparser.add_option(
-    '-t', '--tokens',
-    action='store_true',
-    dest='token',
-    default=False
-  )
-  cmdparser.add_option(
-    '-a', '--abstract-syntax-tree',
-    action='store_true',
-    dest='ast',
-    default=False
-  )
+    cmdparser = optparse.OptionParser(usage='%prog [options] <arg1>',
+                                      prog = 'codspeech')
+    cmdparser.add_option(
+        '-t', '--tokens',
+        action='store_true',
+        dest='token',
+        default=False
+    )
+    cmdparser.add_option(
+        '-a', '--abstract-syntax-tree',
+        action='store_true',
+        dest='ast',
+        default=False
+    )
 
-  options, args = cmdparser.parse_args(*args)
+    options, args = cmdparser.parse_args(*args)
 #  if not args:
 #    cmdparser.parse_args(['--help'])
 #    return None
@@ -68,7 +65,7 @@ def main(*args):
 #        return None
 
 if __name__ == '__main__':
-  main()
+    main()
 
 
 
