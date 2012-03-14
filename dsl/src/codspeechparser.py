@@ -249,12 +249,18 @@ def p_atom_stmt(p):
 def p_stmt_block(p):
   """
   stmt_block : opt_cr lbrace stmt_list rbrace
-             | opt_cr LBRACE opt_cr RBRACE
+             | opt_cr stmt_block_empty
   """
   if len(p) == 5:
     p[0] = p[3]
   else:
     p[0] = []
+
+def p_stmt_block_emtpy(p):
+  """
+  stmt_block_empty : LBRACE opt_cr RBRACE
+  """
+  pass
 
 
 # A list of single statements on separate lines.
