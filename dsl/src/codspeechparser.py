@@ -400,7 +400,7 @@ def p_type(p):
 # Docstrings. Used for documentation.
 def p_docstring(p):
     """
-    docstring : DOCSTRING
+    docstring : DOCSTRING empty
               | empty
     """
     if len(p) == 3:
@@ -528,7 +528,7 @@ def parse(data):
     return p
 
 def test():
-    f = open('../examples/example2.cod')
+    f = open('../examples/example1.cod')
     x = f.read()
     p = parse(x)
     parser.restart()

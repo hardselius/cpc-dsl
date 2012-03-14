@@ -3,9 +3,9 @@ import monkey.doodey
 
 
 Component apa      '''dfg'''
-  in  (Int a)
-  out (Int b)
-  Atom <SHIT> {}
+  in  (Int a ''' foo ''')
+  out (Int b ''' bar ''')
+  Atom <SHIT.for.brains> assmonkey 
 #/
 
 Component c1      '''dfg OLIG'''
