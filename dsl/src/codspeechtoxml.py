@@ -137,7 +137,7 @@ def toXML(t):
     putConnection(showIdent(t[1]),showIdent(t[2]))
 
   elif t[0] == 'ATOM':
-    pass
+    putController(t[1],showIdent([t[2]]))
 
   elif t[0] == 'CONTROLLER':
     pass
@@ -151,7 +151,6 @@ def showIdent(i):
     return i[0][1]
   elif len(i) == 2:
     x = i.pop(0)
-    return x + "." + showIdent(i)
+    return "self:ext_" + x + "." + showIdent(i)
   else:
-    x = i.pop(0)
-    return x[1] + ":" + showIdent(i)
+    return i[0][1] + ":" + i[1] + "." + i[2][1]

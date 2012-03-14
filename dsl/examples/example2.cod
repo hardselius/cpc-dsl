@@ -4,15 +4,13 @@ Component add      '''adds'''
   in  ( Float a
       , Float b )
   out ( Float q )
-  Atom <SHIT>
-  {}
+  Atom <float> add
 
 Component mul      '''multiplies'''
   in  ( Float a
       , Float b )
   out ( Float q )
-  Atom <SHIT>
-  {}
+  Atom <float> mul
 
 Component addmul      '''Test function that adds and multiplies'''
   in  ( Float a
@@ -22,4 +20,5 @@ Component addmul      '''Test function that adds and multiplies'''
   Network
   { cAdd = add in.a, in.b
     cMul = mul cAdd.out.q, in.c
-    out.q <- cMul.out.q }
+#    out.q <- cMul.out.q
+  }
