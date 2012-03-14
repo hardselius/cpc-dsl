@@ -4,8 +4,7 @@ import foo.bar
 Component apa      '''dfg'''
   in  (Float a )
   out (Float b)
-  Atom <SHIT>
-  {}
+  Atom <SHIT.for.brains> crap
 
 Component c1      '''dfg OLIG'''
   in  ( Float a      , Int   c )
