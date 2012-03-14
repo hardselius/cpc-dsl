@@ -8,14 +8,20 @@ Component apa      '''dfg'''
   {}
 
 Component c1      '''dfg OLIG'''
-  in  ( Float a
-      , Int   c )
+  in  ( Float a      , Int   c )
   out ( Float b )
   Network
   Controller apa contr
-  { out.b <- in.a
-    temp = c1 in.a, in.c
+  { out.b <- in.c
+    temp = apa in.a 
     temp2 = apa temp.out.b }
+
+/#
+Component test
+  in ()
+  out ()
+  Network {}
+#/
 
 #Component c3      ''' C '''
 #  in  ()

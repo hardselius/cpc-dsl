@@ -30,7 +30,6 @@ def p_entrypoint(p):
   else:
     p[0] = p[1]
 
-
 def p_program(p):
   """
   program : import_stmt_list cr component_decl_list opt_cr
