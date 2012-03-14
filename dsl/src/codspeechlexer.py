@@ -36,34 +36,26 @@ reserved = {
     'File'      : 'FILE',
     'Float'     : 'FLOAT',
     'Int'       : 'INT',
-    'newtype'   : 'NEWTYPE'
     }
 
 tokens = [
-    # Literals: identifier, integer constant, float constant, string
-    # constant
+    # Literals: identifier, type, integer constant, float constant,
+    # string constant
     'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST', 'DOCSTRING',
-
-    # Operators: + - * / %
-    'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MOD',
 
     # Assignments: =
     'EQUALS',
 
-    # Substitution: :=
-    'SUBSTITUTION',
-
     # Connection: <-
     'CONNECTION',
 
-    # Delimeters: ( ) [ ] { } , . ; : ::
+    # Delimeters: ( ) { } , .
     'LPAREN', 'RPAREN',
-    'LBRACKET', 'RBRACKET',
     'LBRACE', 'RBRACE',
-    'COMMA', 'PERIOD', 'SEMI', 'COLON', 'DOUBLECOLON',
+    'COMMA', 'PERIOD',
 
     # Other:
-    'COMMENT', 'CR', 'MODULE'
+    'CR', 'MODULE'
     ] + reserved.values()
 
 
@@ -101,51 +93,51 @@ def t_ID(t):
     t.type = reserved.get(t.value,"ID")
     return t
 
+    
 @TOKEN(typeident)
 def t_TYPE(t):
     t.type = reserved.get(t.value,"TYPE")
     return t
 
+    
 @TOKEN(litfloat)
 def t_FCONST(t):
     t.value = float(t.value)
     return t
 
+    
 @TOKEN(litint)
 def t_ICONST(t):
     t.value = int(t.value)
     return t
 
+    
 @TOKEN(litstring)
 def t_SCONST(t):
     return t
 
+    
 # Modulename
 @TOKEN(modulename)
 def t_MODULE(t):
     return t
 
+    
 # Assignment operators
 t_EQUALS       = r'='
 
-# Substitution
-t_SUBSTITUTION = r':='
 
 # Connection
 t_CONNECTION   = r'<-'
 
+
 # Delimeters
 t_LPAREN       = r'\('
 t_RPAREN       = r'\)'
-t_LBRACKET     = r'\['
-t_RBRACKET     = r'\]'
 t_LBRACE       = r'\{'
 t_RBRACE       = r'\}'
 t_COMMA        = r','
 t_PERIOD       = r'\.'
-t_SEMI         = r';'
-t_COLON        = r':'
-t_DOUBLECOLON  = r'::'
 
 
 #  Other
@@ -156,6 +148,7 @@ def t_atommodule(t):
     t.value = re.search(atommodule, t.value).group('opt')
     return t
 
+    
 # multline comments (/# comment #/)
 def t_comment(t):
     r'/\#(.|\n)*?\#/'
@@ -163,17 +156,22 @@ def t_comment(t):
     t.lexer.lineno += t.value.count('\n')
     pass
 
+    
 # single line comment (# comment)
 def t_comment2(t):
     r'\#[^\\\n]*'
     t.type = 'COMMENT'
     pass
 
+    
+# new line
 def t_CR(t):
     r'\n'
     t.lexer.lineno += len(t.value)
     return t
 
+
+# docstrings '''docstring'''
 @TOKEN(docstring)
 def t_docstring(t):
     t.type = 'DOCSTRING'
@@ -184,24 +182,10 @@ def t_docstring(t):
     return t
 
 
+# error
 def t_error(t):
     print "Illegal character %s" % repr(t.value[0])
     t.lexer.skip(1)
-
-
-# ------------------------------------------------------------------
-# create lexer
-# ------------------------------------------------------------------
-lexer = lex.lex()
-
-
-
-
-# ------------------------------------------------------------------
-# useful functions
-# ------------------------------------------------------------------
-
-
 
 
 # ------------------------------------------------------------------
@@ -211,10 +195,14 @@ lexer = lex.lex()
 example2 = '../examples/example2.cod'
 example3 = '../examples/example3.cod'
 
+
+# create lexer
+lexer = lex.lex()
+
+
 def test(path):
     f = open(path)
     s = f.read()
-
     lex.lex()
     lexer.lineno = 1
     lex.input(s)

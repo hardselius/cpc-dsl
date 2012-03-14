@@ -308,18 +308,6 @@ def p_sass(p):
 # ----------------------------------------------------------------------
 
 
-# Expression list.
-def p_expr_list(p):
-    """
-    expr_list : expr
-              | expr_list COMMA expr
-    """
-    if len(p) == 2:
-        p[0] = [p[1]]
-    else:
-        p[0] = p[1] + [p[3]]
-
-
 # Expressions.
 def p_expr(p):
     """

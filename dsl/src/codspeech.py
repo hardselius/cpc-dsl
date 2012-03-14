@@ -7,6 +7,7 @@ import codspeechparser as csparse
 lexer  = cslex.lex.lex(module=cslex)
 parser = csparse.yacc.yacc(module=csparse)
 
+foo = cslex.lex.lex()
 
 def read_input(filepath):
     f = open(filepath)
