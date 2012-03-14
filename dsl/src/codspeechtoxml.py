@@ -128,6 +128,7 @@ def toXML(t):
     for i in range(len(t[3])):
       putConnection(showIdent(t[3][i]) \
                    ,showIdent([['',t[2][1]],'in',ctx[t[2][1]]['in'][i]]))
+    f.write("\n")
 
   elif t[0] == 'CONNECTION':
     putConnection(showIdent(t[1]),showIdent(t[2]))
