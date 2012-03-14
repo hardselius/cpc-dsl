@@ -54,12 +54,16 @@ def endOutput():
   f.write(indent + "</outputs>\n")
 
 def putParam(id,type,desc = None):
-  f.write(indent + "<field type=\"" + type + "\" id=\"" + id + "\">\n")
-  if desc != None:
+  if desc == None:
+    f.write(indent + "<field type=\"" + type.lower() \
+                   + "\" id=\"" + id + "\"/>\n")
+  else:
+    f.write(indent + "<field type=\"" + type.lower() \
+                   + "\" id=\"" + id + "\">\n")
     ind()
     putDesc(desc)
     unind()
-  f.write(indent + "</field>\n")
+    f.write(indent + "</field>\n")
 
 def putDesc(desc):
   f.write(indent + "<desc>" + desc + "</desc>\n")
@@ -115,7 +119,7 @@ def toXML(t):
     if t[5][0] == 'NETWORK':
       startFun(t[1][1],"network")
     else:
-      startFun(t[1][1],"external")
+      startFun(t[1][1],"python-extended")
     putDesc(t[2])
     startInput()
     map(lambda x:putParam(x[1][1],x[0]),t[3])
