@@ -13,11 +13,6 @@ from ply.lex import TOKEN
 
 import re
 
-# Lexer states
-states = (('doc','exclusive'),
-          )
-
-
 
 # ------------------------------------------------------------------
 # Tokens
@@ -90,6 +85,7 @@ litstring   = r'\"' + string + r'\"'
 description = r'(\{-)' + string + r'(-\})'
 modulename  = r'(' + nondigit + r'(.' + nondigit + r')*' +  r')'
 atommodule  = r'<( )*(?P<opt>' + modulename + r'+)( )*>'
+docstring   = r'(\'\'\')(.|\n)*?(\'\'\')'
 
 
 # ------------------------------------------------------------------
@@ -178,44 +174,19 @@ def t_CR(t):
     t.lexer.lineno += len(t.value)
     return t
 
+@TOKEN(docstring)
+def t_docstring(t):
+    t.type = 'DOCSTRING'
+    t.lexer.lineno += t.value.count('\n')
+    #doc = re.search(docstring, t.value).group('doc')
+    t.value = re.sub(r'\n( )*','\n',t.value)
+    t.value = re.sub(r'(\'\'\')','',t.value)
+    return t
+
+
 def t_error(t):
     print "Illegal character %s" % repr(t.value[0])
     t.lexer.skip(1)
-
-# ------------------------------
-# conditional lexing triggers
-# ------------------------------
-
-# docstring
-def t_start_doc(t):
-    r'\'\'\''
-    t.lexer.docstart = t.lexpos
-    t.lexer.push_state('doc')
-
-
-
-
-# ------------------------------------------------------------------
-# docstring lexer environment
-# ------------------------------------------------------------------
-def t_doc_contents(t):
-    r'[^\\\']+(?=\'\'\')'
-
-def t_doc_end(t):
-    r'\'\'\''
-    t.type = 'DOCSTRING'
-    doc = t.lexer.lexdata[t.lexer.docstart+3:t.lexpos]
-    t.value = re.sub(r'\n( )*', '\n', doc)
-    t.lexer.pop_state()
-    t.lexer.lineno += t.value.count('\n')
-    return t
-
-t_doc_ignore = ' '
-
-def t_doc_error(t):
-    raise RuntimeError
-
-
 
 
 # ------------------------------------------------------------------
@@ -238,6 +209,7 @@ lexer = lex.lex()
 # ------------------------------------------------------------------
 
 example2 = '../examples/example2.cod'
+example3 = '../examples/example3.cod'
 
 def test(path):
     f = open(path)

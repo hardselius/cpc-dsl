@@ -528,7 +528,7 @@ def parse(data):
     return p
 
 def test():
-    f = open('../examples/example1.cod')
+    f = open('../examples/example3.cod')
     x = f.read()
     p = parse(x)
     parser.restart()
