@@ -7,6 +7,7 @@ import os
 import codspeechlexer       as cslex
 import codspeechparser      as csparse
 import codspeechtypechecker as cstype
+import codspeechtoxml       as csxml
 
 lexer  = cslex.lex.lex(module=cslex)
 parser = csparse.yacc.yacc(module=csparse)
@@ -102,15 +103,18 @@ def main(*args):
     )
     compile_opts.add_option(
         '--xml',
-        action   = 'store',
+        action   = 'store_true',
         dest     = 'xml',
-        default  = '',
-        metavar  = 'FILE.xml',
+        default  = 'False',
+        #metavar  = 'FILE.xml',
         help     = 'Generate an xml representation of the program.'
     )
     cmdparser.add_option_group(compile_opts)
 
     opts, args = cmdparser.parse_args(*args)
+    filePath   = None # /path/to/file.ext
+    fileName   = None # /path/to/file
+    fileExt    = None # .ext
     program    = None # Contents of read file
     ast        = None # Abstract Syntax Tree
     ctx        = None # Context after typechecking
@@ -118,32 +122,45 @@ def main(*args):
     if len(args) != 1:
         cmdparser.print_help()
     else:
+        filePath = args[0]
+        fileName, fileExt = os.path.splitext(filePath)
+        if fileExt != '.cod':
+            print filePath + " is not a .cod-file"
+            pass
         try:
-            buffer = open(args[0])            
-        except IOError:
-            print "Error: No such file or directory: '%s'" % args[0], "\n"
-            cmdparser.print_help()
-        else:
+            buffer = open(filePath)
             program = buffer.read()
+            buffer.close()
+        except IOError:
+            print "Error: No such file or directory: '%s'" % filePath, "\n"
+            cmdparser.print_help()
+            
 
     if opts.lex:
-        print_header('Tokens',args[0])
+        print_header('Tokens',filePath)
         get_tokens(program)
         
     if opts.ast:
-        print_header('Abstract Syntax Tree',args[0])
+        print_header('Abstract Syntax Tree',filePath)
         ast = get_ast(program)
         print ast
 
     if opts.typecheck:
         if not ast: ast = get_ast(program)
         ctx = cstype.typecheck(ast)
-        print_header('Typecheck',args[0])
+        print_header('Typecheck',filePath)
         if not ctx:
             print "Typechecking failed"
         else:
             print ctx
             print "Typechecking passed. Everything correct."
+
+    if opts.xml:
+        if not ast: ast = get_ast(program)
+        if not ctx: ctx = cstype.typecheck(ast)
+        print_header('Generate XML',filePath)
+        csxml.generateXML(ast,ctx,(fileName + '.xml'))
+        print "... Wrote %s" % (fileName + '.xml')
         
 def print_header(s,f):
     print "\n\t{1} - {0}:\n".format(s,f)
