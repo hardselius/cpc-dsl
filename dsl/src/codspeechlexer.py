@@ -186,28 +186,3 @@ def t_docstring(t):
 def t_error(t):
     print "Illegal character %s" % repr(t.value[0])
     t.lexer.skip(1)
-
-
-# ------------------------------------------------------------------
-# some tests
-# ------------------------------------------------------------------
-
-example2 = '../examples/example2.cod'
-example3 = '../examples/example3.cod'
-
-
-# create lexer
-lexer = lex.lex()
-
-
-def test(path):
-    f = open(path)
-    s = f.read()
-    lex.lex()
-    lexer.lineno = 1
-    lex.input(s)
-    while 1:
-        tok = lex.token()
-        if not tok: break
-        print tok
-

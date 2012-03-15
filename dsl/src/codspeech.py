@@ -4,8 +4,10 @@ import sys
 sys.path.insert(0,"../..")
 
 import os
-import codspeechlexer  as cslex
-import codspeechparser as csparse
+import codspeechlexer       as cslex
+import codspeechparser      as csparse
+import codspeechtypechecker as cstype
+import codspeechtoxml       as csxml
 
 lexer  = cslex.lex.lex(module=cslex)
 parser = csparse.yacc.yacc(module=csparse)
@@ -27,14 +29,6 @@ def get_ast(code):
     if parser.error:
         return None
     return p
-
-
-args1 = ['-f','../examplesexample2.cod']
-args2 = ['-a','-f','../examplesexample2.cod']
-args3 = ['--tokens','--abstract-syntax-tree','-f','../examplesexample2.cod']
-
-
-
 
 
 # ------------------------------------------------------------------
@@ -68,76 +62,103 @@ def main(*args):
         help     = 'Compile'
     )
 
-    query_opts   = optparse.OptionGroup(
+    query_options   = optparse.OptionGroup(
         cmdparser, 'Query Options',
         'These options control the query mode.'
     )
-    query_opts.add_option(
+    query_options.add_option(
         '-l', '--lex',
         action   = 'store_true',
         dest     = 'lex',
         default  = False,
         help     = 'Print the output from the tokenized file <arg1>.'
     )
-    query_opts.add_option(
+    query_options.add_option(
         '-a', '--ast',
         action   = 'store_true',
         dest     = 'ast',
         default  = False,
         help     = 'Print the Abstract Syntax Tree.'
     )
-    cmdparser.add_option_group(query_opts)
+    cmdparser.add_option_group(query_options)
 
-    compile_opts = optparse.OptionGroup(
+    compile_options = optparse.OptionGroup(
         cmdparser, 'Compile Options',
         'These options control compilation'
     )
-    compile_opts.add_option(
+    compile_options.add_option(
         '-t', '--typecheck',
         action   = 'store_true',
         dest     = 'typecheck',
         default  = False,
         help     = 'Check the program for type errors.'        
     )
-    compile_opts.add_option(
+    compile_options.add_option(
         '--xml',
-        action   = 'store',
+        action   = 'store_true',
         dest     = 'xml',
-        default  = 'lol',
-        metavar  = 'FILE.xml',
+        default  = 'False',
+        #metavar  = 'FILE.xml',
         help     = 'Generate an xml representation of the program.'
     )
-    cmdparser.add_option_group(compile_opts)
-
-    opts, args = cmdparser.parse_args(*args)
-    program = ''
+    cmdparser.add_option_group(compile_options)
     
-    if len(args) != 1:
+    options, arguments = cmdparser.parse_args(*args)
+    filePath  = None # /path/to/file.ext
+    fileName  = None # /path/to/file
+    fileExt   = None # .ext
+    program   = None # Contents of read file
+    ast       = None # Abstract Syntax Tree
+    ctx       = None # Context after typechecking
+    
+    if len(arguments) != 1:
+        print "Program called with no arguments or flags.\n"
         cmdparser.print_help()
+        return None
     else:
+        filePath = arguments[0]
+        fileName, fileExt = os.path.splitext(filePath)
+        if fileExt != '.cod':
+            print filePath + " is not a .cod-file"
+            pass
         try:
-            buffer = open(args[0])            
+            buffer = open(filePath)
         except IOError:
-            print "Error: No such file or directory: '%s'" % args[0], "\n"
+            print "Error: No such file or directory: '%s'" % filePath, "\n"
             cmdparser.print_help()
         else:
             program = buffer.read()
 
-    if opts.lex:
-        print_header('Tokens',args[0])
+    if options.lex:
+        print_header('Tokens',filePath)
         get_tokens(program)
-        print '-' * 68 + '\n'
         
-    if opts.ast:
-        print_header('Abstract Syntax Tree',args[0])
-        print get_ast(program)
-        print '-' * 68 + '\n'
-        
+    if options.ast:
+        print_header('Abstract Syntax Tree',filePath)
+        ast = get_ast(program)
+        print ast
+
+    if options.typecheck:
+        if not ast: ast = get_ast(program)
+        ctx = cstype.typecheck(ast)
+        print_header('Typecheck',filePath)
+        if not ctx:
+            print "Typechecking failed!"
+        else:
+            print ctx
+            print "Typechecking passed. Everything correct."
+
+    if options.xml:
+        if not ast: ast = get_ast(program)
+        if not ctx: ctx = cstype.typecheck(ast)
+        print_header('Generate XML',filePath)
+        csxml.generateXML(ast,ctx,(fileName + '.xml'))
+        print "... Wrote %s" % (fileName + '.xml')
+
+    pass
         
 def print_header(s,f):
-    print '-' * 68
-    print "\t{1}: {0}".format(s,f)
-    print '-' * 68 + '\n'
+    print "\n\t{1} - {0}:\n".format(s,f)
 
         
 if __name__ == '__main__':
