@@ -29,9 +29,11 @@ def test(testfile):
   global pctx
   f = open(testfile)
   x = f.read()
-  cslex.lexer.lineno = 1
-  ast = csparse.parse(x)
-  csparse.parser.restart()
+#  cslex.lexer.lineno = 1
+  lexer  = cslex.lex.lex(module=cslex)
+  parser = csparse.yacc.yacc(module=csparse)
+  ast = parser.parse(x)
+  parser.restart()
   if ast != None:
     if past:
       print "Abstrac syntax tree:"

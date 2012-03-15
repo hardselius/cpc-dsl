@@ -71,13 +71,19 @@ def putDesc(desc):
   if desc != []:
     f.write(indent + "<desc>" + desc + "</desc>\n")
 
-def putController(fun,module = None):
-  if module == None:
-    f.write(indent + "<controller function=\"" + showIdent(fun) + "\" />\n")
-  else:
-    f.write(indent + "<controller function=\"" + module \
-                                  + "." + showIdent(fun) + "\"\n"  \
-          + indent + "            import=\"" +  module + "\" />\n")
+def putController(opts,module = None):
+  f.write(indent + "<controller")
+  for x in opts:
+    f.write("\n" + indent + "            " + x[0] + "=\"" \
+                                           + x[1] + "\"")
+  f.write("/>\n")
+
+#  if module == None:
+#    f.write(indent + "<controller function=\"" + showIdent(fun) + "\" />\n")
+#  else:
+#    f.write(indent + "<controller function=\"" + module \
+#                                  + "." + showIdent(fun) + "\"\n"  \
+#          + indent + "            import=\"" +  module + "\" />\n")
 
 def putImport(module):
   f.write(indent + "<import name=\"" + module + "\" />\n")
@@ -144,7 +150,7 @@ def toXML(t):
     if t[5][0] == 'NETWORK':
       startFun(t[1][1],"network")
     else:
-      startFun(t[1][1],"python-extended")
+      startFun(t[1][1],t[5][1])
     putDesc(t[2])
     startInput()
     map(putParam,t[3])
@@ -167,7 +173,7 @@ def toXML(t):
     putConnection(t[1],t[2])
 
   elif t[0] == 'ATOM':
-    putController(t[2],t[1])
+    putController(t[2])
 
   elif t[0] == 'CONTROLLER':
     putController(t[1])
