@@ -15,18 +15,15 @@ def unind():
   global indent
   indent = indent[:len(indent)-4]
 
-ctx = {}
+ctx = None
 
 f = None
-file = "output.xml"
 
 #---------------------------------------------------------------------
 # Write XML functions
 #---------------------------------------------------------------------
 
 def init():
-  global f
-  f = open(file,"w")
   f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
 
 def end():
@@ -115,6 +112,12 @@ def showIdent(i):
 #---------------------------------------------------------------------
 # Build a cpc XML from abstract syntax tree
 #---------------------------------------------------------------------
+def generateXML(ast,context,file = "output.xml"):
+  global ctx
+  global f
+  ctx = context
+  f = open(file,"w")
+  toXML(ast)
 
 def toXML(t):
   if t == []:

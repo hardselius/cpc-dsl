@@ -42,8 +42,7 @@ def test(testfile):
       if pctx:
         print "Context:"
         print env
-      xml.ctx = env[0]
-      xml.toXML(ast)
+      xml.generateXML(ast,env)
     else:
       print "No context was generated."
   else:

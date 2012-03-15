@@ -79,7 +79,7 @@ def typecheck(t):
   elif t[0] == 'PROGRAM':
     map(typecheck,t[1])
     map(typecheck,t[2])
-    ctx = copy.copy(env)
+    ctx = copy.copy(env[0])
     env = [{}]
     if error == 0: return ctx
 
