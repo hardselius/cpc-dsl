@@ -45,6 +45,7 @@ lextab.py
 parsetab.py
 parser.out
 *.pyc
+*.xml
 
 # emacs #
 #########

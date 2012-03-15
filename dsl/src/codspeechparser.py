@@ -321,11 +321,32 @@ def p_expr(p):
 # Constants or literals.
 def p_constant(p):
     """
-    constant : FCONST
-             | ICONST
-             | SCONST
+    constant : fconst
+             | iconst
+             | sconst
     """
-    p[0] = [p.type(1),p[1]]
+    p[0] = p[1]
+    
+    
+def p_fconst(p):
+    """
+    fconst : FCONST
+    """
+    p[0] = ['FLOAT',p[1]]
+
+
+def p_iconst(p):
+    """
+    iconst : ICONST
+    """
+    p[0] = ['INT',p[1]]
+
+
+def p_sconst(p):
+    """
+    sconst : SCONST
+    """
+    p[0] = ['STRING',p[1]]
 
 
 # Idents.

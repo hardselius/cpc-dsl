@@ -3,7 +3,7 @@ import monkey.doodey
 
 
 Component apa      '''dfg'''
-  in  (Int a ''' foo ''')
+  in  (Int a default 1 ''' foo ''')
   out (Int b ''' bar ''')
   Atom <SHIT.for.brains> assmonkey 
 #/
