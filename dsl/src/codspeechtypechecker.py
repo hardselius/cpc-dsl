@@ -69,6 +69,7 @@ def addParam(io,param):
 
 def typecheck(t):
   global error
+  global env
 
   # Nothing to check
   if t == []:
@@ -78,7 +79,9 @@ def typecheck(t):
   elif t[0] == 'PROGRAM':
     map(typecheck,t[1])
     map(typecheck,t[2])
-    if error == 0: return env
+    ctx = copy.copy(env[0])
+    env = [{}]
+    if error == 0: return ctx
 
   # Network: check controller, network block
   elif t[0] == 'NETWORK':

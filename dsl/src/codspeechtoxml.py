@@ -15,18 +15,15 @@ def unind():
   global indent
   indent = indent[:len(indent)-4]
 
-ctx = {}
+ctx = None
 
 f = None
-file = "output.xml"
 
 #---------------------------------------------------------------------
 # Write XML functions
 #---------------------------------------------------------------------
 
 def init():
-  global f
-  f = open(file,"w")
   f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
 
 def end():
@@ -75,10 +72,10 @@ def putDesc(desc):
 
 def putController(fun,module = None):
   if module == None:
-    f.write(indent + "<controller function=\"" + showIdent([fun]) + "\" />\n")
+    f.write(indent + "<controller function=\"" + showIdent(fun) + "\" />\n")
   else:
     f.write(indent + "<controller function=\"" + module \
-                                  + "." + showIdent([fun]) + "\"\n"  \
+                                  + "." + showIdent(fun) + "\"\n"  \
           + indent + "            import=\"" +  module + "\" />\n")
 
 def putImport(module):
@@ -97,12 +94,14 @@ def putConnection(src,dest):
                                         + showIdent(dest) + "\" />\n")
 
 def putInstance(id,fun):
-  f.write(indent + "<instance id=\"" + showIdent([id]) \
-                 + "\" function=\"" + showIdent([fun]) \
+  f.write(indent + "<instance id=\"" + showIdent(id) \
+                 + "\" function=\"" + showIdent(fun) \
                  + "\" />\n")
 
 def showIdent(i):
-  if len(i) == 1:
+  if i[0] == 'IDENT':
+    return i[1]
+  elif len(i) == 1:
     return i[0][1]
   elif len(i) == 2:
     x = i.pop(0)
@@ -113,6 +112,12 @@ def showIdent(i):
 #---------------------------------------------------------------------
 # Build a cpc XML from abstract syntax tree
 #---------------------------------------------------------------------
+def generateXML(ast,context,file = "output.xml"):
+  global ctx
+  global f
+  ctx = context
+  f = open(file,"w")
+  toXML(ast)
 
 def toXML(t):
   if t == []:
