@@ -17,7 +17,7 @@ Component mul      '''Multiply two floating point numbers: q=a*b'''
 Component addmul      '''Test function that adds and multiplies'''
   in  ( Float a       '''First input'''
       , Float b       '''Second input'''
-      , Float c       '''Third input'''
+      , Float c default 2      '''Third input'''
       )
   out ( Float q       '''q = (a+b)*c'''
       )

@@ -1,3 +1,4 @@
+import copy
 import sys
 sys.path.insert(0,"../..")
 
@@ -156,8 +157,10 @@ def toXML(t):
 
   elif t[0] == 'ASSIGNMENT':
     putInstance(t[1],t[2])
-    for i in range(len(t[3])):
-      putConnection(t[3][i], [['',t[2][1]],'in',ctx[t[2][1]]['in'][i]])
+    args = copy.copy(ctx[t[2][1]]['in'])
+    for x in t[3]:
+      y = args.pop(0)
+      putConnection(x, [['',t[2][1]],'in',y])
     f.write("\n")
 
   elif t[0] == 'CONNECTION':
