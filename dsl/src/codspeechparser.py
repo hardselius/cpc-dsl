@@ -325,7 +325,7 @@ def p_constant(p):
              | ICONST
              | SCONST
     """
-    p[0] = [p.type,p[1]]
+    p[0] = [p.type(1),p[1]]
 
 
 # Idents.
@@ -502,23 +502,19 @@ def syntaxerror(token):
     print row_col(token), ("Syntax error at: '%s'" % token.value)
 
 
-
-
-
-
-parser = yacc.yacc()
-
-def parse(data):
-    cslex.lexer.lineno = 1
-    parser.error = 0
-    p = parser.parse(data)
-    if parser.error: return None
-    return p
-
-def test():
-    f = open('../examples/example3.cod')
-    x = f.read()
-    p = parse(x)
-    parser.restart()
-    return p
+#parser = yacc.yacc()
+#
+#def parse(data):
+#    cslex.lexer.lineno = 1
+#    parser.error = 0
+#    p = parser.parse(data)
+#    if parser.error: return None
+#    return p
+#
+#def test():
+#    f = open('../examples/example3.cod')
+#    x = f.read()
+#    p = parse(x)
+#    parser.restart()
+#    return p
 
