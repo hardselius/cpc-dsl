@@ -1,24 +1,28 @@
 import float
 
-Component add      '''adds'''
+Component add      '''Add two floating point numbers: q=a+b'''
   in  ( Float a
       , Float b )
-  out ( Float q )
-  Atom <float> add
+  out ( Float q    '''a+b'''
+      )
+  Atom <builtin.float> add
 
-Component mul      '''multiplies'''
+Component mul      '''Multiply two floating point numbers: q=a*b'''
   in  ( Float a
       , Float b )
-  out ( Float q )
-  Atom <float> mul
+  out ( Float q    '''a*b'''
+      )
+  Atom <builtin.float> mul
 
 Component addmul      '''Test function that adds and multiplies'''
-  in  ( Float a
-      , Float b
-      , Float c )
-  out ( Float q )
+  in  ( Float a       '''First input'''
+      , Float b       '''Second input'''
+      , Float c       '''Third input'''
+      )
+  out ( Float q       '''q = (a+b)*c'''
+      )
   Network
   { cAdd = add in.a, in.b
     cMul = mul cAdd.out.q, in.c
-#    out.q <- cMul.out.q
+    out.q <- cMul.out.q
   }

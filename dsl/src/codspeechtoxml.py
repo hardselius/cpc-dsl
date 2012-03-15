@@ -1,9 +1,9 @@
-import copy
-
 import sys
 sys.path.insert(0,"../..")
 
-from xml.dom.minidom import Document
+#---------------------------------------------------------------------
+# Settings/Global variables
+#---------------------------------------------------------------------
 
 indent = "    "
 
@@ -19,6 +19,10 @@ ctx = {}
 
 f = None
 file = "output.xml"
+
+#---------------------------------------------------------------------
+# Write XML functions
+#---------------------------------------------------------------------
 
 def init():
   global f
@@ -69,11 +73,13 @@ def putDesc(desc):
   if desc != []:
     f.write(indent + "<desc>" + desc + "</desc>\n")
 
-def putController(module,fun):
-  f.write(indent + "<controller function=\"cpc.lib." \
-                                + module + "."       \
-                                + fun + "\"\n"       \
-        + indent + "            import=\"cpc.lib." + module + "\" />\n")
+def putController(fun,module = None):
+  if module == None:
+    f.write(indent + "<controller function=\"" + showIdent([fun]) + "\" />\n")
+  else:
+    f.write(indent + "<controller function=\"" + module \
+                                  + "." + showIdent([fun]) + "\"\n"  \
+          + indent + "            import=\"" +  module + "\" />\n")
 
 def putImport(module):
   f.write(indent + "<import name=\"" + module + "\" />\n")
@@ -87,13 +93,25 @@ def endNet():
   f.write(indent + "</network>\n")
 
 def putConnection(src,dest):
-  f.write(indent + "<connection src=\"" + src + "\" dest=\"" \
-                                        + dest + "\" />\n")
+  f.write(indent + "<connection src=\"" + showIdent(src) + "\" dest=\"" \
+                                        + showIdent(dest) + "\" />\n")
 
 def putInstance(id,fun):
-  f.write(indent + "<instance id=\"" + id + "\" function=\"" \
-                                     + fun + "\" />\n")
+  f.write(indent + "<instance id=\"" + showIdent([id]) \
+                 + "\" function=\"" + showIdent([fun]) \
+                 + "\" />\n")
 
+def showIdent(i):
+  if len(i) == 1:
+    return i[0][1]
+  elif len(i) == 2:
+    x = i.pop(0)
+    return "self:ext_" + x + "." + showIdent(i)
+  else:
+    return i[0][1] + ":" + i[1] + "." + i[2][1]
+
+#---------------------------------------------------------------------
+# Build a cpc XML from abstract syntax tree
 #---------------------------------------------------------------------
 
 def toXML(t):
@@ -132,30 +150,19 @@ def toXML(t):
     endFun()
 
   elif t[0] == 'ASSIGNMENT':
-    putInstance(showIdent([t[1]]),showIdent([t[2]]))
+    putInstance(t[1],t[2])
     for i in range(len(t[3])):
-      putConnection(showIdent(t[3][i]) \
-                   ,showIdent([['',t[2][1]],'in',ctx[t[2][1]]['in'][i]]))
+      putConnection(t[3][i], [['',t[2][1]],'in',ctx[t[2][1]]['in'][i]])
     f.write("\n")
 
   elif t[0] == 'CONNECTION':
-    putConnection(showIdent(t[1]),showIdent(t[2]))
+    putConnection(t[1],t[2])
 
   elif t[0] == 'ATOM':
-    putController(t[1],showIdent([t[2]]))
+    putController(t[2],t[1])
 
   elif t[0] == 'CONTROLLER':
-    pass
+    putController(t[1])
 
   else:
     pass
-
-
-def showIdent(i):
-  if len(i) == 1:
-    return i[0][1]
-  elif len(i) == 2:
-    x = i.pop(0)
-    return "self:ext_" + x + "." + showIdent(i)
-  else:
-    return i[0][1] + ":" + i[1] + "." + i[2][1]

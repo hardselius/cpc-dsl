@@ -49,4 +49,4 @@ def test(testfile):
   else:
     print "No abstract syntax tree was generated."
 
-test('../examples/example3.cod')
+test('../examples/example2.cod')

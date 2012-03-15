@@ -27,7 +27,6 @@ def add(ident,type):
      error = 1
   else:
     env[len(env)-1][ident[1]] = type
-    return False
 
 # Return the type of an Ident
 def type(ident):
