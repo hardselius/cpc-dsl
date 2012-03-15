@@ -69,6 +69,7 @@ def addParam(io,param):
 
 def typecheck(t):
   global error
+  global env
 
   # Nothing to check
   if t == []:
