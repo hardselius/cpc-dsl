@@ -10,16 +10,13 @@ sys.path.insert(0,"../..")
 env = [{}]
 error = 0
 
-def getEnv():
-  return env[-1]
-
 # Close scope
 def pop():
   env.pop()
 
 # Open new scope
 def put():
-  return env.append(copy.copy(getEnv()))
+  return env.append(copy.copy(env[-1]))
 
 # Add (Iden,Type) to the environment
 def add(ident,type):
@@ -29,18 +26,18 @@ def add(ident,type):
            % (ident[2],ident[1])
      error = 1
   else:
-    getEnv()[ident[1]] = type
+    env[-1][ident[1]] = type
 
 # Return the type of an Ident
 def type(ident):
   global error
   try:
     if ident[0] == 'IDENT':
-      return getEnv()[ident[1]]
+      return env[-1][ident[1]]
     elif len(ident) == 2:
-      return getEnv()[ident[0]][ident[1][1]]
+      return env[-1][ident[0]][ident[1][1]]
     else:
-      return typeParams(getEnv()[ident[0][1]][ident[1]] \
+      return typeParams(env[-1][ident[0][1]][ident[1]] \
                        ,ident[2][1])
   except KeyError:
     print "%s REFERENCE ERROR[variable not found]: %s" \
@@ -54,12 +51,12 @@ def typeParams(params,p):
 
 # Returns if variable exists in environment
 def varExist(var):
-  return getEnv().has_key(var)
+  return env[-1].has_key(var)
 
 # Add parameter to input/output record
 def addParam(io,param):
   global error
-  if getEnv()[io].has_key(param[1][1]):
+  if env[-1][io].has_key(param[1][1]):
     print "%s REFERENCE ERROR[variable already exists]: %s" \
           % (param[1][2],param[1][1])
     error = 1
@@ -67,7 +64,7 @@ def addParam(io,param):
     print "%s TYPE ERROR[default value]: %s" \
           % (param[1][2],param[1][1])
   else:
-    getEnv()[io][param[1][1]] = param[0]
+    env[-1][io][param[1][1]] = param[0]
 
 #---------------------------------------------------------------------
 # Type Check
@@ -85,7 +82,7 @@ def typecheck(t):
   elif t[0] == 'PROGRAM':
     map(typecheck,t[1])
     map(typecheck,t[2])
-    ctx = copy.copy(getEnv())
+    ctx = copy.copy(env[-1])
     env = [{}]
     if error == 0: return ctx
 
