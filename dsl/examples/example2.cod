@@ -5,24 +5,27 @@ Component add      '''Add two floating point numbers: q=a+b'''
       , Float b )
   out ( Float q    '''a+b'''
       )
-  Atom <builtin.float> add
+  Atom <python>
+  ( "function" : "builtin.float.add"
+  , "import "  : "buitlin.float" )
 
 Component mul      '''Multiply two floating point numbers: q=a*b'''
   in  ( Float a
       , Float b )
   out ( Float q    '''a*b'''
       )
-  Atom <builtin.float> mul
+  Atom <python>
+  ( "function" : "builtin.float.add"
+  , "import "  : "buitlin.float" )
 
 Component addmul      '''Test function that adds and multiplies'''
   in  ( Float a       '''First input'''
       , Float b       '''Second input'''
-      , Float c default 2      '''Third input'''
+      , Float c       '''Third input'''
       )
   out ( Float q       '''q = (a+b)*c'''
       )
-  Network
-  { cAdd = add in.a, in.b
-    cMul = mul cAdd.out.q, in.c
+  Network {
+    cMul = mul ((add (in.a, in.b)).out.q, in.c)
     out.q <- cMul.out.q
   }

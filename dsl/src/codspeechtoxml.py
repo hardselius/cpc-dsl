@@ -56,34 +56,39 @@ def endOutput():
   f.write(indent + "</outputs>\n")
 
 def putParam(param):
+  f.write(indent + "<field type=\"" + param[0].lower() \
+                 + "\" id=\"" + param[1][1] + "\"")
   if param[2] == []:
-    f.write(indent + "<field type=\"" + param[0].lower() \
-                   + "\" id=\"" + param[1][1] + "\"/>\n")
-  else:
-    f.write(indent + "<field type=\"" + param[0].lower() \
-                   + "\" id=\"" + param[1][1] + "\">\n")
+    f.write(" />\n")
+  elif param[2] != 'OPTIONAL':
+    f.write(">\n")
     ind()
     putDesc(param[2])
     unind()
     f.write(indent + "</field>\n")
+  else:
+    f.write(" opt=\"true\"")
+    if param[3] == []:
+      f.write(" />\n")
+    else:
+      f.write(">\n")
+      ind()
+      putDesc(param[3])
+      unind()
+      f.write(indent + "</field>\n")
 
 def putDesc(desc):
   if desc != []:
     f.write(indent + "<desc>" + desc + "</desc>\n")
 
-def putController(opts,module = None):
-  f.write(indent + "<controller")
+def putController(opts):
+  f.write(indent + "<controller ")
   for x in opts:
-    f.write("\n" + indent + "            " + x[0] + "=\"" \
-                                           + x[1] + "\"")
-  f.write("/>\n")
-
-#  if module == None:
-#    f.write(indent + "<controller function=\"" + showIdent(fun) + "\" />\n")
-#  else:
-#    f.write(indent + "<controller function=\"" + module \
-#                                  + "." + showIdent(fun) + "\"\n"  \
-#          + indent + "            import=\"" +  module + "\" />\n")
+    f.write(x[0][1].translate(None, '"') + "=" + x[1][1])
+    if x == opts[-1]:
+      f.write(" />\n")
+    else:
+      f.write("\n" + indent + "            ")
 
 def putImport(module):
   f.write(indent + "<import name=\"" + module + "\" />\n")
@@ -97,6 +102,7 @@ def endNet():
   f.write(indent + "</network>\n")
 
 def putConnection(src,dest):
+  print dest
   f.write(indent + "<connection src=\"" + showIdent(src) + "\" dest=\"" \
                                         + showIdent(dest) + "\" />\n")
 
@@ -105,16 +111,15 @@ def putInstance(id,fun):
                  + "\" function=\"" + showIdent(fun) \
                  + "\" />\n")
 
-def showIdent(i):
-  if i[0] == 'IDENT':
-    return i[1]
-  elif len(i) == 1:
-    return i[0][1]
-  elif len(i) == 2:
-    x = i.pop(0)
-    return "self:ext_" + x + "." + showIdent(i)
-  else:
-    return i[0][1] + ":" + i[1] + "." + i[2][1]
+def showIdent(a):
+    if a[0] == 'THIS':
+      return "self:ext_" + a[1] + "." + a[2][1]
+    elif a[0] == 'OTHER':
+      return a[1][1] + ":" + a[2] + "." + a[3][1]
+    elif a[0] == 'COMP':
+      return a[1][0][1] + ":" + a[2] + "." + a[3][1]
+    else:
+      return a[1]
 
 #---------------------------------------------------------------------
 # Build a cpc XML from abstract syntax tree
@@ -130,9 +135,8 @@ def toXML(t):
   if t == []:
     pass
 
-  elif t[0] == 'IMPORT':
+#  elif t[0] == 'IMPORT':
 #    putImport('.'.join(t[1]))
-    pass
 
   elif t[0] == 'PROGRAM':
     init()
@@ -162,11 +166,11 @@ def toXML(t):
     endFun()
 
   elif t[0] == 'ASSIGNMENT':
-    putInstance(t[1],t[2])
-    args = copy.copy(ctx[t[2][1]]['in'])
-    for x in t[3]:
+    putInstance(t[1],t[2][0])
+    args = copy.copy(ctx[t[2][0][1]]['in'])
+    for x in t[2][1]:
       y = args.pop(0)
-      putConnection(x, [['',t[2][1]],'in',y])
+      putConnection(x, ['OTHER',t[2][0],'in',y[1]])
     f.write("\n")
 
   elif t[0] == 'CONNECTION':
@@ -175,8 +179,8 @@ def toXML(t):
   elif t[0] == 'ATOM':
     putController(t[2])
 
-  elif t[0] == 'CONTROLLER':
-    putController(t[1])
+#  elif t[0] == 'CONTROLLER':
+#    putController(t[1])
 
   else:
     pass

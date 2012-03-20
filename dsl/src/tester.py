@@ -29,6 +29,7 @@ def test(testfile):
   global pctx
   f = open(testfile)
   x = f.read()
+  tc = cstype.TypeChecker()
 #  cslex.lexer.lineno = 1
   lexer  = cslex.lex.lex(module=cslex)
   parser = csparse.yacc.yacc(module=csparse)
@@ -39,7 +40,7 @@ def test(testfile):
       print "Abstrac syntax tree:"
       print ast
       print ""
-    env = cstype.typecheck(ast)
+    env = tc.typecheck(ast)
     if env != None:
       if pctx:
         print "Context:"
@@ -50,4 +51,4 @@ def test(testfile):
   else:
     print "No abstract syntax tree was generated."
 
-test('../examples/example2.cod')
+test('../examples/example3.cod')
