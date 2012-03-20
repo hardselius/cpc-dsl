@@ -574,20 +574,20 @@ def syntaxerror(token):
     print row_col(token), ("Syntax error at: '%s'" % token.value)
 
 
-lexer = cslex.lex.lex()
-parser = yacc.yacc()
-
-def parse(data):
-    lexer.lineno = 1
-    parser.error = 0
-    p = parser.parse(data)
-    if parser.error: return None
-    return p
-
-def test():
-    f = open('../examples/example1.cod')
-    x = f.read()
-    p = parse(x)
-    parser.restart()
-    return p
+#lexer = cslex.lex.lex()
+#parser = yacc.yacc()
+#
+#def parse(data):
+#    lexer.lineno = 1
+#    parser.error = 0
+#    p = parser.parse(data)
+#    if parser.error: return None
+#    return p
+#
+#def test():
+#    f = open('../examples/example1.cod')
+#    x = f.read()
+#    p = parse(x)
+#    parser.restart()
+#    return p
 
