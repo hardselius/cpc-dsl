@@ -1,42 +1,41 @@
 #!/usr/bin/python
+# ------------------------------------------------------------------
+# codspeech: codspeech.py
+#
+# This is the command line tool for using Codspeech.
+#
+# Copyright (C) 2012, Martin Hardselius, Viktor Almqvist
+# License:
+# ------------------------------------------------------------------
 
 import sys
-sys.path.insert(0,"../..")
-
 import os
-import codspeechlexer       as cslex
-import codspeechparser      as csparse
+import optparse
+
+from codspeechparser import CodspeechParser
+
 import codspeechtypechecker as cstype
 import codspeechtoxml       as csxml
 
-lexer  = cslex.lex.lex(module=cslex)
-parser = csparse.yacc.yacc(module=csparse)
 
+def parse_file(filename):
+    """Parse a Codspeech file using codspeechparser.
 
-def get_tokens(code):
-    lexer.lineno = 1
-    lexer.input(code)
-    while 1:
-        t = lexer.token()
-        if not t:
-            break
-        print '\t' + str(t)
+    Keyword arguments:
+    filename -- Name of the file to parse.
 
-def get_ast(code):
-    lexer.lineno = 1
-    parser.error = 0
-    p = parser.parse(code)
-    if parser.error:
-        return None
-    return p
+    When successful, an AST is returned. ParseError can be thrown if
+    the file does not parse successfully.
 
+    """
+    text = open(filename, 'rU').read()
+    parser = CodspeechParser()
+    return parser.parse(text, filename)
+    
 
 # ------------------------------------------------------------------
 # Codspeech main program
 # ------------------------------------------------------------------
-
-import optparse
-
 desc = """This is a description of %prog, the amazing compiler for the
 Domain Specific Language \'CODSPEECH\'.
 
