@@ -43,8 +43,8 @@ tokens = [
     # string constant
     'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST', 'DOCSTRING',
 
-    # Assignments: =
-    'EQUALS',
+    # Assignments: = :
+    'EQUALS', 'COLON',
 
     # Connection: <-
     'CONNECTION',
@@ -55,7 +55,7 @@ tokens = [
     'COMMA', 'PERIOD',
 
     # Other:
-    'CR', 'MODULE'
+    'CR', 'MODULE', 'OPTIONAL'
     ] + reserved.values()
 
 
@@ -86,6 +86,7 @@ docstring   = r'(\'\'\')(.|\n)*?(\'\'\')'
 
 # Ignored characters
 t_ignore = ' \t\x0c'
+
 
 # Literals
 @TOKEN(ident)
@@ -125,6 +126,7 @@ def t_MODULE(t):
     
 # Assignment operators
 t_EQUALS       = r'='
+t_COLON        = r':'
 
 
 # Connection
@@ -141,6 +143,9 @@ t_PERIOD       = r'\.'
 
 
 #  Other
+t_OPTIONAL     = r'\?'
+
+
 # option for atom env. <option>
 @TOKEN(atommodule)
 def t_atommodule(t):

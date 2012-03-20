@@ -134,7 +134,7 @@ def p_component_header(p):
 # or no parameters at all.
 def p_in_params(p):
     """
-    in_params : IN lparen param_list rparen cr
+    in_params : IN lparen in_param_list rparen cr
               | IN no_params cr
     """
     if len(p) == 6:
@@ -147,7 +147,7 @@ def p_in_params(p):
 # or no parameters at all.
 def p_out_params(p):
     """
-    out_params : OUT lparen param_list rparen cr
+    out_params : OUT lparen out_param_list rparen cr
                | OUT no_params cr
     """
     if len(p) == 6:
@@ -158,10 +158,21 @@ def p_out_params(p):
 
 # Either a single parameter or a list of parameters separated by ','
 # and possibly on separate lines.
-def p_param_list(p):
+def p_in_param_list(p):
     """
-    param_list : param
-               | param_list param_sep param
+    in_param_list : in_param
+                  | in_param_list comma_sep in_param
+    """
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
+
+
+def p_out_param_list(p):
+    """
+    out_param_list : out_param
+                   | out_param_list comma_sep out_param
     """
     if len(p) == 2:
         p[0] = [p[1]]
@@ -180,24 +191,29 @@ def p_no_params(p):
 
 # A parameter is either just a type and an ident or extended with a
 # default value.
-def p_param(p):
+def p_in_param(p):
     """
-    param : type ident docstring
-          | type ident DEFAULT constant docstring
+    in_param : type ident docstring
+             | OPTIONAL type ident docstring
+             | type ident DEFAULT constant docstring
+    """
+    if len(p) == 4:
+        p[0] = [p[1],p[2],p[3]]
+    elif len(p) == 5:
+        p[0] = [p[2],p[3],'OPTIONAL',p[4]]
+    else:
+        p[0] = [p[1],p[2],'DEFAULT',p[4],p[5]]
+
+
+def p_out_param(p):
+    """
+    out_param : type ident docstring
+              | type ident DEFAULT constant docstring
     """
     if len(p) == 4:
         p[0] = [p[1],p[2],p[3]]
     else:
         p[0] = [p[1],p[2],'DEFAULT',p[4],p[5]]
-
-
-# Parameters are separated by an arbitrary number of new lines, a
-# comma and an arbitrary number of new lines.
-def p_param_sep(p):
-    """
-    param_sep : opt_cr COMMA opt_cr
-    """
-    pass
 
 
 # ----------------------------------------------------------------------
@@ -236,9 +252,28 @@ def p_network_controller(p):
 # block contains.
 def p_atom_stmt(p):
     """
-    atom_stmt : ATOM MODULE ident
+    atom_stmt : ATOM MODULE opt_cr lparen atom_conf_list rparen
     """
-    p[0] = ['ATOM',p[2],p[3]]
+    p[0] = ['ATOM',p[2],p[5]]
+
+
+def p_atom_conf_list(p):
+    """
+    atom_conf_list : atom_conf
+                   | atom_conf_list comma_sep atom_conf
+    """
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
+
+
+def p_atom_conf(p):
+    """
+    atom_conf : sconst COLON sconst
+    """
+    p[0] = [p[1],p[3]]
+
 
 
 # ----------------------------------------------------------------------
@@ -297,10 +332,17 @@ def p_connection(p):
 # Assignment.
 def p_sass(p):
     """
-    sass : ident EQUALS ident param_ref_list
+    sass : ident EQUALS component_stmt
     """
-    p[0] = ['ASSIGNMENT',p[1],p[3],p[4]]
+    p[0] = ['ASSIGNMENT',p[1],p[3]]
 
+
+# A component statement: comp_id (expr_0, ..., expr_n)
+def p_component_stmt(p):
+    """
+    component_stmt : ident lparen expr_list rparen
+    """
+    p[0] = [p[1],p[3]]
 
 
 # ----------------------------------------------------------------------
@@ -308,7 +350,6 @@ def p_sass(p):
 # ----------------------------------------------------------------------
 
 
-# Expressions.
 def p_expr(p):
     """
     expr : constant
@@ -316,6 +357,18 @@ def p_expr(p):
          | param_ref
     """
     p[0] = p[1]
+
+
+# Expression list: expr_0, ..., expr_n
+def p_expr_list(p):
+    """
+    expr_list : expr
+              | expr_list comma_sep expr
+    """
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
 
 
 # Constants or literals.
@@ -365,24 +418,14 @@ def p_param_ref(p):
               | OUT PERIOD ident
               | ident PERIOD IN PERIOD ident
               | ident PERIOD OUT PERIOD ident
+              | lparen component_stmt rparen PERIOD OUT PERIOD ident
     """
     if len(p) == 4:
-        p[0] = [p[1],p[3]]
+        p[0] = ['THIS',p[1],p[3]]
+    elif len(p) == 6:
+        p[0] = ['OTHER',p[1],p[3],p[5]]
     else:
-        p[0] = [p[1],p[3],p[5]]
-
-
-# Lists of parameter references, used by assignments, are comma
-# separated.
-def p_param_ref_list(p):
-    """
-    param_ref_list : param_ref
-                   | param_ref_list COMMA param_ref
-    """
-    if len(p) == 2:
-        p[0] = [p[1]]
-    else:
-        p[0] = p[1] + [p[3]]
+        p[0] = ['COMP',p[2],p[5],p[7]]
 
 
 # ----------------------------------------------------------------------
@@ -480,6 +523,14 @@ def p_empty(p):
     pass
 
 
+# Comma separator
+def p_comma_sep(p):
+    """
+    comma_sep : opt_cr COMMA opt_cr
+    """
+    pass
+
+
 # ----------------------------------------------------------------------
 # error
 # ----------------------------------------------------------------------
@@ -523,19 +574,20 @@ def syntaxerror(token):
     print row_col(token), ("Syntax error at: '%s'" % token.value)
 
 
-#parser = yacc.yacc()
-#
-#def parse(data):
-#    cslex.lexer.lineno = 1
-#    parser.error = 0
-#    p = parser.parse(data)
-#    if parser.error: return None
-#    return p
-#
-#def test():
-#    f = open('../examples/example3.cod')
-#    x = f.read()
-#    p = parse(x)
-#    parser.restart()
-#    return p
+lexer = cslex.lex.lex()
+parser = yacc.yacc()
+
+def parse(data):
+    lexer.lineno = 1
+    parser.error = 0
+    p = parser.parse(data)
+    if parser.error: return None
+    return p
+
+def test():
+    f = open('../examples/example1.cod')
+    x = f.read()
+    p = parse(x)
+    parser.restart()
+    return p
 
