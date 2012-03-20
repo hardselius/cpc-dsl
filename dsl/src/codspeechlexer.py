@@ -1,193 +1,245 @@
-
 # ------------------------------------------------------------------
 # codspeechlexer.py
 #
 # A lexer for Codspeech
 # ------------------------------------------------------------------
 
+import re
 import sys
-sys.path.insert(0,"../..")
+
 
 import ply.lex as lex
-from ply.lex import TOKEN
+from   ply.lex import TOKEN
 
-import re
-
-
-# ------------------------------------------------------------------
-# Tokens
-# ------------------------------------------------------------------
-
-# Reserved words
-reserved = {
-    # Module stuff
-    'import'    : 'IMPORT',
-
-    # Component, Controller, Network, Atom
-    'Component'  : 'COMPONENT',
-    'Controller' : 'CONTROLLER',
-    'Network'    : 'NETWORK',
-    'Atom'       : 'ATOM',
-    'in'         : 'IN',
-    'out'        : 'OUT',
-    'default'    : 'DEFAULT',
-
-    # Types
-    'File'      : 'FILE',
-    'Float'     : 'FLOAT',
-    'Int'       : 'INT',
-    }
-
-tokens = [
-    # Literals: identifier, type, integer constant, float constant,
-    # string constant
-    'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST', 'DOCSTRING',
-
-    # Assignments: = :
-    'EQUALS', 'COLON',
-
-    # Connection: <-
-    'CONNECTION',
-
-    # Delimeters: ( ) { } , .
-    'LPAREN', 'RPAREN',
-    'LBRACE', 'RBRACE',
-    'COMMA', 'PERIOD',
-
-    # Other:
-    'CR', 'MODULE', 'OPTIONAL'
-    ] + reserved.values()
+sys.path.insert(0,"../..")
 
 
-# ------------------------------------------------------------------
-# Regular Expressions
-# ------------------------------------------------------------------
+class CodspeechLexer(object):
+    """A lexer for the Codspeech Copernicus Domain Specific
+       Language.
 
-digits      = r'([0-9])'
-lowercase   = r'([a-z])'
-uppercase   = r'([A-Z])'
-letters     = r'([A-Za-z])'
-nondigit    = r'([_A-Za-z])'
-string      = r'([^\\\n]|(\\.))*?'
-ident       = r'(' + lowercase + r'(' + digits + r'|' + nondigit + r')*)'
-typeident   = r'(' + uppercase + r'(' + digits + r'|' + nondigit + r')*)'
-litint      = r'\d+'
-litfloat    = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
-litstring   = r'\"' + string + r'\"'
-description = r'(\{-)' + string + r'(-\})'
-modulename  = r'(' + nondigit + r'(.' + nondigit + r')*' +  r')'
-atommodule  = r'<( )*(?P<opt>' + modulename + r'+)( )*>'
-docstring   = r'(\'\'\')(.|\n)*?(\'\'\')'
+    """
+    def __init__(self, error_func):
+        """Create a new Lexer.
 
+        Keyword arguments:
+        error_func -- An error function. Will be called with and error
+            message, line and column as arguments, in case of an error
+            during lexing.
 
-# ------------------------------------------------------------------
-# default tokenizer
-# ------------------------------------------------------------------
+        """
+        self.error_func = error_func
 
-# Ignored characters
-t_ignore = ' \t\x0c'
+        
+    def build(self,**kwargs):
+        """Builds the lexer."""
+        self.lexer = lex.lex(module=self, **kwargs)
 
+        
+    def reset_lineno(self):
+        """Reset the internal line-number counter of the lexer."""
+        self.lexer.lineno = 1
 
-# Literals
-@TOKEN(ident)
-def t_ID(t):
-    t.type = reserved.get(t.value,"ID")
-    return t
+        
+    def input(self, text):
+        self.lexer.input(text)
 
-    
-@TOKEN(typeident)
-def t_TYPE(t):
-    t.type = reserved.get(t.value,"TYPE")
-    return t
+        
+    def token(self):
+        g = self.lexer.token()
+        return g
 
-    
-@TOKEN(litfloat)
-def t_FCONST(t):
-    t.value = float(t.value)
-    return t
+        
+    ######################--   PRIVATE   --######################
 
-    
-@TOKEN(litint)
-def t_ICONST(t):
-    t.value = int(t.value)
-    return t
+    # --------------------------------------------------------------
+    # Internal auxiliary methods
+    # --------------------------------------------------------------
+    def _error(self, msg, token):
+        location = self._make_tok_location(token)
+        self.error_func(msg, location[0], location[1])
+        self.lexer.skip(1)
 
-    
-@TOKEN(litstring)
-def t_SCONST(t):
-    return t
+        
+    def _find_tok_column(self, token):
+        i = token.lexpos
+        while i > 0:
+            if self.lexer.lexdata[i] == '\n': break
+            return (token.lexpos - i) + 1
 
-    
-# Modulename
-@TOKEN(modulename)
-def t_MODULE(t):
-    return t
+            
+    def _make_tok_location(self, token):
+        return (token.lineno, self._find_tok_column(token))
 
-    
-# Assignment operators
-t_EQUALS       = r'='
-t_COLON        = r':'
+        
+    # --------------------------------------------------------------
+    # reserved keywords
+    # --------------------------------------------------------------
+    keyword_map = {
+        # Module stuff
+        'import'    : 'IMPORT',
 
-
-# Connection
-t_CONNECTION   = r'<-'
-
-
-# Delimeters
-t_LPAREN       = r'\('
-t_RPAREN       = r'\)'
-t_LBRACE       = r'\{'
-t_RBRACE       = r'\}'
-t_COMMA        = r','
-t_PERIOD       = r'\.'
+        # Component, Controller, Network, Atom
+        'Component'  : 'COMPONENT',
+        'Controller' : 'CONTROLLER',
+        'Network'    : 'NETWORK',
+        'Atom'       : 'ATOM',
+        'in'         : 'IN',
+        'out'        : 'OUT',
+        'default'    : 'DEFAULT',
+        
+        # Types
+        'File'      : 'FILE',
+        'Float'     : 'FLOAT',
+        'Int'       : 'INT',}
 
 
-#  Other
-t_OPTIONAL     = r'\?'
+    # --------------------------------------------------------------
+    # tokens
+    # --------------------------------------------------------------
+    tokens = [
+        # Literals: identifier, type, integer constant, float
+        # constant, string constant
+        'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST', 'DOCSTRING',
+
+        # Assignments: = :
+        'EQUALS', 'COLON',
+
+        # Connection: <-
+        'CONNECTION',
+
+        # Delimeters: ( ) { } , .
+        'LPAREN', 'RPAREN',
+        'LBRACE', 'RBRACE',
+        'COMMA', 'PERIOD',
+
+        # Other:
+        'CR', 'MODULE', 'OPTIONAL'
+    ] + keyword_map.values()
 
 
-# option for atom env. <option>
-@TOKEN(atommodule)
-def t_atommodule(t):
-    t.type = 'MODULE'
-    t.value = re.search(atommodule, t.value).group('opt')
-    return t
+    # --------------------------------------------------------------
+    # regular expressions for use in tokens
+    # --------------------------------------------------------------
+    digits      = r'([0-9])'
+    lowercase   = r'([a-z])'
+    uppercase   = r'([A-Z])'
+    letters     = r'([A-Za-z])'
+    nondigit    = r'([_A-Za-z])'
+    string      = r'([^\\\n]|(\\.))*?'
+    ident       = r'(' + lowercase + r'(' + digits + r'|' + nondigit + r')*)'
+    typeident   = r'(' + uppercase + r'(' + digits + r'|' + nondigit + r')*)'
+    litint      = r'\d+'
+    litfloat    = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
+    litstring   = r'\"' + string + r'\"'
+    description = r'(\{-)' + string + r'(-\})'
+    modulename  = r'(' + nondigit + r'(.' + nondigit + r')*' +  r')'
+    atommodule  = r'<( )*(?P<opt>' + modulename + r'+)( )*>'
+    docstring   = r'(\'\'\')(.|\n)*?(\'\'\')'
+
+
+    # --------------------------------------------------------------
+    # token rules
+    # --------------------------------------------------------------
+    t_ignore = ' \t\x0c'
 
     
-# multline comments (/# comment #/)
-def t_comment(t):
-    r'/\#(.|\n)*?\#/'
-    t.type = 'COMMENT'
-    t.lexer.lineno += t.value.count('\n')
-    pass
+    @TOKEN(ident)
+    def t_ID(self, t):
+        t.type = self.keyword_map.get(t.value,"ID")
+        return t
+
+
+    @TOKEN(typeident)
+    def t_TYPE(self, t):
+        t.type = self.keyword_map.get(t.value,"TYPE")
+        return t
+
+
+    @TOKEN(litfloat)
+    def t_FCONST(self, t):
+        t.value = float(t.value)
+        return t
 
     
-# single line comment (# comment)
-def t_comment2(t):
-    r'\#[^\\\n]*'
-    t.type = 'COMMENT'
-    pass
+    @TOKEN(litint)
+    def t_ICONST(self, t):
+        t.value = int(t.value)
+        return t
 
     
-# new line
-def t_CR(t):
-    r'\n'
-    t.lexer.lineno += len(t.value)
-    return t
+    @TOKEN(litstring)
+    def t_SCONST(self, t):
+        return t
 
 
-# docstrings '''docstring'''
-@TOKEN(docstring)
-def t_docstring(t):
-    t.type = 'DOCSTRING'
-    t.lexer.lineno += t.value.count('\n')
-    #doc = re.search(docstring, t.value).group('doc')
-    t.value = re.sub(r'\n( )*','\n',t.value)
-    t.value = re.sub(r'(\'\'\')','',t.value)
-    return t
+    @TOKEN(modulename)
+    def t_MODULE(self, t):
+        return t
+
+    
+    t_EQUALS     = r'='
+    t_COLON      = r':'
+    t_CONNECTION = r'<-'
+    t_LPAREN     = r'\('
+    t_RPAREN     = r'\)'
+    t_LBRACE     = r'\{'
+    t_RBRACE     = r'\}'
+    t_COMMA      = r','
+    t_PERIOD     = r'\.'
+    t_OPTIONAL   = r'\?'
+
+    
+    @TOKEN(atommodule)
+    def t_atommodule(self, t):
+        t.type = 'MODULE'
+        t.value = re.search(self.atommodule, t.value).group('opt')
+        return t
+
+    
+    # multline comments (/# comment #/)
+    def t_comment(self, t):
+        r'/\#(.|\n)*?\#/'
+        t.type = 'COMMENT'
+        t.lexer.lineno += t.value.count('\n')
+        pass
+
+    
+    # single line comment (# comment)
+    def t_comment2(self, t):
+        r'\#[^\\\n]*'
+        t.type = 'COMMENT'
+        pass
+
+    
+    # new line
+    def t_CR(self, t):
+        r'\n'
+        t.lexer.lineno += len(t.value)
+        return t
 
 
-# error
-def t_error(t):
-    print "Illegal character %s" % repr(t.value[0])
-    t.lexer.skip(1)
+    # docstrings '''docstring'''
+    @TOKEN(docstring)
+    def t_docstring(self, t):
+        t.type = 'DOCSTRING'
+        t.lexer.lineno += t.value.count('\n')
+        t.value = re.sub(r'\n( )*','\n',t.value)
+        t.value = re.sub(r'(\'\'\')','',t.value)
+        return t
+
+        
+    def t_error(self, t):
+        msg = "Illegal character %s" % repr(t.value[0])
+        self._error(msg,t)
+
+
+
+    # test the lexer
+    def test(self,data):
+        self.input(data)
+        while True:
+            tok = self.token()
+            if not tok: break
+            print tok
+
