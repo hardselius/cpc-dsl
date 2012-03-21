@@ -37,7 +37,7 @@ Component gmxtest
       , File top
       )
   out ( File stdout )
-  Network
+  Network 
   {
     c1 = grompp (in.conf, in.mdp, in.top)
     c2 = mdrun (c1.out.tpr)

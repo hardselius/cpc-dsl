@@ -29,7 +29,8 @@ class CodspeechLexer(object):
 
         """
         self.error_func = error_func
-
+        self.lexer = None
+        
         
     def build(self,**kwargs):
         """Builds the lexer."""
