@@ -2,116 +2,112 @@ import copy
 import sys
 sys.path.insert(0,"../..")
 
-#---------------------------------------------------------------------
-# Settings/Global variables
-#---------------------------------------------------------------------
+class XMLGenerator:
+  def __init__(self,ind = 4):
+    self.i = ind
+    self.indent = ' '*ind
+    self.ctx = None
+    self.f = None
 
-indent = "    "
+  def _ind(self):
+    self.indent += ' '*self.i
 
-def ind():
-  global indent
-  indent += "    "
-
-def unind():
-  global indent
-  indent = indent[:len(indent)-4]
-
-ctx = None
-
-f = None
+  def _unind(self):
+    self.indent = self.indent[:len(self.indent)-self.i]
 
 #---------------------------------------------------------------------
 # Write XML functions
 #---------------------------------------------------------------------
 
-def init():
-  f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
+  def _init(self):
+    self.f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
 
-def end():
-  f.write("</cpc>\n")
-  f.close()
+  def _end(self):
+    self.f.write("</cpc>\n")
+    self.f.close()
 
-def startFun(id,type):
-  f.write(indent + "<function id=\"" + id + "\" type=\"" + type + "\">\n")
-  ind()
+  def _startFun(self,id,type):
+    self.f.write(self.indent + "<function id=\"" + id
+                + "\" type=\"" + type + "\">\n")
+    self._ind()
 
-def endFun():
-  unind()
-  f.write(indent + "</function>\n")
+  def _endFun(self):
+    self._unind()
+    self.f.write(self.indent + "</function>\n")
 
-def startInput():
-  f.write(indent + "<inputs>\n")
-  ind()
+  def _startInput(self):
+    self.f.write(self.indent + "<inputs>\n")
+    self._ind()
 
-def endInput():
-  unind()
-  f.write(indent + "</inputs>\n")
+  def _endInput(self):
+    self._unind()
+    self.f.write(self.indent + "</inputs>\n")
 
-def startOutput():
-  f.write(indent + "<outputs>\n")
-  ind()
+  def _startOutput(self):
+    self.f.write(self.indent + "<outputs>\n")
+    self._ind()
 
-def endOutput():
-  unind()
-  f.write(indent + "</outputs>\n")
+  def _endOutput(self):
+    self._unind()
+    self.f.write(self.indent + "</outputs>\n")
 
-def putParam(param):
-  f.write(indent + "<field type=\"" + param[0].lower() \
-                 + "\" id=\"" + param[1][1] + "\"")
-  if param[2] == []:
-    f.write(" />\n")
-  elif param[2] != 'OPTIONAL':
-    f.write(">\n")
-    ind()
-    putDesc(param[2])
-    unind()
-    f.write(indent + "</field>\n")
-  else:
-    f.write(" opt=\"true\"")
-    if param[3] == []:
-      f.write(" />\n")
+  def _putParam(self,param):
+    self.f.write(self.indent + "<field type=\"" + param[0].lower() \
+                             + "\" id=\"" + param[1][1] + "\"")
+    if param[2] == []:
+      self.f.write(" />\n")
+    elif param[2] != 'OPTIONAL':
+      self.f.write(">\n")
+      self._ind()
+      self._putDesc(param[2])
+      self._unind()
+      self.f.write(self.indent + "</field>\n")
     else:
-      f.write(">\n")
-      ind()
-      putDesc(param[3])
-      unind()
-      f.write(indent + "</field>\n")
+      self.f.write(" opt=\"true\"")
+      if param[3] == []:
+        self.f.write(" />\n")
+      else:
+        self.f.write(">\n")
+        self._ind()
+        self._putDesc(param[3])
+        self._unind()
+        self.f.write(self.indent + "</field>\n")
 
-def putDesc(desc):
-  if desc != []:
-    f.write(indent + "<desc>" + desc + "</desc>\n")
+  def _putDesc(self,desc):
+    if desc != []:
+      self.f.write(self.indent + "<desc>" + desc + "</desc>\n")
 
-def putController(opts):
-  f.write(indent + "<controller ")
-  for x in opts:
-    f.write(x[0][1].translate(None, '"') + "=" + x[1][1])
-    if x == opts[-1]:
-      f.write(" />\n")
-    else:
-      f.write("\n" + indent + "            ")
+  def _putController(self,opts):
+    self.f.write(self.indent + "<controller ")
+    for x in opts:
+      self.f.write(x[0][1].translate(None, '"') + "=" + x[1][1])
+      if x == opts[-1]:
+        self.f.write(" />\n")
+      else:
+        self.f.write("\n" + self.indent + "            ")
 
-def putImport(module):
-  f.write(indent + "<import name=\"" + module + "\" />\n")
+  def _putImport(self,module):
+    self.f.write(self.indent + "<import name=\"" + module + "\" />\n")
 
-def startNet():
-  f.write(indent + "<network>\n")
-  ind()
+  def _startNet(self):
+    self.f.write(self.indent + "<network>\n")
+    self._ind()
 
-def endNet():
-  unind()
-  f.write(indent + "</network>\n")
+  def _endNet(self):
+    self._unind()
+    self.f.write(self.indent + "</network>\n")
 
-def putConnection(src,dest):
-  print dest
-  f.write(indent + "<connection src=\"" + showIdent(src) + "\" dest=\"" \
-                                        + showIdent(dest) + "\" />\n")
+  def _putConnection(self,src,dest):
+    self.f.write(self.indent + "<connection src=\""  \
+               + self._showIdent(src) + "\" dest=\"" \
+               + self._showIdent(dest) + "\" />\n")
 
-def putInstance(id,fun):
-  f.write(indent + "<instance id=\"" + showIdent(id) \
-                 + "\" function=\"" + showIdent(fun) \
-                 + "\" />\n")
+  def _putInstance(self,id,fun):
+    self.f.write(self.indent + "<instance id=\""        \
+               + self._showIdent(id) + "\" function=\"" \
+               + self._showIdent(fun) + "\" />\n")
 
-def showIdent(a):
+  def _showIdent(a):
     if a[0] == 'THIS':
       return "self:ext_" + a[1] + "." + a[2][1]
     elif a[0] == 'OTHER':
@@ -124,63 +120,61 @@ def showIdent(a):
 #---------------------------------------------------------------------
 # Build a cpc XML from abstract syntax tree
 #---------------------------------------------------------------------
-def generateXML(ast,context,file = "output.xml"):
-  global ctx
-  global f
-  ctx = context
-  f = open(file,"w")
-  toXML(ast)
+  def generateXML(self,ast,context,file = "output.xml"):
+    self.ctx = context
+    self.f = open(file,"w")
+    self._toXML(ast)
 
-def toXML(t):
-  if t == []:
-    pass
+  def _toXML(self,t):
+    if t == []:
+      pass
 
-#  elif t[0] == 'IMPORT':
-#    putImport('.'.join(t[1]))
+    #elif t[0] == 'IMPORT':
+    #  putImport('.'.join(t[1]))
 
-  elif t[0] == 'PROGRAM':
-    init()
-    map(toXML,t[1])
-    map(toXML,t[2])
-    end()  
+    elif t[0] == 'PROGRAM':
+      self._init()
+      map(self._toXML,t[1])
+      map(self._toXML,t[2])
+      self._end()  
 
-  elif t[0] == 'NETWORK':
-    startNet()
-    toXML(t[1])
-    map(toXML,t[2])
-    endNet()
+    elif t[0] == 'NETWORK':
+      self._startNet()
+      self._toXML(t[1])
+      map(self._toXML,t[2])
+      self._endNet()
 
-  elif t[0] == 'COMPONENT':
-    if t[5][0] == 'NETWORK':
-      startFun(t[1][1],"network")
+    elif t[0] == 'COMPONENT':
+      if t[5][0] == 'NETWORK':
+        self._startFun(t[1][1],"network")
+      else:
+        self._startFun(t[1][1],t[5][1])
+        self._putDesc(t[2])
+        self._startInput()
+        map(self._putParam,t[3])
+        self._endInput()
+        self._startOutput()
+        map(self._putParam,t[4])
+        self._endOutput()
+        self._toXML(t[5])
+        self._endFun()
+
+    elif t[0] == 'ASSIGNMENT':
+      self._putInstance(t[1],t[2][0])
+      args = copy.copy(self.ctx[t[2][0][1]]['in'])
+      for x in t[2][1]:
+        y = args.pop(0)
+        self._putConnection(x, ['OTHER',t[2][0],'in',y[1]])
+        self._f.write("\n")
+        
+    elif t[0] == 'CONNECTION':
+      self._putConnection(t[1],t[2])
+      
+    elif t[0] == 'ATOM':
+      self._putController(t[2])
+      
+      #elif t[0] == 'CONTROLLER':
+      #  putController(t[1])
+
     else:
-      startFun(t[1][1],t[5][1])
-    putDesc(t[2])
-    startInput()
-    map(putParam,t[3])
-    endInput()
-    startOutput()
-    map(putParam,t[4])
-    endOutput()
-    toXML(t[5])
-    endFun()
-
-  elif t[0] == 'ASSIGNMENT':
-    putInstance(t[1],t[2][0])
-    args = copy.copy(ctx[t[2][0][1]]['in'])
-    for x in t[2][1]:
-      y = args.pop(0)
-      putConnection(x, ['OTHER',t[2][0],'in',y[1]])
-    f.write("\n")
-
-  elif t[0] == 'CONNECTION':
-    putConnection(t[1],t[2])
-
-  elif t[0] == 'ATOM':
-    putController(t[2])
-
-#  elif t[0] == 'CONTROLLER':
-#    putController(t[1])
-
-  else:
-    pass
+      pass

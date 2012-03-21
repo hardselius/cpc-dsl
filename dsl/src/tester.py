@@ -30,25 +30,26 @@ def test(testfile):
   f = open(testfile)
   x = f.read()
   tc = cstype.TypeChecker()
-#  cslex.lexer.lineno = 1
-  lexer  = cslex.lex.lex(module=cslex)
-  parser = csparse.yacc.yacc(module=csparse)
+  parser = csparse.CodspeechParser()
   ast = parser.parse(x)
-  parser.restart()
   if ast != None:
     if past:
       print "Abstrac syntax tree:"
       print ast
       print ""
-    env = tc.typecheck(ast)
-    if env != None:
+    try:
+      env = tc.typecheck(ast)
+    except cstype.TypeError as e:
+      print "Type Error" + str(e)
+    except cstype.ReferenceError as e:
+      print "Reference Error" + str(e)
+    else:
       if pctx:
         print "Context:"
         print env
-      xml.generateXML(ast,env)
-    else:
-      print "No context was generated."
+      gXML = xml.XMLGenerator()
+      gXML.generateXML(ast,env)
   else:
     print "No abstract syntax tree was generated."
 
-test('../examples/example3.cod')
+test('../examples/example2.cod')
