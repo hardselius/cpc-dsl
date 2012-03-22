@@ -171,12 +171,13 @@ class CodspeechLexer(object):
     
     @TOKEN(litstring)
     def t_SCONST(self, t):
+        t.value = t.value.lstrip('"').rstrip('"')
         return t
 
 
-    @TOKEN(modulename)
-    def t_MODULE(self, t):
-        return t
+#    @TOKEN(modulename)
+#    def t_MODULE(self, t):
+#        return t
 
     
     t_EQUALS     = r'='

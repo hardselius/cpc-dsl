@@ -17,7 +17,7 @@ Component c1      '''dfg OLIG'''
   out ( Float b
       , Float c )
   Network
-  Controller apa contr
+  Controller apa
   { out.b <- in.a
     temp = apa (temp.in.a)
     temp2 = c1 (1.0, 5)
