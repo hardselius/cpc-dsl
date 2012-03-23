@@ -19,7 +19,7 @@ class CodspeechParser(PLYParser):
             error_func = self._lex_error_func)
         self.cslex.build()
         self.tokens = self.cslex.tokens
-        self.csparser = ply.yacc.yacc(
+        self.csparser = yacc.yacc(
             module=self,
             start='entrypoint',
         )
@@ -69,50 +69,48 @@ class CodspeechParser(PLYParser):
             
     def p_program(self, p):
         """
-        program : import_stmt_list cr newtype_stmt_list cr component_decl_list opt_cr
-                | import_stmt_list cr newtype_stmt_list opt_cr
-                | newtype_stmt_list cr component_decl_list opt_cr
+        program : import_stmt_list cr component_decl_list opt_cr
                 | import_stmt_list  cr empty opt_cr
-                | newtype_stmt_list cr component_decl_list opt_cr
+                | component_decl_list opt_cr
                 | empty
         """
-        if len(p) == 7:
-            p[0] = csast.Program(p[1],p[5],p[3])
-        elif len(p) == 6:
+        if len(p) == 5:
             p[0] = csast.Program(p[1],[],p[3])
-        elif len(p) == 5:
-            p[0] = csast.Program([],p[3],p[1])
+        elif len(p) == 4:
+            p[0] = csast.Program(p[1],[],[])
+        elif len(p) == 3:
+            p[0] = csast.Program([],[],p[1])
         else:
             p[0] = csast.Program([],[],[])
 
 
-    def p_top_stmt_list(self, p):
-        """
-        top_stmt_list : top_stmt
-                      | top_stmt_list cr top_stmt
-        """
-        if len(p) == 2:
-            p[0] = [p[1]]
-        else:
-            p[0] = p[1] + [p[3]]
-
-
-    def p_top_stmt(self, p):
-        """
-        top_stmt : 
-        """
-        p[0] = p[1]
-
-
-#    def p_import_stmt_list(self, p):
+#    def p_top_stmt_list(self, p):
 #        """
-#        import_stmt_list : import_stmt
-#                         | import_stmt_list cr import_stmt
+#        top_stmt_list : top_stmt
+#                      | top_stmt_list cr top_stmt
 #        """
 #        if len(p) == 2:
 #            p[0] = [p[1]]
 #        else:
 #            p[0] = p[1] + [p[3]]
+#
+#
+#    def p_top_stmt(self, p):
+#        """
+#        top_stmt : 
+#        """
+#        p[0] = p[1]
+
+
+    def p_import_stmt_list(self, p):
+        """
+        import_stmt_list : import_stmt
+                         | import_stmt_list cr import_stmt
+        """
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = p[1] + [p[3]]
 
             
     def p_import_stmt(self, p):
@@ -140,22 +138,22 @@ class CodspeechParser(PLYParser):
         p[0] = p[1]
 
 
-    def p_newtype_stmt_list(self, p):
-        """
-        newtype_stmt_list : newtype_stmt
-                          | newtype_stmt_list cr newtype_stmt
-        """
-        if len(p) == 2:
-            p[0] = [p[1]]
-        else:
-            p[0] = p[1] + [p[3]]
-
-
-    def p_newtype_stmt(self,p):
-        '''
-        newtype_stmt : NEWTYPE type docstring cr lparen type_conf_list rparen
-        '''
-        p[0] = csast.NewType(p[2],p[6],p[3])
+#    def p_newtype_stmt_list(self, p):
+#        """
+#        newtype_stmt_list : newtype_stmt
+#                          | newtype_stmt_list cr newtype_stmt
+#        """
+#        if len(p) == 2:
+#            p[0] = [p[1]]
+#        else:
+#            p[0] = p[1] + [p[3]]
+#
+#
+#    def p_newtype_stmt(self,p):
+#        '''
+#        newtype_stmt : NEWTYPE type docstring cr lparen type_conf_list rparen
+#        '''
+#        p[0] = csast.NewType(p[2],p[6],p[3])
 
 
     def p_type_conf_list(self, p):
@@ -205,7 +203,7 @@ class CodspeechParser(PLYParser):
         """
         component_header : ident docstring cr in_params out_params
         """
-        p[0] = csast.Header(p[1],p[4],p[5],p[2])
+        p[0] = csast.Header(p[1],p[2],p[4],p[5])
 
 
     # ------------------------------------------------------------------
@@ -279,11 +277,11 @@ class CodspeechParser(PLYParser):
                  | type ident DEFAULT constant docstring
         """
         if len(p) == 4:
-            p[0] = csast.InParameter(p[2],p[1],p[3])
+            p[0] = csast.InParameter(p[2], p[1], p[3])
         elif len(p) == 5:
-            p[0] = csast.InParameter(p[3],p[2],p[4],None,True)
+            p[0] = csast.InParameter(p[3], p[2], p[4], True, None)
         else:
-            p[0] = csast.InParameter(p[2],p[1],p[5],p[4])
+            p[0] = csast.InParameter(p[2], p[1], p[5], False, p[4])
 
 
     def p_out_param(self, p):
@@ -331,7 +329,7 @@ class CodspeechParser(PLYParser):
         """
         atom_stmt : ATOM MODULE opt_cr lparen atom_conf_list rparen
         """
-        p[0] = csast.Atom(p[2],p[5])
+        p[0] = csast.Atom(csast.AtomType(p[2]), p[5])
 
 
     def p_atom_conf_list(self, p):
@@ -349,7 +347,7 @@ class CodspeechParser(PLYParser):
         """
         atom_conf : sconst COLON sconst
         """
-        p[0] = csast.AtomOption(p[1],p[3])
+        p[0] = csast.AtomOption(p[1].value, p[3].value)
 
 
     # ------------------------------------------------------------------
@@ -458,21 +456,21 @@ class CodspeechParser(PLYParser):
         """
         fconst : FCONST
         """
-        p[0] = csast.Const('FLOAT',p[1])
+        p[0] = csast.Const(csast.Type('FLOAT'),p[1])
 
 
     def p_iconst(self, p):
         """
         iconst : ICONST
         """
-        p[0] = csast.Const('INT',p[1])
+        p[0] = csast.Const(csast.Type('INT'),p[1])
 
 
     def p_sconst(self, p):
         """
         sconst : SCONST
         """
-        p[0] = csast.Const('STRING',p[1])
+        p[0] = csast.Const(csast.Type('STRING'),p[1])
 
 
     # Idents.
@@ -494,11 +492,11 @@ class CodspeechParser(PLYParser):
                   | lparen component_stmt rparen PERIOD OUT PERIOD ident
         """
         if len(p) == 4:
-            p[0] = csast.This(p[3],p[1])
+            p[0] = csast.ParamRef(None, csast.Ref(p[1]), p[3])
         elif len(p) == 6:
-            p[0] = csast.Other(p[5],p[3],p[1])
+            p[0] = csast.ParamRef(p[1], csast.Ref(p[3]), p[5])
         else:
-            p[0] = csast.Comp(p[7],p[5],p[2])
+            p[0] = csast.ParamRef(p[2], csast.Ref(p[5]), p[7])
 
 
     # ------------------------------------------------------------------
@@ -512,7 +510,7 @@ class CodspeechParser(PLYParser):
              | INT
              | TYPE
         """
-        p[0] = p[1]
+        p[0] = csast.Type(p[1])
 
 
     # ------------------------------------------------------------------
@@ -525,9 +523,9 @@ class CodspeechParser(PLYParser):
                   | empty
         """
         if len(p) == 3:
-            p[0] = p[1]
+            p[0] = csast.DocString(p[1])
         else:
-            p[0] = None
+            p[0] = csast.DocString(None)
 
 
     # ------------------------------------------------------------------
@@ -634,25 +632,3 @@ class CodspeechParser(PLYParser):
         last_cr = input.rfind('\n',0,lexpos)
         colno = (lexpos - last_cr) - 1
         return colno
-
-
-
-
-
-
-
-
-        
-    # --------------------------------------------------------------
-    # test functions
-    # --------------------------------------------------------------
-def test(filepath):
-    p = CodspeechParser()
-    try:
-        buffer = open(filepath)
-    except IOError, e:
-        raise e
-    else:
-        prog = buffer.read()
-        return p.parse(prog, filepath)
-        
