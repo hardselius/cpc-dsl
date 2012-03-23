@@ -5,7 +5,7 @@
 # ------------------------------------------------------------------
 
 import copy
-
+from ..ast              import csast
 from ..parser.plyparser import Coord
 
 #---------------------------------------------------------------------
@@ -17,167 +17,196 @@ class TypeError(Exception): pass
 class ReferenceError(Exception): pass
 
 def _error_type(coord,msg):
-  raise TypeError("%s: %s" % (coord,msg))
+    raise TypeError("%s: %s" % (coord,msg))
 
 def _error_ref(coord,msg):
-  raise ReferenceError("%s: %s" % (coord,msg))
+    raise ReferenceError("%s: %s" % (coord,msg))
 
 #---------------------------------------------------------------------
 # Typechecker
 #---------------------------------------------------------------------
 
 class TypeChecker:
-  def __init__(self):
-    self.env = [{}]
+    def __init__(self):
+        self._resetEnv()
 
-  #-------------------------------------------------------------------
-  # Environment
-  #-------------------------------------------------------------------
+    #-----------------------------------------------------------------
+    # Environment
+    #-----------------------------------------------------------------
   
-  # Close scope
-  def _pop(self):
-    self.env.pop()
+    def _getEnv(self):
+        return self.env[-1]
 
-  # Open new scope
-  def _put(self):
-    return self.env.append(copy.copy(self.env[-1]))
+    def _resetEnv(self):
+        self.env = [{}]
 
-  # Add (Iden,Type) to the self.environment
-  def _add(self,ident,type):
-    if self._varExist(ident[1]):
-      _error_ref(ident[2],"multiple defenitions of " + ident[1])
-    else:
-      self.env[-1][ident[1]] = type
+    # Close scope
+    def _pop(self):
+        self.env.pop()
 
-  # Return the type of an Ident
-  def _type(self,ident):
-    try:
-      if ident[0] == 'IDENT':
-        return self.env[-1][ident[1]]
-      elif ident[0] == 'THIS':
-        return self.env[-1][ident[1]][ident[2][1]]
-      elif ident[0] == 'OTHER':
-        return self._typeParams(self.env[-1][ident[1][1]][ident[2]] \
-                               ,ident[3][1])
-      elif ident[0] == 'COMP':
-        return self._typeParams(self.env[-1][ident[1][0][1]] \
-                                        [ident[2]], ident[3][1])
-    except KeyError:
-      _error_ref(ident[2],"variable is not defined: " + \
-                          self._showArg(ident))
 
-  # Returns type of a parameter 'p' from a list of parameters
-  def _typeParams(self,params,p):
-    for x in params:
-      if x[1][1] == p: return x[0]
+    # Open new scope
+    def _put(self):
+        return self.env.append(copy.copy(self._getEnv()))
 
-  # Returns if variable exists in self.environment
-  def _varExist(self,var):
-    return self.env[-1].has_key(var)
 
-  # Add parameter to input/output record
-  def _addParam(self,io,param):
-    if self.env[-1][io].has_key(param[1][1]):
-      _error_ref(param[1][2],"multiple defenitions of " + param[1][1])
-    elif param[2] == 'DEFAULT' and param[0] != param[3][0].title():
-      _error_type(param[1][2],"(%s::%s) (%s::%s)" % \
-                 (param[1][1], param[0]             \
-                 ,param[3][1], param[3][0]))
-    else:
-      self.env[-1][io][param[1][1]] = param[0]
+    # Add (Iden,Type) to the self.environment
+    def _add(self,ident,type):
+        if self._varExist(ident.name):
+            _error_ref(ident,"multiple defenitions of " + ident.pos)
+        else:
+            self._getEnv()[ident.name] = type
 
-  def _showArg(self,a):
-    if a[0] == 'THIS':
-      return a[1] + "." + a[2][1]
-    elif a[0] == 'OTHER':
-      return a[1][1] + "." + a[2] + "." + a[3][1]
-    elif a[0] == 'COMP':
-      return a[1][0][1] + "." + a[2] + "." + a[3][1]
-    else:
-      return a[1]
 
-  #---------------------------------------------------------------------
-  # typecheck function
-  #---------------------------------------------------------------------
+    # Return the type of an Ident
+    def _type(self,o):
+        try:
+            if type(o) == ast.Ident:
+                return self._getEnv()[o.name]
 
-  def typecheck(self,t):
-    # Nothing to check
-    if t == []:
-      pass
+            elif type(o) == ast.This:
+                return self._getEnv()[o.io][o.ident.name]
 
-    # Program: check import, components
-    elif t[0] == 'PROGRAM':
-      map(self.typecheck,t[2])
-      ctx = copy.copy(self.env[-1])
-      self.env = [{}]
-      return ctx
+            elif type(o) == ast.Other:
+                return self._typeParams(self._getEnv()[o.component.name] \
+                                                     [o.io], o.ident.name)
 
-    # Network: check controller, network block
-    elif t[0] == 'NETWORK':
-      self.typecheck(t[1])
-      map(self.typecheck,t[2])
+            elif type(o) == ast.Comp:
+                return self._typeParams(self._getEnv()                 \
+                                             [o.component.ident.name] \
+                                             [o.io]                   \
+                                             , o.ident.name)
 
-    # Component: check paramaters, network/atom
-    elif t[0] == 'COMPONENT':
-      self._add(t[1],{'in':t[3],'out':t[4]})
-      self._put()
-      self._add(['IDENT','in'],{})
-      self._add(['IDENT','out'],{})
-      map(lambda x:self._addParam('in',x),t[3])
-      map(lambda x:self._addParam('out',x),t[4])
-      self.typecheck(t[5])
-      self._pop()
+        except KeyError:
+            _error_ref(ident[2],"variable is not defined: " + \
+                                self._showArg(ident))
 
-    # Assignment: check component, argument
-    elif t[0] == 'ASSIGNMENT':
-      self._add(t[1],self._type(t[2][0]))
-      self._checkCompStmt(t[2])
 
-    elif t[0] == 'THIS':
-      return self._type(t)
+    # Returns type of a parameter 'p' from a list of parameters
+    def _typeParams(self,params,p):
+        for x in params:
+            if x.ident.name == p: return x.type
 
-    elif t[0] == 'OTHER':
-      return self._type(t)
 
-    elif t[0] == 'COMP':
-      self._checkCompStmt(t[1])
-      return self._type(['OTHER',t[1][0],t[2],t[3]])
+    # Returns if variable exists in self.environment
+    def _varExist(self,var):
+        return self._getEnv().has_key(var)
 
-    elif t[0] == 'INT':
-      return 'Int'
 
-    elif t[0] == 'FLOAT':
-      return 'Float'
+    # Add parameter to input/output record
+    def _addParam(self,param):
+        if type(param) == ast.InParameter: io = 'in'
+        else: io = 'out'
 
-    elif t[0] == 'STRING':
-      return 'String'
+        if self._getEnv()[io].has_key(param.ident.name):
+            _error_ref(param.ident.pos,"multiple defenitions of " + \
+                       param.ident.name)
 
-    # Connection: check variables
-    elif t[0] == 'CONNECTION':
-      if self._type(t[1]) != self._type(t[2]):
-        _error_type(t[2][-1][2],"(%s::%s) (%s::%s)" %     \
-                   (self._showArg(t[1]), self._type(t[1]) \
-                   ,self._showArg(t[2]), self._type(t[1])))
+        elif param.default != None \
+            and param.type != param.default.type.title():
+            _error_type(param.ident.pos,"(%s::%s) (%s::%s)" % \
+                       (param.ident.name, param.type          \
+                       ,param.default.value, param.default.type))
 
-    # Controller: check variable, component
-    elif t[0] == 'CONTROLLER':
-      add(t[2],self._type(t[1]))
+        else:
+            self._getEnv()[io][param.ident.name] = param.type
+
+
+    def _showArg(self,a):
+        if   type(a) == ast.This:
+            return a.io + "." + a.ident.name
+        elif type(a) == ast.Other:
+            return a.component.name + "." + a.io + "." + a.ident.name
+        elif type(a) == ast.Comp:
+            return a.component.component.name + "." + a.io + \
+                                                "." + a.ident.name
+        else:
+            return a.name
+
+    #-------------------------------------------------------------------
+    # typecheck function
+    #-------------------------------------------------------------------
+
+    def typecheck(self,t):
+        # Program: check import, components
+        if type(t) == ast.Program:
+            addComp = lambda x: self._add(x.header.ident,       \
+                                         {'in':x.header.inputs, \
+                                          'out':x.header.outputs})
+            map(addComp,t.components)
+            map(self.typecheck,t.newtypes)
+            map(self.typecheck,t.components)
+            ctx = copy.copy(self._getEnv())
+            self._resetEnv()
+            return ctx
+
+        # Component: check paramaters, network/atom
+        elif type(t) == ast.Component:
+            self._put()
+            self._add(ast.Ident('in'),{})
+            self._add(ast.Ident('out'),{})
+            map(self._addParam,t.header.inputs)
+            map(self._addParam,t.header.outputs)
+            self.typecheck(t.body)
+            self._pop()
+
+        # Network: check controller, network block
+        elif type(t) == ast.Network:
+            self.typecheck(t.controller)
+            map(self.typecheck,t.body)
+
+        elif type(t) == ast.NewType:
+            pass
+
+        # Network: check controller, network block
+        elif type(t) == ast.Atom:
+            pass
+
+        # Assignment: check component, argument
+        elif type(t) == ast.Assignment:
+            self._add(t.ident,self._type(t.component.ident))
+            self.typecheck(t.component)
+
+        elif type(t) == ast.ComponentStmt:
+            args = copy.copy(self._type(t.ident)['in'])
+            for x in t.inputs:
+                if args == []:
+                    _error_ref(x.ident.pos,"input out of bounds: " + \
+                                           self._showArg(x))
+                else:
+                    y = args.pop(0)
+                    tx = self.typecheck(x)
+                    if tx != y.type:
+                        _error_type(x.ident.pos,"(%s::%s) (%s::%s)" %     \
+                                   (self._showArg(x), tx                  \
+                                   ,self._showArg(ast.Other(y.ident,      \
+                                                           'in',t.ident)) \
+                                   ,y.type))
+
+        elif type(t) == ast.Const:
+            return t.type
+
+        elif type(t) == ast.This:
+            return self._type(t)
+
+        elif type(t) == ast.Other:
+            return self._type(t)
+
+        elif type(t) == ast.Comp:
+            self.typecheck(t.component)
+            return self._type(t)
+
+        # Connection: check variables
+        elif type(t) == ast.Connection:
+            if self._type(t.left) != self._type(t.right):
+                _error_type(t.right.ident.pos,"(%s::%s) (%s::%s)" %         \
+                           (self._showArg(t.left), self._type(t.left) \
+                           ,self._showArg(t.right), self._type(t.right)))
+
+        # Controller: check variable, component
+        elif type(t) == ast.Controller:
+            add(t.ident,self._type(t.type))
     
-    # Something is missing
-    else:
-      pass
-
-
-  def _checkCompStmt(self,c):
-    args = copy.copy(self._type(c[0])['in'])
-    for x in c[1]:
-      if args == []:
-        _error_ref(x[-1][2],"input out of bounds: " + \
-                            self._showArg(x))
-      else:
-        y = args.pop(0)
-        tx = self.typecheck(x)
-        if tx != y[0] and self.error == 0:
-          _error_type(x[-1][2],"(%s::%s) (%s::%s)" % \
-                     (self._showArg(x)      , tx     \
-                     ,self._showArg(['OTHER', c[0],'in',y[1]]),y[0]))
+        # Something is missing
+        else:
+            pass
