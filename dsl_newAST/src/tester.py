@@ -47,9 +47,9 @@ def test(testfile):
       if pctx:
         print "Context:"
         print env
-#      gXML = xml.XMLGenerator()
-#      gXML.generateXML(ast,env)
+      gXML = xml.XMLGenerator()
+      gXML.generateXML(ast,env)
   else:
     print "No abstract syntax tree was generated."
 
-test('../examples/example2.cod')
+test('../examples/example3.cod')

@@ -8,17 +8,53 @@ def strNewLine(x):
             return "\n" + indent + str(y) + strNewLine(x)
 
 class Program(object):
-    def __init__(self,i,c):
+    def __init__(self,i,c,t):
         self.imports    = i
         self.components = c
+	self.newtypes   = t
 
     def __str__(self):
         global indent
         indent = "    "
         s = "Program:" + indent + strNewLine(self.imports) + \
+            "\n" + indent + strNewLine(self.newtypes) + \
             "\n" + indent + strNewLine(self.components)
         indent = ""
         return s
+
+
+class Import(object):
+    def __init__(self,p):
+        self.path = p
+
+    def __str__(self):
+        global indent
+        return "Import: " + str(self.path)
+
+
+class NewType(object):
+    def __init__(self,id,b,d = None):
+        self.ident = id
+	self.body  = b
+	self.doc   = d
+
+    def __str__(self):
+        global indent
+        indent += "    "
+        s = "NewType: " + str(self.ident) + \
+            indent + strNewLine(self.body)
+        indent = indent[:len(indent)-4]
+        return s
+
+
+class NewTypeObject(object):
+    def __init__(self,id,t):
+        self.ident = id
+	self.type  = t
+
+    def __str__(self):
+        global indent
+        return "NWObject: " + str(self.ident) + ", " + str(self.type)
 
 
 class Import(object):

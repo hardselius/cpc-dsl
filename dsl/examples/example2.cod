@@ -27,5 +27,5 @@ Component addmul      '''Test function that adds and multiplies'''
       )
   Network {
     cMul = mul ((add (in.a, in.b)).out.q, in.c)
-    out.q <- cMul.out.q
+    out.q <- cMul.out.apa
   }

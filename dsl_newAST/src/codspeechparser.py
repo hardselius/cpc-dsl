@@ -73,30 +73,50 @@ class CodspeechParser(PLYParser):
             
     def p_program(self, p):
         """
-        program : import_stmt_list cr component_decl_list opt_cr
-                | import_stmt_list empty opt_cr
-                | component_decl_list opt_cr
+        program : import_stmt_list cr newtype_stmt_list cr component_decl_list opt_cr
+                | import_stmt_list cr newtype_stmt_list opt_cr
+                | newtype_stmt_list cr component_decl_list opt_cr
+                | import_stmt_list  cr empty opt_cr
+                | newtype_stmt_list cr component_decl_list opt_cr
                 | empty
         """
-        if len(p) == 5:
-            p[0] = ast.Program(p[1],p[3])
-        elif len(p) == 4:
-            p[0] = ast.Program(p[1],None)
-        elif len(p) == 3:
-            p[0] = ast.Program([],p[3])
+        if len(p) == 7:
+            p[0] = ast.Program(p[1],p[5],p[3])
+        elif len(p) == 6:
+            p[0] = ast.Program(p[1],[],p[3])
+        elif len(p) == 5:
+            p[0] = ast.Program([],p[3],p[1])
         else:
-            p[0] = ast.Program([],None)
+            p[0] = ast.Program([],[],[])
 
 
-    def p_import_stmt_list(self, p):
+    def p_top_stmt_list(self, p):
         """
-        import_stmt_list : import_stmt
-                         | import_stmt_list cr import_stmt
+        top_stmt_list : top_stmt
+                      | top_stmt_list cr top_stmt
         """
         if len(p) == 2:
             p[0] = [p[1]]
         else:
             p[0] = p[1] + [p[3]]
+
+
+    def p_top_stmt(self, p):
+        """
+        top_stmt : 
+        """
+        p[0] = p[1]
+
+
+#    def p_import_stmt_list(self, p):
+#        """
+#        import_stmt_list : import_stmt
+#                         | import_stmt_list cr import_stmt
+#        """
+#        if len(p) == 2:
+#            p[0] = [p[1]]
+#        else:
+#            p[0] = p[1] + [p[3]]
 
             
     def p_import_stmt(self, p):
@@ -122,6 +142,42 @@ class CodspeechParser(PLYParser):
         package_identifier : ID
         """
         p[0] = p[1]
+
+
+    def p_newtype_stmt_list(self, p):
+        """
+        newtype_stmt_list : newtype_stmt
+                          | newtype_stmt_list cr newtype_stmt
+        """
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = p[1] + [p[3]]
+
+
+    def p_newtype_stmt(self,p):
+        '''
+        newtype_stmt : NEWTYPE type docstring cr lparen type_conf_list rparen
+        '''
+        p[0] = ast.NewType(p[2],p[6],p[3])
+
+
+    def p_type_conf_list(self, p):
+        """
+        type_conf_list : type_conf
+                       | type_conf_list comma_sep type_conf
+        """
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = p[1] + [p[3]]
+
+
+    def p_type_conf(self, p):
+        """
+        type_conf : ident COLON type
+        """
+        p[0] = ast.NewTypeObject(p[1],p[3])
 
 
     # A list of components consists of either a single component or
