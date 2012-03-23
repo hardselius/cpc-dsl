@@ -52,7 +52,9 @@ parser.out
 *~
 \#*#
 .ropeproject
+.old
 
 # documents #
 #############
 *.pdf
+
