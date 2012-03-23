@@ -1,17 +1,12 @@
 # ------------------------------------------------------------------
-# codspeechlexer.py
+# Codspeech/codspeech/parser: cslexer.py
 #
 # A lexer for Codspeech
 # ------------------------------------------------------------------
 
 import re
-import sys
-
-
-import ply.lex as lex
-from   ply.lex import TOKEN
-
-sys.path.insert(0,"../..")
+from ..ply     import lex
+from ..ply.lex import TOKEN
 
 
 class CodspeechLexer(object):
