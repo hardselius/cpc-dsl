@@ -5,9 +5,9 @@
 # ----------------------------------------------------------------------
 
 from ..ply      import yacc
+from ..ast      import ast
 from .cslexer   import CodspeechLexer
 from .plyparser import PLYParser, Coord, ParseError
-
 
 
 class CodspeechParser(PLYParser):
@@ -69,37 +69,57 @@ class CodspeechParser(PLYParser):
             
     def p_program(self, p):
         """
-        program : import_stmt_list cr component_decl_list opt_cr
-                | import_stmt_list empty opt_cr
-                | component_decl_list opt_cr
+        program : import_stmt_list cr newtype_stmt_list cr component_decl_list opt_cr
+                | import_stmt_list cr newtype_stmt_list opt_cr
+                | newtype_stmt_list cr component_decl_list opt_cr
+                | import_stmt_list  cr empty opt_cr
+                | newtype_stmt_list cr component_decl_list opt_cr
                 | empty
         """
-        if len(p) == 5:
-            p[0] = ['PROGRAM',p[1],p[3]]
-        elif len(p) == 4:
-            p[0] = ['PROGRAM',p[1],[]]
-        elif len(p) == 3:
-            p[0] = ['PROGRAM',[],p[1]]
+        if len(p) == 7:
+            p[0] = ast.Program(p[1],p[5],p[3])
+        elif len(p) == 6:
+            p[0] = ast.Program(p[1],[],p[3])
+        elif len(p) == 5:
+            p[0] = ast.Program([],p[3],p[1])
         else:
-            p[0] = []
+            p[0] = ast.Program([],[],[])
 
 
-    def p_import_stmt_list(self, p):
+    def p_top_stmt_list(self, p):
         """
-        import_stmt_list : import_stmt
-                         | import_stmt_list cr import_stmt
+        top_stmt_list : top_stmt
+                      | top_stmt_list cr top_stmt
         """
         if len(p) == 2:
             p[0] = [p[1]]
         else:
             p[0] = p[1] + [p[3]]
 
+
+    def p_top_stmt(self, p):
+        """
+        top_stmt : 
+        """
+        p[0] = p[1]
+
+
+#    def p_import_stmt_list(self, p):
+#        """
+#        import_stmt_list : import_stmt
+#                         | import_stmt_list cr import_stmt
+#        """
+#        if len(p) == 2:
+#            p[0] = [p[1]]
+#        else:
+#            p[0] = p[1] + [p[3]]
+
             
     def p_import_stmt(self, p):
         """
         import_stmt : IMPORT package_path
         """
-        p[0] = ['IMPORT',p[2]]
+        p[0] = ast.Import(p[2])
 
 
     def p_package_path(self, p):
@@ -118,6 +138,42 @@ class CodspeechParser(PLYParser):
         package_identifier : ID
         """
         p[0] = p[1]
+
+
+    def p_newtype_stmt_list(self, p):
+        """
+        newtype_stmt_list : newtype_stmt
+                          | newtype_stmt_list cr newtype_stmt
+        """
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = p[1] + [p[3]]
+
+
+    def p_newtype_stmt(self,p):
+        '''
+        newtype_stmt : NEWTYPE type docstring cr lparen type_conf_list rparen
+        '''
+        p[0] = ast.NewType(p[2],p[6],p[3])
+
+
+    def p_type_conf_list(self, p):
+        """
+        type_conf_list : type_conf
+                       | type_conf_list comma_sep type_conf
+        """
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = p[1] + [p[3]]
+
+
+    def p_type_conf(self, p):
+        """
+        type_conf : ident COLON type
+        """
+        p[0] = ast.NewTypeObject(p[1],p[3])
 
 
     # A list of components consists of either a single component or
@@ -140,7 +196,7 @@ class CodspeechParser(PLYParser):
         component_decl : COMPONENT component_header network_stmt
                        | COMPONENT component_header atom_stmt
         """
-        p[0] = ['COMPONENT'] + p[2] + [p[3]]
+        p[0] = ast.Component(p[2],p[3])
 
 
     # A component header consists of the the name of the component, a
@@ -149,7 +205,7 @@ class CodspeechParser(PLYParser):
         """
         component_header : ident docstring cr in_params out_params
         """
-        p[0] = [p[1],p[2],p[4],p[5]]
+        p[0] = ast.Header(p[1],p[4],p[5],p[2])
 
 
     # ------------------------------------------------------------------
@@ -223,11 +279,11 @@ class CodspeechParser(PLYParser):
                  | type ident DEFAULT constant docstring
         """
         if len(p) == 4:
-            p[0] = [p[1],p[2],p[3]]
+            p[0] = ast.InParameter(p[2],p[1],p[3])
         elif len(p) == 5:
-            p[0] = [p[2],p[3],'OPTIONAL',p[4]]
+            p[0] = ast.InParameter(p[3],p[2],p[4],None,True)
         else:
-            p[0] = [p[1],p[2],'DEFAULT',p[4],p[5]]
+            p[0] = ast.InParameter(p[2],p[1],p[5],p[4])
 
 
     def p_out_param(self, p):
@@ -236,9 +292,9 @@ class CodspeechParser(PLYParser):
                   | type ident DEFAULT constant docstring
         """
         if len(p) == 4:
-            p[0] = [p[1],p[2],p[3]]
+            p[0] = ast.OutParameter(p[2],p[1],p[3])
         else:
-            p[0] = [p[1],p[2],'DEFAULT',p[4],p[5]]
+            p[0] = ast.InParameter(p[2],p[1],p[5],p[4])
 
 
     # ------------------------------------------------------------------
@@ -253,9 +309,9 @@ class CodspeechParser(PLYParser):
                      | NETWORK opt_cr network_controller stmt_block
         """
         if len(p) == 3:
-            p[0] = ['NETWORK',[],p[2]]
+            p[0] = ast.Network(p[2])
         else:
-            p[0] = ['NETWORK',p[3],p[4]]
+            p[0] = ast.Network(p[4],p[3])
 
 
     # A network controller is a component and the controller alias?
@@ -263,7 +319,7 @@ class CodspeechParser(PLYParser):
         """
         network_controller : CONTROLLER ident ident
         """
-        p[0] = ['CONTROLLER',p[2],p[3]]
+        p[0] = ast.Controller(p[2],p[3])
 
 
     # ------------------------------------------------------------------
@@ -275,7 +331,7 @@ class CodspeechParser(PLYParser):
         """
         atom_stmt : ATOM MODULE opt_cr lparen atom_conf_list rparen
         """
-        p[0] = ['ATOM',p[2],p[5]]
+        p[0] = ast.Atom(p[2],p[5])
 
 
     def p_atom_conf_list(self, p):
@@ -293,7 +349,7 @@ class CodspeechParser(PLYParser):
         """
         atom_conf : sconst COLON sconst
         """
-        p[0] = [p[1],p[3]]
+        p[0] = ast.AtomOption(p[1],p[3])
 
 
     # ------------------------------------------------------------------
@@ -345,7 +401,7 @@ class CodspeechParser(PLYParser):
         """
         connection : param_ref CONNECTION param_ref
         """
-        p[0] = ['CONNECTION',p[1],p[3]]
+        p[0] = ast.Connection(p[1],p[3])
 
 
     # Assignment.
@@ -353,7 +409,7 @@ class CodspeechParser(PLYParser):
         """
         sass : ident EQUALS component_stmt
         """
-        p[0] = ['ASSIGNMENT',p[1],p[3]]
+        p[0] = ast.Assignment(p[1],p[3])
 
 
     # A component statement: comp_id (expr_0, ..., expr_n)
@@ -361,7 +417,7 @@ class CodspeechParser(PLYParser):
         """
         component_stmt : ident lparen expr_list rparen
         """
-        p[0] = [p[1],p[3]]
+        p[0] = ast.ComponentStmt(p[1],p[3])
 
 
     # ------------------------------------------------------------------
@@ -402,21 +458,21 @@ class CodspeechParser(PLYParser):
         """
         fconst : FCONST
         """
-        p[0] = ['FLOAT',p[1]]
+        p[0] = ast.Const('FLOAT',p[1])
 
 
     def p_iconst(self, p):
         """
         iconst : ICONST
         """
-        p[0] = ['INT',p[1]]
+        p[0] = ast.Const('INT',p[1])
 
 
     def p_sconst(self, p):
         """
         sconst : SCONST
         """
-        p[0] = ['STRING',p[1]]
+        p[0] = ast.Const('STRING',p[1])
 
 
     # Idents.
@@ -424,7 +480,7 @@ class CodspeechParser(PLYParser):
         """
         ident : ID
         """
-        p[0] = ['IDENT',p[1],self._coord(p.lineno(1))]
+        p[0] = ast.Ident(p[1],self._coord(p.lineno(1)))
 
 
     # A parameter reference references either the component it's stated
@@ -438,11 +494,11 @@ class CodspeechParser(PLYParser):
                   | lparen component_stmt rparen PERIOD OUT PERIOD ident
         """
         if len(p) == 4:
-            p[0] = ['THIS',p[1],p[3]]
+            p[0] = ast.This(p[3],p[1])
         elif len(p) == 6:
-            p[0] = ['OTHER',p[1],p[3],p[5]]
+            p[0] = ast.Other(p[5],p[3],p[1])
         else:
-            p[0] = ['COMP',p[2],p[5],p[7]]
+            p[0] = ast.Comp(p[7],p[5],p[2])
 
 
     # ------------------------------------------------------------------
@@ -471,7 +527,7 @@ class CodspeechParser(PLYParser):
         if len(p) == 3:
             p[0] = p[1]
         else:
-            p[0] = []
+            p[0] = None
 
 
     # ------------------------------------------------------------------
