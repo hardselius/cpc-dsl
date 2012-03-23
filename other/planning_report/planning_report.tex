@@ -1,0 +1,175 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{tikz}
+\usepackage{gantt}
+
+\title{Planning report\\
+  \large{Domain-specific language for high-level
+  sampling tasks in high-performance computing
+  }
+}
+
+\author{Martin Hardselius \and Viktor Almqvist} 
+
+\date
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\section{Background}
+\begin{quotation}
+  ``Many applications for high-performance computing, including
+  bio-molecular simulations and materials science calculations, have
+  limited potential to achieve the strong scaling necessary to run on
+  modern supercomputers with 10000 cores or more. At the same time,
+  many applications of these simulations are statistical in nature:
+  they rely on sampling of many individual simulations or
+  trajectories\ldots
+
+  \ldots In response to this, we have created a framework for the
+  execution of large-scale sampling calculations: Copernicus. This
+  platform changes the focus away from managing individual simulations
+  and processing the results and expresses large multi-level jobs as
+  single tasks. The user can create and compose these computational
+  tasks, and inspect a task's progress while it is running.''
+\end{quotation}
+
+Copernicus is a framework for managing large scale calculations and
+the distribution of these computational tasks over a large scale of
+workers. The system contains servers, workers and clients. The server
+distributes the tasks to workers and the client sends calculation
+requests to the server. The calculations, which are the input to
+Copernicus, are described using a dataflow-network model. The
+data-flow networks are basically instances of functions and their
+connections to each other. The data-flow networks are currently
+defined in the form of XML code. Since the developers of Copernicus
+aims for a more user-friendly experience, they want to replace the XML
+input with a domain-specific language.
+
+\section{Aim}
+The goal of this project is the creation of a domain-specific language
+for describing input to the project Copernicus. Since the input to
+Copernicus can be described as data-flow network, the design of this
+DSL should adhere that paradigm. Furthermore, the language should
+allow Copernicus plug-in libraries, and the internal network must be
+algorithmically expressible, to allow the user to query a full
+state. The language should be simple enough to describe data-flow
+networks as plain code, but also designed with the possibility to
+easily add a graphical interface.
+
+\section{Problem}
+The objective is to implement a domain specific language as described
+in the previous section. The intended users of the language are not
+necessarily programmers, which makes it important for the language to be
+simple and intuitive.
+
+The DSL should be fully functional which mean it must include all
+features and structures offered in the data-flow networks in
+Copernicus. It should be possible to pipe the compiler to Copernicus,
+which means the output form the compiler should be in the same form as
+the input for Copernicus.
+
+
+\section{Scope}
+The most important part is to get a working solution since the DSL is
+supposed to be used by the users of Copernicus. The input to the
+system is currently described in XML, but the DSL and its compiler
+could render the use of XML redundant. As the main objective is a
+fully functional compiler, we will generate XML code. This saves time
+and will enable us to focus on the more important parts of our
+project. If there is time when we are done with the translation from
+our language to XML, we will look into the possibility of an extension
+that bypasses the XML-code generation.
+
+\section{Method}
+Our method for making the DSL is divided into three steps: research,
+design and implementation. We will have short daily meetings with our
+supervisors during the first period of the research step, where we
+will discuss what has been done since the last meeting and what we
+will be doing until the next one. We will meet less often later on,
+since the first part is to make sure we get started and on the right
+track.
+
+\subsection{Research}
+Our first objective is to research languages describing data-flow
+networks to get a good sense on how such languages are designed. This
+will serve as an inspiration to our DSL design.
+
+The next objective is to learn the structure of the current input
+data. We will be studying project code, the XML-code examples used for
+testing the system and discuss the DSL design with the Copernicus
+developers. We need to understand how the input data hierarchy works,
+how functions and sub nets are defined, etc.
+
+\subsection{Design}
+In the end of the research period, we will start to define a language
+syntax. We expect to make a simple draft to show our ideas for a
+structure of the language. During syntax development, we will discuss
+our draft regularly with the Copernicus developers to avoid missing
+any important features.
+
+Working from this point with a continuous input from the developers
+will result in us creating a good syntax that both the developers and
+we are satisfied with. The syntax need to be clean and be clear and
+effective to implement.
+
+\subsection{Implementation}
+\subsubsection{Parser}
+We can start implementing the compiler when the language syntax has
+been established. The first step is to write a parser for building
+abstract syntax trees. We will use BNFC which is a tool for generating
+a finished parser from BNF grammar. Our objective is to write a BNF
+grammar which represent our syntax defined in the previous step. The
+grammar will contain definitions of statements, expressions, types,
+etc. The reasons behind choosing BNFC are former experience using it
+and the freedom to decide which implementation language to use later
+on; BNFC has support for C, C++, C\#, F\#, Haskell, Java, OCamel.
+
+We have chosen not to write the compiler in Haskell, a language we
+have a lot of experience in using. There are two reasons for this
+decision: The first is to ensure that anyone can more easily take over
+and understand our code (or write a graphical interface) when we leave
+the project, since Java, C, C++, C\# are more commonly known
+languages. The second reason is that we want to strengthen our skills
+in some other language than Haskell before we graduate from Chalmers.
+
+\subsubsection{Type Checker}
+Since the language is supposed to be typed, a type-checker will be
+implemented. A type-checker can provide the user with more expressive
+error reporting, and will also facilitate the learning experience. At
+this point, we will have decided on an implementation language.
+
+\subsubsection{Code Generation}
+Once we have a type checker we can start with the final part of the
+compiler, the code generator. The code generator will generate XML
+code which can be used directly as input for Copernicus. It is crucial
+during this part to fully understand the structure of the XML code
+describing data-flow networks. At this point we can start trying out
+our project with Copernicus as we add parts of the code generator.
+
+
+\section{Time Plan}
+\begin{gantt}[
+    xunitlength=0.5cm,
+    fontsize=\small,
+    titlefontsize=\small,
+    drawledgerline=true]
+  {8}{18}
+  \begin{ganttitle}
+    \titleelement{weeks}{18}
+  \end{ganttitle}
+  \begin{ganttitle}
+    \numtitle{7}{1}{24}{1}
+  \end{ganttitle}
+  \ganttbar{research}{0}{4}
+  \ganttbar{design}{2}{4}
+  \ganttbar[pattern=crosshatch,color=red]{easter}{7}{1}
+  \ganttbar{implementation}{5}{8}
+  \ganttbar{report}{11}{5}
+  \ganttbar{presentation}{16}{2}
+\end{gantt}
+
+\end{document}

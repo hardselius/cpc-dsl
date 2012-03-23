@@ -1,0 +1,38 @@
+import funclib
+import complib
+
+Componen addMul             ''q = (a+b)*c''
+  in  Float a               ''input a''
+     ,Float b               ''input b''
+     ,Float c               ''input c''
+  out Float q               ''output q''
+  x = fAdd a b              ''x = a+b''
+  q = fMul x c              ''output q = x*c''
+
+
+Component addMul2           ''(a+b)*c''
+  in  Float a               ''input a''
+     ,Float b               ''input b''
+     ,Float c               ''input c''
+  out Float q               ''output q''
+  subnet := nAddMul a b c         ''nAddMul network output connected to q''
+  q = subnet.q
+
+Network nAddMul             ''network nAddMul: q = (a+b)*c''
+{
+  in  Float a               ''input a''
+     ,Float b               ''input b''
+     ,Float c               ''input c''
+  out Float q               ''output q''
+
+  c1 := add in.b in.a             ''add component: input a b''
+  c2 := mul c1.out.q in.c          ''mul component: input a b''
+
+  c3 := add _ c2.q          ''add component: input default c2.q''
+  c4 := apply add [c3.q,0] ''apply component: applies add on c3.q 0''
+
+  c5 := add
+
+  c5.in.b <- c4.out.q
+  q <- c4.q                  ''output q = c4.q''
+}
