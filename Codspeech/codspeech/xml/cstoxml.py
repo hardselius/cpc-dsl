@@ -4,182 +4,185 @@
 # An xml generator for Codspeech
 # ------------------------------------------------------------------
 
-
 import copy
+from ..ast import csast
 
 class XMLGenerator:
-  def __init__(self,ind = 4):
-    self.i = ind
-    self.indent = ' '*ind
-    self.ctx = None
-    self.f = None
+    def __init__(self,ind = 4):
+        self.i = ind
+        self.indent = ' '*ind
+        self.ctx = None
+        self.f = None
+        self.tempName = 0
 
-  def _ind(self):
-    self.indent += ' '*self.i
+    def _ind(self):
+        self.indent += ' '*self.i
 
-  def _unind(self):
-    self.indent = self.indent[:len(self.indent)-self.i]
+    def _unind(self):
+        self.indent = self.indent[:len(self.indent)-self.i]
 
 #---------------------------------------------------------------------
 # Write XML functions
 #---------------------------------------------------------------------
 
-  def _init(self):
-    self.f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
+    def _init(self):
+        self.f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
 
-  def _end(self):
-    self.f.write("</cpc>\n")
-    self.f.close()
+    def _end(self):
+        self.f.write("</cpc>\n")
+        self.f.close()
 
-  def _startFun(self,id,type):
-    self.f.write(self.indent + "<function id=\"" + id
-                + "\" type=\"" + type + "\">\n")
-    self._ind()
-
-  def _endFun(self):
-    self._unind()
-    self.f.write(self.indent + "</function>\n")
-
-  def _startInput(self):
-    self.f.write(self.indent + "<inputs>\n")
-    self._ind()
-
-  def _endInput(self):
-    self._unind()
-    self.f.write(self.indent + "</inputs>\n")
-
-  def _startOutput(self):
-    self.f.write(self.indent + "<outputs>\n")
-    self._ind()
-
-  def _endOutput(self):
-    self._unind()
-    self.f.write(self.indent + "</outputs>\n")
-
-  def _putParam(self,param):
-    self.f.write(self.indent + "<field type=\"" + param[0].lower() \
-                             + "\" id=\"" + param[1][1] + "\"")
-    if param[2] == []:
-      self.f.write(" />\n")
-    elif param[2] != 'OPTIONAL':
-      self.f.write(">\n")
-      self._ind()
-      self._putDesc(param[2])
-      self._unind()
-      self.f.write(self.indent + "</field>\n")
-    else:
-      self.f.write(" opt=\"true\"")
-      if param[3] == []:
-        self.f.write(" />\n")
-      else:
-        self.f.write(">\n")
+    def _startFun(self,id,type):
+        self.f.write(self.indent + "<function id=\"" + id
+                                 + "\" type=\"" + type + "\">\n")
         self._ind()
-        self._putDesc(param[3])
+
+    def _endFun(self):
         self._unind()
-        self.f.write(self.indent + "</field>\n")
+        self.f.write(self.indent + "</function>\n")
 
-  def _putDesc(self,desc):
-    if desc != []:
-      self.f.write(self.indent + "<desc>" + desc + "</desc>\n")
+    def _startInput(self):
+        self.f.write(self.indent + "<inputs>\n")
+        self._ind()
 
-  def _putController(self,opts):
-    self.f.write(self.indent + "<controller ")
-    for x in opts:
-      self.f.write(x[0][1].translate(None, '"') + "=" + x[1][1])
-      if x == opts[-1]:
-        self.f.write(" />\n")
-      else:
-        self.f.write("\n" + self.indent + "            ")
+    def _endInput(self):
+        self._unind()
+        self.f.write(self.indent + "</inputs>\n")
 
-  def _putImport(self,module):
-    self.f.write(self.indent + "<import name=\"" + module + "\" />\n")
+    def _startOutput(self):
+        self.f.write(self.indent + "<outputs>\n")
+        self._ind()
 
-  def _startNet(self):
-    self.f.write(self.indent + "<network>\n")
-    self._ind()
+    def _endOutput(self):
+        self._unind()
+        self.f.write(self.indent + "</outputs>\n")
 
-  def _endNet(self):
-    self._unind()
-    self.f.write(self.indent + "</network>\n")
+    def _putParam(self,param):
+        self.f.write(self.indent + "<field type=\"" + param.type.lower() \
+                                 + "\" id=\"" + param.ident.name + "\"")
+        if type(param) == csast.InParameter and param.optional:
+            self.f.write(" opt=\"true\"")
+        if param.doc == None:
+            self.f.write(" />\n")
+        else:
+            self.f.write(">\n")
+            self._ind()
+            self._putDoc(param.doc)
+            self._unind()
+            self.f.write(self.indent + "</field>\n")
 
-  def _putConnection(self,src,dest):
-    self.f.write(self.indent + "<connection src=\""  \
-               + self._showIdent(src) + "\" dest=\"" \
-               + self._showIdent(dest) + "\" />\n")
+    def _putDoc(self,desc):
+        if desc != None:
+            self.f.write(self.indent + "<desc>" + desc + "</desc>\n")
 
-  def _putInstance(self,id,fun):
-    self.f.write(self.indent + "<instance id=\""        \
-               + self._showIdent(id) + "\" function=\"" \
-               + self._showIdent(fun) + "\" />\n")
+    def _putController(self,opts):
+        self.f.write(self.indent + "<controller ")
+        for x in opts:
+            self.f.write(x.option.value.translate(None, '"') + \
+                         "=" + x.value.value)
+            if x == opts[-1]:
+                self.f.write(" />\n")
+            else:
+                self.f.write("\n" + self.indent + "            ")
 
-  def _showIdent(a):
-    if a[0] == 'THIS':
-      return "self:ext_" + a[1] + "." + a[2][1]
-    elif a[0] == 'OTHER':
-      return a[1][1] + ":" + a[2] + "." + a[3][1]
-    elif a[0] == 'COMP':
-      return a[1][0][1] + ":" + a[2] + "." + a[3][1]
-    else:
-      return a[1]
+    def _putImport(self,module):
+        self.f.write(self.indent + "<import name=\"" \
+                                 + module + "\" />\n")
 
-#---------------------------------------------------------------------
-# Build a cpc XML from abstract syntax tree
-#---------------------------------------------------------------------
-  def generateXML(self,ast,context,file = "output.xml"):
-    self.ctx = context
-    self.f = open(file,"w")
-    self._toXML(ast)
+    def _startNet(self):
+        self.f.write(self.indent + "<network>\n")
+        self._ind()
 
-  def _toXML(self,t):
-    if t == []:
-      pass
+    def _endNet(self):
+        self._unind()
+        self.f.write(self.indent + "</network>\n")
 
-    #elif t[0] == 'IMPORT':
-    #  putImport('.'.join(t[1]))
+    def _putConnection(self,src,dest):
+        self.f.write(self.indent + "<connection src=\""    \
+                   + self._showIdent(src) + "\" dest=\"" \
+                   + self._showIdent(dest) + "\" />\n")
 
-    elif t[0] == 'PROGRAM':
-      self._init()
-      map(self._toXML,t[1])
-      map(self._toXML,t[2])
-      self._end()  
+    def _putInstance(self,id,fun):
+        self.f.write(self.indent + "<instance id=\""                \
+                   + self._showIdent(id) + "\" function=\"" \
+                   + self._showIdent(fun) + "\" />\n")
 
-    elif t[0] == 'NETWORK':
-      self._startNet()
-      self._toXML(t[1])
-      map(self._toXML,t[2])
-      self._endNet()
+    def _showIdent(self,a):
+        if type(a) == csast.This:
+            return "self:ext_" + a.io + "." + a.ident.name
+        elif type(a) == csast.Other:
+            return a.component.name + ":" + a.io + "." + a.ident.name
+        elif type(a) == csast.Comp:
+            return a.component.ident.name + ":" + a.io + \
+                                            "." + a.ident.name
+        else:
+            return a.name
 
-    elif t[0] == 'COMPONENT':
-      if t[5][0] == 'NETWORK':
-        self._startFun(t[1][1],"network")
-      else:
-        self._startFun(t[1][1],t[5][1])
-        self._putDesc(t[2])
-        self._startInput()
-        map(self._putParam,t[3])
-        self._endInput()
-        self._startOutput()
-        map(self._putParam,t[4])
-        self._endOutput()
-        self._toXML(t[5])
-        self._endFun()
+    #-----------------------------------------------------------------
+    # Build a cpc XML from abstract syntax tree
+    #-----------------------------------------------------------------
+    def generateXML(self,csast,context,file = "output.xml"):
+        self.ctx = context
+        self.f = open(file,"w")
+        self._toXML(csast)
 
-    elif t[0] == 'ASSIGNMENT':
-      self._putInstance(t[1],t[2][0])
-      args = copy.copy(self.ctx[t[2][0][1]]['in'])
-      for x in t[2][1]:
-        y = args.pop(0)
-        self._putConnection(x, ['OTHER',t[2][0],'in',y[1]])
-        self._f.write("\n")
-        
-    elif t[0] == 'CONNECTION':
-      self._putConnection(t[1],t[2])
-      
-    elif t[0] == 'ATOM':
-      self._putController(t[2])
-      
-      #elif t[0] == 'CONTROLLER':
-      #  putController(t[1])
+    def _toXML(self,t):
+        #elif t[0] == 'IMPORT':
+        #    putImport('.'.join(t[1]))
 
-    else:
-      pass
+        if type(t) == csast.Program:
+            self._init()
+            map(self._toXML,t.imports)
+            map(self._toXML,t.components)
+            self._end()    
+
+        elif type(t) == csast.Network:
+            self._startNet()
+            self._toXML(t.controller)
+            map(self._toXML,t.body)
+            self._endNet()
+
+        elif type(t) == csast.Component:
+            if type(t.body) == csast.Network:
+                self._startFun(t.header.ident.name,"network")
+            else:
+                self._startFun(t.header.ident.name,t.body.type)
+            self._putDoc(t.header.doc)
+            self._startInput()
+            map(self._putParam,t.header.inputs)
+            self._endInput()
+            self._startOutput()
+            map(self._putParam,t.header.outputs)
+            self._endOutput()
+            self._toXML(t.body)
+            self._endFun()
+
+        elif type(t) == csast.Assignment:
+            self._putInstance(t.ident,t.component.ident)
+            args = copy.copy(self.ctx[t.component.ident.name]['in'])
+            for x in t.component.inputs:
+                y = args.pop(0)
+                if type(x) == csast.ComponentStmt:
+                    print "STMT"
+                    if self.ctx.has_key("temp"+str(tempName)):
+                        print "ZOMFG"
+                    self._putConnection(x, csast.Other(y.ident \
+                                                    ,'in'    \
+                                                    ,"temp"+str(tempName)))
+                else:
+                    self._putConnection(x, csast.Other(y.ident \
+                                                    ,'in'    \
+                                                    ,t.component.ident))
+            self.f.write("\n")
+                
+        elif type(t) == csast.Connection:
+            self._putConnection(t.left,t.right)
+            
+        elif type(t) == csast.Atom:
+            self._putController(t.options)
+            
+        #elif t[0] == 'CONTROLLER':
+        #    putController(t[1])
+
+        else:
+            pass
