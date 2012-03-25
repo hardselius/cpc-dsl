@@ -75,11 +75,11 @@ class CodspeechParser(PLYParser):
                 | empty
         """
         if len(p) == 5:
-            p[0] = csast.Program(p[1],[],p[3])
+            p[0] = csast.Program(p[1],p[3],[])
         elif len(p) == 4:
             p[0] = csast.Program(p[1],[],[])
         elif len(p) == 3:
-            p[0] = csast.Program([],[],p[1])
+            p[0] = csast.Program([],p[1],[])
         else:
             p[0] = csast.Program([],[],[])
 
