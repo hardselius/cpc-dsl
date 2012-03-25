@@ -2,6 +2,7 @@
 
 import codspeech.parser.csparser  as parser
 import codspeech.ast.csast as csast
+import codspeech.typechecker.cstypechecker_visitor as cstv
 
 
 # --------------------------------------------------------------
@@ -17,4 +18,6 @@ def test(filepath):
         prog = buffer.read()
         return p.parse(prog, filepath)
 
-t = test('examples/example3.cod')
+ast = test('examples/example3.cod')
+t = cstv.TypeChecker(debug=True)
+ctx = t.typecheck(ast)
