@@ -159,7 +159,7 @@ class NewType(Node):
             nodelist.append(("typedecl[%d]" % i, child))
         return tuple(nodelist)
 
-        attr_names = ()
+    attr_names = ()
 
 class TypeDecl(Node):
     def __init__(self, type, ident, coord=None):
