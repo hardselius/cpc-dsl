@@ -15,7 +15,14 @@ class Node(object):
         """
         pass
 
-    def show(self, buf=sys.stdout, offset=0, attrnames=False, nodenames=False, showcoord=False, _my_node_name=None):
+    def show(
+        self,
+        buf=sys.stdout,
+        offset=0,
+        attrnames=False,
+        nodenames=False,
+        showcoord=False,
+        _my_node_name=None):
         """ Pretty print the Node and all its attributes and
             children (recursively) to a buffer.
 
@@ -115,20 +122,14 @@ class NodeVisitor(object):
 
 
 class Program(Node):
-    def __init__(self, imports, components, newtypes, coord=None):
-        self.imports = imports
-        self.components = components
-        self.newtypes = newtypes
+    def __init__(self, definitions, coord=None):
+        self.definitions = definitions
         self.coord = coord
 
     def children(self):
         nodelist = []
-        for i, child in enumerate(self.imports or []):
-            nodelist.append(("imports[%d]" % i, child))
-        for i, child in enumerate(self.components or []):
-            nodelist.append(("components[%d]" % i, child))
-        for i, child in enumerate(self.newtypes or []):
-            nodelist.append(("newtypes[%d]" % i, child))
+        for i, child in enumerate(self.definitions or []):
+            nodelist.append(("definitions[%d]" % i, child))
         return tuple(nodelist)
 
     attr_names = ()
@@ -143,6 +144,36 @@ class Import(Node):
         return tuple(nodelist)
 
     attr_names = ('path',)
+
+class NewType(Node):
+    def __init__(self, type, typedecl, coord=None):
+        self.type = type
+        self.typedecl = typedecl
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        if self.type is not None: nodelist.append(("type", self.type))
+        for i, child in enumerate(self.typedecl or []):
+            nodelist.append(("typedecl[%d]" % i, child))
+        return tuple(nodelist)
+
+        attr_names = ()
+
+class TypeDecl(Node):
+    def __init__(self, type, ident, coord=None):
+        self.type = type
+        self.ident = ident
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        if self.type is not None: nodelist.append(("type", self.type))
+        if self.ident is not None: nodelist.append(("ident", self.ident))
+        return tuple(nodelist)
+
+    attr_names = ()
+
 
 class Component(Node):
     def __init__(self, header, body, coord=None):
