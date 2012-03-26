@@ -75,7 +75,7 @@ class CodspeechLexer(object):
         # Module stuff
         'import'    : 'IMPORT',
 
-        # Component, Controller, Network, Atom
+        # Component, Controller, Network, Atom, NewType
         'Component'  : 'COMPONENT',
         'Controller' : 'CONTROLLER',
         'Network'    : 'NETWORK',
@@ -83,6 +83,7 @@ class CodspeechLexer(object):
         'in'         : 'IN',
         'out'        : 'OUT',
         'default'    : 'DEFAULT',
+        'NewType'    : 'NEWTYPE',
         
         # Types
         'File'      : 'FILE',

@@ -60,59 +60,41 @@ class CodspeechParser(PLYParser):
     def p_entrypoint(self, p):
         """
         entrypoint : opt_cr program
+                   | empty
         """
         if len(p) == 3:
             p[0] = p[2]
         else:
             p[0] = p[1]
 
-            
-    def p_program(self, p):
+
+    def p_program(self,p):
         """
-        program : import_stmt_list cr component_decl_list opt_cr
-                | import_stmt_list  cr empty opt_cr
-                | component_decl_list opt_cr
-                | empty
+        program : top_stmt_list
         """
-        if len(p) == 5:
-            p[0] = csast.Program(p[1],p[3],[])
-        elif len(p) == 4:
-            p[0] = csast.Program(p[1],[],[])
-        elif len(p) == 3:
-            p[0] = csast.Program([],p[1],[])
-        else:
-            p[0] = csast.Program([],[],[])
+        p[0] = csast.Program(p[1])
 
 
-#    def p_top_stmt_list(self, p):
-#        """
-#        top_stmt_list : top_stmt
-#                      | top_stmt_list cr top_stmt
-#        """
-#        if len(p) == 2:
-#            p[0] = [p[1]]
-#        else:
-#            p[0] = p[1] + [p[3]]
-#
-#
-#    def p_top_stmt(self, p):
-#        """
-#        top_stmt : 
-#        """
-#        p[0] = p[1]
-
-
-    def p_import_stmt_list(self, p):
+    def p_top_stmt_list(self, p):
         """
-        import_stmt_list : import_stmt
-                         | import_stmt_list cr import_stmt
+        top_stmt_list : top_stmt
+                       | top_stmt_list cr top_stmt
         """
         if len(p) == 2:
             p[0] = [p[1]]
         else:
             p[0] = p[1] + [p[3]]
 
-            
+
+    def p_top_stmt(self, p):
+        """
+        top_stmt : import_stmt
+                 | newtype_stmt
+                 | component_decl
+        """
+        p[0] = p[1]
+
+
     def p_import_stmt(self, p):
         """
         import_stmt : IMPORT package_path
@@ -138,53 +120,33 @@ class CodspeechParser(PLYParser):
         p[0] = p[1]
 
 
-#    def p_newtype_stmt_list(self, p):
-#        """
-#        newtype_stmt_list : newtype_stmt
-#                          | newtype_stmt_list cr newtype_stmt
-#        """
-#        if len(p) == 2:
-#            p[0] = [p[1]]
-#        else:
-#            p[0] = p[1] + [p[3]]
-#
-#
-#    def p_newtype_stmt(self,p):
-#        '''
-#        newtype_stmt : NEWTYPE type docstring cr lparen type_conf_list rparen
-#        '''
+    # A NewType statement consists of a new type name, documentation and
+    # a list of type declaratins
+    def p_newtype_stmt(self,p):
+        '''
+        newtype_stmt : NEWTYPE type docstring cr lparen type_decl_list rparen
+        '''
+        print "NewType"
 #        p[0] = csast.NewType(p[2],p[6],p[3])
 
 
-    def p_type_conf_list(self, p):
+    def p_type_decl_list(self, p):
         """
-        type_conf_list : type_conf
-                       | type_conf_list comma_sep type_conf
-        """
-        if len(p) == 2:
-            p[0] = [p[1]]
-        else:
-            p[0] = p[1] + [p[3]]
-
-
-    def p_type_conf(self, p):
-        """
-        type_conf : ident COLON type
-        """
-        p[0] = csast.NewTypeObject(p[1],p[3])
-
-
-    # A list of components consists of either a single component or
-    # several components separated by newlines.
-    def p_component_decl_list(self, p) :
-        """
-        component_decl_list : component_decl
-                            | component_decl_list cr component_decl
+        type_decl_list : type_decl
+                       | type_decl_list comma_sep type_decl
         """
         if len(p) == 2:
             p[0] = [p[1]]
         else:
             p[0] = p[1] + [p[3]]
+
+
+    def p_type_decl(self, p):
+        """
+        type_decl : type COLON ident
+        """
+        print "NewTypeObject"
+#        p[0] = csast.NewTypeObject(p[1],p[3])
 
 
     # A component declaratation consists of the component header and
