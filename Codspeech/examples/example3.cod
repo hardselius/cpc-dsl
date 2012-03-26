@@ -1,3 +1,8 @@
+NewType Setting
+  ( Int   : a
+  , Float : b
+  )
+
 Component grompp '''The gromacs pre-processor: prepares run files for mdrun'''
   in  ( File   conf              '''a .gro configuration file'''
       , File   mdp               '''a .mpp settings file'''
