@@ -126,8 +126,7 @@ class CodspeechParser(PLYParser):
         '''
         newtype_stmt : NEWTYPE type docstring cr lparen type_decl_list rparen
         '''
-        print "NewType"
-#        p[0] = csast.NewType(p[2],p[6],p[3])
+        p[0] = csast.NewType(p[2],p[6],p[3])
 
 
     def p_type_decl_list(self, p):
@@ -145,8 +144,7 @@ class CodspeechParser(PLYParser):
         """
         type_decl : type COLON ident
         """
-        print "NewTypeObject"
-#        p[0] = csast.NewTypeObject(p[1],p[3])
+        p[0] = csast.TypeDecl(p[1],p[3])
 
 
     # A component declaratation consists of the component header and

@@ -146,9 +146,10 @@ class Import(Node):
     attr_names = ('path',)
 
 class NewType(Node):
-    def __init__(self, type, typedecl, coord=None):
+    def __init__(self, type, typedecl, doc, coord=None):
         self.type = type
         self.typedecl = typedecl
+        self.doc = doc
         self.coord = coord
 
     def children(self):
