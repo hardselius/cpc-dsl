@@ -416,21 +416,30 @@ class CodspeechParser(PLYParser):
         """
         fconst : FCONST
         """
-        p[0] = csast.Const(csast.Type('FLOAT'),p[1])
+        p[0] = csast.Const(
+            csast.Type('FLOAT'),
+            p[1],
+            self._coord(lineno(1)))
 
 
     def p_iconst(self, p):
         """
         iconst : ICONST
         """
-        p[0] = csast.Const(csast.Type('INT'),p[1])
+        p[0] = csast.Const(
+            csast.Type('INT'),
+            p[1],
+            self._coord(p.lineno(1)))
 
 
     def p_sconst(self, p):
         """
         sconst : SCONST
         """
-        p[0] = csast.Const(csast.Type('STRING'),p[1])
+        p[0] = csast.Const(
+            csast.Type('STRING'),
+            p[1],
+            self._coord(p.lineno(1)))
 
 
     # Idents.
