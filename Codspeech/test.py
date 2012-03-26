@@ -20,4 +20,4 @@ def test(filepath):
 
 ast = test('examples/example3.cod')
 t = cstv.TypeChecker(debug=True)
-ctx = t.typecheck(ast)
+#ctx = t.typecheck(ast)
