@@ -263,6 +263,19 @@ class Network(Node):
 
     attr_names = ()
 
+class Controller(Node):
+    def __init__(self, type, ident, coord=None):
+        self.type = type
+        self.ident = ident
+
+    def children(self):
+        nodelist = []
+        if self.type is not None: nodelist.append(("type", self.type))
+        if self.ident is not None: nodelist.append(("ident", self.ident))
+        return tuple(nodelist)
+
+    attr_names = ()
+
 class Atom(Node):
     def __init__(self, type, options, coord=None):
         self.type = type
