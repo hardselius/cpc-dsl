@@ -64,7 +64,7 @@ class TypeChecker:
             if type(o) == csast.Ident:
                 return self._getEnv()[o.name]
 
-            elif type(o)
+#            elif type(o)
 
             elif type(o) == csast.This:
                 return self._getEnv()[o.io][o.ident.name]

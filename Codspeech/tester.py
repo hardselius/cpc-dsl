@@ -4,8 +4,8 @@ sys.path.insert(0,"../..")
 import copy
 import codspeech.parser.csparser as csparse
 
-#import codspeech.typechecker.cstypechecker as cstype
-#import codspeech.xml.cstoxml       as xml
+import codspeech.typechecker.cstypechecker_visitor as cstype
+import codspeech.xml.cstoxml_visitor as xml
 
 
 example1 = '../examples/example1.cod'
@@ -30,7 +30,7 @@ def test(testfile):
   global pctx
   f = open(testfile)
   x = f.read()
-#  tc = cstype.TypeChecker()
+  tc = cstype.TypeChecker()
   parser = csparse.CodspeechParser()
   ast = parser.parse(x)
   if ast != None:
@@ -38,19 +38,19 @@ def test(testfile):
       print "Abstrac syntax tree:"
       print ast
       print ""
-#    try:
-#      env = tc.typecheck(ast)
-#    except cstype.TypeError as e:
-#      print "Type Error" + str(e)
-#    except cstype.ReferenceError as e:
-#      print "Reference Error" + str(e)
-#    else:
-#      if pctx:
-#        print "Context:"
-#        print env
-#      gXML = xml.XMLGenerator()
-#      gXML.generateXML(ast,env)
-#  else:
-#    print "No abstract syntax tree was generated."
+    try:
+      env = tc.typecheck(ast)
+    except cstype.TypeError as e:
+      print "Type Error" + str(e)
+    except cstype.ReferenceError as e:
+      print "Reference Error" + str(e)
+    else:
+      if pctx:
+        print "Context:"
+        print env
+      gXML = xml.XMLGenerator()
+      gXML.generateXML(ast,env)
+  else:
+    print "No abstract syntax tree was generated."
 
 test('examples/example3.cod')
