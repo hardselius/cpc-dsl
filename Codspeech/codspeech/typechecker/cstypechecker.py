@@ -1,16 +1,12 @@
 # ------------------------------------------------------------------
-# Codspeech/codspeech/typechecker: cstypechecker.py
+# Codspeech/codspeech/typechecker: cstypechecker_visitor.py
 #
 # A typechecker for Codspeech
 # ------------------------------------------------------------------
 
-import copy
-from ..ast              import csast
+from copy import copy
+from ..ast import csast
 from ..parser.plyparser import Coord
-
-#---------------------------------------------------------------------
-# Error Handling
-#---------------------------------------------------------------------
 
 class TypeError(Exception): pass
 
@@ -22,193 +18,223 @@ def _error_type(coord,msg):
 def _error_ref(coord,msg):
     raise ReferenceError("%s: %s" % (coord,msg))
 
-#---------------------------------------------------------------------
-# Typechecker
-#---------------------------------------------------------------------
-
-class TypeChecker:
-    def __init__(self):
-        self._resetEnv()
-
-    #-----------------------------------------------------------------
-    # Environment
-    #-----------------------------------------------------------------
-  
-    def _getEnv(self):
-        return self.env[-1]
-
-    def _resetEnv(self):
+    
+class TypeChecker(csast.NodeVisitor):
+    def __init__(self, debug=False):
         self.env = [{}]
+        self.debug = debug
+        if self.debug:
+            print '\nDebug: ON'
 
-    # Close scope
-    def _pop(self):
+            
+    def typecheck(self, ast):
+        """ Typechecks the AST
+
+        Keyword arguments:
+        ast - Duh...
+        
+        """
+        self.visit(ast)
+
+    def print_debug(self, node, msg):
+        if self.debug:
+            print "Visiting: '%s'" % node.__class__.__name__, msg
+
+
+    def print_env(self):
+        ind = '    '
+        e = self.getEnv()
+        for k, v in e.iteritems():
+            if type(v) == dict:
+                print k, ':'
+                for kv, vv in e[k].iteritems():
+                    print 1*ind, kv, ':'
+                    for t in vv:
+                        print 2*ind, t
+            else:
+                print k, ':', v
+
+
+    def pop(self):
         self.env.pop()
 
+    def push(self):
+        self.env.append(copy(self.getEnv()))
 
-    # Open new scope
-    def _put(self):
-        return self.env.append(copy.copy(self._getEnv()))
+    def getEnv(self):
+        return self.env[-1]
 
-
-    # Add (Iden,Type) to the self.environment
-    def _add(self,ident,type):
-        if self._varExist(ident.name):
-            _error_ref(ident,"multiple definitions of " + ident.pos)
+    def add (self, ident, type):
+        id = ident.name
+        if self.getEnv().has_key(id):
+            _error_ref(ident.coord, "ident already defined")
         else:
-            self._getEnv()[ident.name] = type
+            self.getEnv()[id] = type
 
 
-    # Return the type of an Ident
-    def _type(self,o):
-        try:
-            if type(o) == csast.Ident:
-                return self._getEnv()[o.name]
+    def getParamType(self, id, tupleList):
+        for i, t in tupleList:
+            if i == id: return t
 
-#            elif type(o)
-
-            elif type(o) == csast.This:
-                return self._getEnv()[o.io][o.ident.name]
-
-            elif type(o) == csast.Other:
-                return self._typeParams(self._getEnv()[o.component.name] \
-                                                     [o.io], o.ident.name)
-
-            elif type(o) == csast.Comp:
-                return self._typeParams(self._getEnv()                 \
-                                             [o.component.ident.name] \
-                                             [o.io]                   \
-                                             , o.ident.name)
-
-        except KeyError:
-            _error_ref(ident[2],"variable is not defined: " + \
-                                self._showArg(ident))
-
-
-    # Returns type of a parameter 'p' from a list of parameters
-    def _typeParams(self,params,p):
-        for x in params:
-            if x.ident.name == p: return x.type
-
-
-    # Returns if variable exists in self.environment
-    def _varExist(self,var):
-        return self._getEnv().has_key(var)
-
-
-    # Add parameter to input/output record
-    def _addParam(self,param):
-        if type(param) == csast.InParameter: io = 'in'
-        else: io = 'out'
-
-        if self._getEnv()[io].has_key(param.ident.name):
-            _error_ref(param.ident.pos,"multiple definitions of " + \
-                       param.ident.name)
-
-        elif param.default != None \
-            and param.type != param.default.type.title():
-            _error_type(param.ident.pos,"(%s::%s) (%s::%s)" % \
-                       (param.ident.name, param.type          \
-                       ,param.default.value, param.default.type))
-
-        else:
-            self._getEnv()[io][param.ident.name] = param.type
-
-
-    def _showArg(self,a):
-        if   type(a) == csast.This:
-            return a.io + "." + a.ident.name
-        elif type(a) == csast.Other:
-            return a.component.name + "." + a.io + "." + a.ident.name
-        elif type(a) == csast.Comp:
-            return a.component.component.name + "." + a.io + \
-                                                "." + a.ident.name
-        else:
-            return a.name
-
-    #-------------------------------------------------------------------
-    # typecheck function
-    #-------------------------------------------------------------------
-
-    def typecheck(self,t):
-        # Program: check import, components
-        if type(t) == csast.Program:
-            addComp = lambda x: self._add(x.header.ident,       \
-                                         {'in':x.header.inputs, \
-                                          'out':x.header.outputs})
-            map(addComp,t.components)
-            map(self.typecheck,t.newtypes)
-            map(self.typecheck,t.components)
-            ctx = copy.copy(self._getEnv())
-            self._resetEnv()
-            return ctx
-
-        # Component: check paramaters, network/atom
-        elif type(t) == csast.Component:
-            self._put()
-            self._add(csast.Ident('in'),{})
-            self._add(csast.Ident('out'),{})
-            map(self._addParam,t.header.inputs)
-            map(self._addParam,t.header.outputs)
-            self.typecheck(t.body)
-            self._pop()
-
-        # Network: check controller, network block
-        elif type(t) == csast.Network:
-            self.typecheck(t.controller)
-            map(self.typecheck,t.body)
-
-        elif type(t) == csast.NewType:
-            pass
-
-        # Network: check controller, network block
-        elif type(t) == csast.Atom:
-            pass
-
-        # Assignment: check component, argument
-        elif type(t) == csast.Assignment:
-            self._add(t.ident,self._type(t.component.ident))
-            self.typecheck(t.component)
-
-        elif type(t) == csast.ComponentStmt:
-            args = copy.copy(self._type(t.ident)['in'])
-            for x in t.inputs:
-                if args == []:
-                    _error_ref(x.ident.pos,"input out of bounds: " + \
-                                           self._showArg(x))
-                else:
-                    y = args.pop(0)
-                    tx = self.typecheck(x)
-                    if tx != y.type:
-                        _error_type(x.ident.pos,"(%s::%s) (%s::%s)" %     \
-                                   (self._showArg(x), tx                  \
-                                   ,self._showArg(csast.Other(y.ident,      \
-                                                           'in',t.ident)) \
-                                   ,y.type))
-
-        elif type(t) == csast.Const:
-            return t.type
-
-        elif type(t) == csast.This:
-            return self._type(t)
-
-        elif type(t) == csast.Other:
-            return self._type(t)
-
-        elif type(t) == csast.Comp:
-            self.typecheck(t.component)
-            return self._type(t)
-
-        # Connection: check variables
-        elif type(t) == csast.Connection:
-            if self._type(t.left) != self._type(t.right):
-                _error_type(t.right.ident.pos,"(%s::%s) (%s::%s)" %         \
-                           (self._showArg(t.left), self._type(t.left) \
-                           ,self._showArg(t.right), self._type(t.right)))
-
-        # Controller: check variable, component
-        elif type(t) == csast.Controller:
-            add(t.ident,self._type(t.type))
     
-        # Something is missing
+    def visit_Program(self, node):
+        self.print_debug(node, 'lol')
+        for cname, c in node.children():
+            if type(c) == csast.Import:
+                pass
+            elif type(c) == csast.Component:
+                self.add(
+                    c.header.ident,
+                    self.visit(c.header))
+            elif type(c) == csast.NewType:
+                pass
+            else:
+                pass
+        self.generic_visit(node)
+        
+
+    def visit_Component(self, node):
+        self.print_debug(node, '')
+        self.component = node
+        self.push()
+        self.visit(node.body)
+        if self.debug: self.print_env()
+        self.pop()
+
+
+    def visit_Import(self, node):
+        pass
+
+
+    def visit_NewType(self, node):
+        pass
+
+
+    def visit_Header(self, node):
+        self.print_debug(node, 'Adding component types')
+        inp  = []
+        outp = []
+        for i in node.inputs:
+            if self.getParamType(i.ident.name, inp):
+                _error_ref(
+                    i.ident.coord,
+                    "multiple definitions of '%s'" % i.ident.name)
+            else:
+                inp.append((i.ident.name, self.visit(i)))
+                
+        for o in node.outputs:
+            if self.getParamType(o.ident.name, inp):
+                _error_ref(
+                    o.ident.coord,
+                    "multiple definitions of '%s'" % o.ident.name)
+            else:
+                outp.append((o.ident.name, self.visit(o)))
+        return { 'in'  : inp,
+                 'out' : outp }
+
+            
+    def visit_InParameter(self, node):
+        self.print_debug(node, '')
+        if node.default:
+            t = self.visit(node.type)
+            d = self.visit(node.default)
+            if not t == d:
+                _error_type(
+                    node.default.coord,
+                    "Constant type '%s' does not match '%s'" % d, t)
         else:
-            pass
+            return self.visit(node.type)
+        
+
+    def visit_OutParameter(self, node):
+        self.print_debug(node, '')
+        return self.visit(node.type)
+
+
+    def visit_Atom(self, node):
+        self.print_debug(node, '')
+
+
+    def visit_Network(self, node):
+        self.print_debug(node, '')
+        self.generic_visit(node)
+        
+
+    def visit_Controller(self, node):
+        self.print_debug(node, '')
+        self.add(node.ident, self.visit(node.comp))
+
+
+    def visit_Connection(self, node):
+        self.print_debug(node, '')
+        tl = self.visit(node.left)
+        tr = self.visit(node.right)
+        if tl != tr:
+            _error_type(
+                left.coord,
+                "type '%s' does not match type of left hand side ('%s')"\
+                % tr, tl)
+        else:
+            return tl
+        
+
+    def visit_Assignment(self, node):
+        self.print_debug(node, '')
+        self.add(
+            node.ident,
+            self.visit(node.comp.ident))
+        self.visit(node.comp)
+
+
+    def visit_ComponentStmt(self, node):
+        self.print_debug(node, '')
+        inparams = copy(self.visit(node.ident)['in'])
+        for i in node.inputs:
+            if inparams:
+                name, par_typ = inparams.pop(0)
+                inp_typ       = self.visit(i)
+                if inp_typ != par_typ:
+                    _error_type(node.ident.coord, "componentstmt error")
+            
+
+
+    def visit_Const(self, node):
+        self.print_debug(node, '')
+        return self.visit(node.type)
+
+        
+    def visit_ParamRef(self, node):
+        self.print_debug(node, '')
+        try:
+            io = node.io.ref
+            pname = node.ident.name
+            c = node.comp
+            if type(c) == csast.Ident:
+                cname = c.name
+            elif type(c) == csast.ComponentStmt:
+                cname = c.ident.name
+            else:
+                cname = self.component.header.ident.name
+            return self.getParamType(pname, self.getEnv()[cname][io])
+        except KeyError:
+            _error_ref(
+                node.ident.coord,
+                "'%s' not defined" % (cname + '.' + pname))
+
+        
+    def visit_Ident(self, node):
+        self.print_debug(node, node.name)
+        try:
+            return self.getEnv()[node.name]
+        except KeyError:
+            _error_ref(node.coord, "ident '%s': not defined" % node.name)
+        
+
+    def visit_Type(self, node):
+        self.print_debug(node, '')
+        return node.type
+
+
+    def visit_Ref(self, node):
+        self.print_debug(node, node.ref)
+        return node.ref
