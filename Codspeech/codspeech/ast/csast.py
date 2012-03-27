@@ -277,14 +277,14 @@ class Controller(Node):
     attr_names = ()
 
 class Atom(Node):
-    def __init__(self, type, options, coord=None):
-        self.type = type
+    def __init__(self, comp, options, coord=None):
+        self.comp = comp
         self.options = options
         self.coord = coord
 
     def children(self):
         nodelist = []
-        if self.type is not None: nodelist.append(("type", self.type))
+        if self.comp is not None: nodelist.append(("comp", self.comp))
         for i, child in enumerate(self.options or []):
             nodelist.append(("options[%d]" % i, child))
         return tuple(nodelist)

@@ -21,8 +21,7 @@ def _error_ref(coord,msg):
     
 class TypeChecker(csast.NodeVisitor):
     def __init__(self, debug=False):
-        self.topdefenv = {}
-        self.env = {}
+        self.env = [{}]
         self.debug = debug
         if self.debug:
             print '\nDebug: ON'
@@ -36,59 +35,161 @@ class TypeChecker(csast.NodeVisitor):
         
         """
         self.visit(ast)
-        #ctx = copy(self._getEnv())
-        #self._resetEnv()
-        #return ctx
 
-        
-    def add (self, env, id, type):
-        env[id] = type
+    def print_debug(self, node, msg):
+        if self.debug:
+            print "Visiting: '%s'" % node.__class__.__name__, msg
 
-    def paramTypes(self, paramList):
-        ps = []
-        for p in paramList:
-            if p.default:
-                if not p.type.type == p.default.type.type:
-                    _error_type(
-                        p.default.coord,
-                        "Constant type '%s' does not match '%s'"\
-                        % p.default.type.type, p.type.type)
-            elif self.getParamType(p.ident.name, ps):
-                _error_ref(
-                    p.ident.coord,
-                    "multiple definitions of '%s'" % p.ident.name)
+
+    def pop(self):
+        self.env.pop()
+
+    def push(self):
+        self.env.append(copy(self.getEnv()))
+
+    def getEnv(self):
+        return self.env[-1]
+
+    def add (self, ident, type):
+        id = ident.name
+        if self.getEnv().has_key(id):
+            _error_ref(ident.coord, "ident already defined")
+        else:
+            self.getEnv()[id] = type
+
+
+    def getType(self, node):
+        try:
+            if type(node) == csast.Ident:
+                return self.getEnv()[self.visit(node)]
+            elif type(node) == csast.ParamRef:                
+                io    = self.visit(node.ref)
+                pname = self.visit(node.ident)
+                c     = node.comp
+                if c:
+                    if type(c) == csast.Ident:
+                        cname = self.visit(c)
+                    elif type(c) == csast.ComponentStmt:
+                        cname = self.visit(c.ident)
+                    else:
+                        pass # some error?
+                else:
+                    cname = self.visit(self.component.header.ident)
+                return self.getParamType(
+                    pname,
+                    self.getEnv()[cname][io])
             else:
-                ps.append((p.ident.name, p.type.type))
-        return ps
+                return None                
+        except KeyError:
+            _error_ref(node.coord, "not defined")
 
 
     def getParamType(self, id, tupleList):
         for i, t in tupleList:
             if i == id: return t
-        
 
     
     def visit_Program(self, node):
+        self.print_debug(node, 'lol')
         for cname, c in node.children():
             if type(c) == csast.Import:
                 pass
             elif type(c) == csast.Component:
                 self.add(
-                    self.topdefenv,
-                    c.header.ident.name,
-                    { 'in'  : self.paramTypes(c.header.inputs),
-                      'out' : self.paramTypes(c.header.outputs) }
-                )
+                    c.header.ident,
+                    self.visit(c.header))
             elif type(c) == csast.NewType:
                 pass
             else:
                 pass
-        print self.topdefenv
+        self.generic_visit(node)
+        
 
         
     def visit_Component(self, node):
-        self.component = node.header.ident.name
-        pass
+        self.print_debug(node, '')
+        self.component = node
+        self.visit(node.body)
+        self.env = {}
+
+
+    def visit_Header(self, node):
+        self.print_debug(node, 'Adding component types')
+        inp  = []
+        outp = []
+        for i in node.inputs:
+            if self.getParamType(i.ident.name, inp):
+                _error_ref(
+                    i.ident.coord,
+                    "multiple definitions of '%s'" % i.ident.name)
+            else:
+                inp.append((i.ident.name, self.visit(i)))
+                
+        for o in node.outputs:
+            if self.getParamType(o.ident.name, inp):
+                _error_ref(
+                    o.ident.coord,
+                    "multiple definitions of '%s'" % o.ident.name)
+            else:
+                outp.append((o.ident.name, self.visit(o)))
+        return { 'in'  : inp,
+                 'out' : outp }
+
+            
+    def visit_InParameter(self, node):
+        self.print_debug(node, '')
+        if node.default:
+            t = self.visit(node.type)
+            d = self.visit(node.default)
+            if not t == d:
+                _error_type(
+                    node.default.coord,
+                    "Constant type '%s' does not match '%s'" % d, t)
+        else:
+            return self.visit(node.type)
+        
+
+    def visit_OutParameter(self, node):
+        self.print_debug(node, '')
+        return self.visit(node.type)
+
+
+    def visit_Atom(self, node):
+        self.print_debug(node, '')
+
+
+    def visit_Network(self, node):
+        self.print_debug(node, '')
+        self.generic_visit(node)
+        
+
+    def visit_Controller(self, node):
+        self.print_debug(node, '')
+        self.add(node.ident, self.getType(node.comp))
+
+
+    def visit_Constant(self, node):
+        self.print_debug(node, '')
+        return self.visit(node.type)
+
+        
+    def visit_Ident(self, node):
+        self.print_debug(node, node.name)
+        return node.name
+        
+
+    def visit_Type(self, node):
+        self.print_debug(node, '')
+        return node.type
+
+
+    def visit_Ref(self, node):
+        self.print_debug(node, node.ref)
+        return node.ref
+
+
+
+
         
 
 
