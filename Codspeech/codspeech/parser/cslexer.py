@@ -45,10 +45,8 @@ class CodspeechLexer(object):
         g = self.lexer.token()
         return g
 
-        
-    ######################--   PRIVATE   --######################
 
-    # --------------------------------------------------------------
+    # ------------------------------------------------------ PRIVATE
     # Internal auxiliary methods
     # --------------------------------------------------------------
     def _error(self, msg, token):
@@ -105,9 +103,10 @@ class CodspeechLexer(object):
         # Connection: <-
         'CONNECTION',
 
-        # Delimeters: ( ) { } , .
+        # Delimeters: ( ) { } [ ] , .
         'LPAREN', 'RPAREN',
         'LBRACE', 'RBRACE',
+        'LBRACKET', 'RBRACKET',
         'COMMA', 'PERIOD',
 
         # Other:
@@ -188,6 +187,8 @@ class CodspeechLexer(object):
     t_CONNECTION = r'<-'
     t_LPAREN     = r'\('
     t_RPAREN     = r'\)'
+    t_LBRACKET   = r'\['
+    t_RBRACKET   = r'\]'
     t_LBRACE     = r'\{'
     t_RBRACE     = r'\}'
     t_COMMA      = r','
