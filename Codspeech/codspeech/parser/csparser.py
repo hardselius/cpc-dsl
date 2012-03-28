@@ -287,7 +287,7 @@ class CodspeechParser(PLYParser):
     # block contains.
     def p_atom_stmt(self, p):
         """
-        atom_stmt : ATOM MODULE opt_cr lparen atom_conf_list rparen
+        atom_stmt : ATOM ATOMTYPE opt_cr lparen atom_conf_list rparen
         """
         p[0] = csast.Atom(csast.AtomType(p[2]), p[5])
 

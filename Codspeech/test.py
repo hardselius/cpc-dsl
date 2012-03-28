@@ -2,7 +2,7 @@
 
 import codspeech.parser.csparser  as parser
 import codspeech.ast.csast as csast
-import codspeech.typechecker.cstypechecker_visitor as cstv
+import codspeech.typechecker.cstypechecker as cstc
 
 
 # --------------------------------------------------------------
@@ -20,5 +20,5 @@ def parse(filepath):
 
 def test():
     ast = parse('examples/example3.cod')
-    t = cstv.TypeChecker(debug=True)
+    t = cstc.TypeChecker(debug=True)
     return ast, t
