@@ -71,15 +71,15 @@ class CodspeechParser(PLYParser):
 
     def p_program(self,p):
         """
-        program : top_stmt_list
+        program : top_def_list opt_cr
         """
         p[0] = csast.Program(p[1])
 
 
-    def p_top_stmt_list(self, p):
+    def p_top_def_list(self, p):
         """
-        top_stmt_list : top_stmt
-                       | top_stmt_list cr top_stmt
+        top_def_list : top_def
+                     | top_def_list cr top_def
         """
         if len(p) == 2:
             p[0] = [p[1]]
@@ -87,15 +87,19 @@ class CodspeechParser(PLYParser):
             p[0] = p[1] + [p[3]]
 
 
-    def p_top_stmt(self, p):
+    def p_top_def(self, p):
         """
-        top_stmt : import_stmt
-                 | newtype_stmt
-                 | component_decl
+        top_def : import_stmt
+                | newtype_decl
+                | atom_decl
+                | network_decl
         """
         p[0] = p[1]
 
 
+    # --------------------------------------------------------------
+    # Import Statement
+    # --------------------------------------------------------------
     def p_import_stmt(self, p):
         """
         import_stmt : IMPORT package_path
@@ -116,18 +120,24 @@ class CodspeechParser(PLYParser):
 
     def p_package_identifier(self, p):
         """
-        package_identifier : ID
+        package_identifier : IDENT
         """
         p[0] = p[1]
 
 
-    # A NewType statement consists of a new type name, documentation and
-    # a list of type declaratins
-    def p_newtype_stmt(self,p):
+    # --------------------------------------------------------------
+    # Newtype
+    # --------------------------------------------------------------
+    # A NewType statement consists of a new type name, documentation
+    # and a list of type declaratins
+    def p_newtype_decl(self,p):
         '''
-        newtype_stmt : NEWTYPE type docstring cr lparen type_decl_list rparen
+        newtype_decl : TYPE type docstring cr lparen type_decl_list rparen
         '''
-        p[0] = csast.NewType(p[2],p[6],p[3])
+        p[0] = csast.Newtype(
+            type     = p[2],
+            doc      = p[3],
+            typedecl = p[6])
 
 
     def p_type_decl_list(self, p):
@@ -148,60 +158,38 @@ class CodspeechParser(PLYParser):
         p[0] = csast.TypeDecl(p[1],p[3])
 
 
-    # A component declaratation consists of the component header and
-    # either a network statement or an atom statement.
-    def p_component_decl(self, p):
+    # --------------------------------------------------------------
+    # Atom Declaration
+    # --------------------------------------------------------------
+    def p_atom_decl(self, p):
         """
-        component_decl : COMPONENT component_header network_stmt
-                       | COMPONENT component_header atom_stmt
+        atom_decl : ATOM atomtype header optionblock
         """
-        p[0] = csast.Component(p[2],p[3])
+        p[0] = csast.Atom(
+            atomtype    = p[2],
+            header      = p[3],
+            optionblock = p[4])
 
 
-    # A component header consists of the the name of the component, a
-    # doctring and the i/o parameters.
-    def p_component_header(self, p):
+    def p_atomtype(self, p):
         """
-        component_header : ident docstring cr in_params out_params
+        atomtype : ATOMTYPE
         """
-        p[0] = csast.Header(p[1],p[2],p[4],p[5])
+        p[0] = csast.AtomType(
+            type = p[1])
+
+    def p_optionblock(self, p):
+        """
+        optionblock : OPTIONS opt_cr lparen atom_option_list rparen
+        """
+        p[0] = csast.Optionblock(
+            options = p[4])
 
 
-    # ------------------------------------------------------------------
-    # parameter lists
-    # ------------------------------------------------------------------
-    # The in-parameters consists of either a non-empty list of parameters
-    # or no parameters at all.
-    def p_in_params(self, p):
+    def p_atom_option_list(self, p):
         """
-        in_params : IN lparen in_param_list rparen cr
-                  | IN no_params cr
-        """
-        if len(p) == 6:
-            p[0] = p[3]
-        else:
-            p[0] = []
-
-
-    # The otu-parameters consists of either a non-empty list of parameters
-    # or no parameters at all.
-    def p_out_params(self, p):
-        """
-        out_params : OUT lparen out_param_list rparen cr
-                   | OUT no_params cr
-        """
-        if len(p) == 6:
-            p[0] = p[3]
-        else:
-            p[0] = []
-
-
-    # Either a single parameter or a list of parameters separated by ','
-    # and possibly on separate lines.
-    def p_in_param_list(self, p):
-        """
-        in_param_list : in_param
-                      | in_param_list comma_sep in_param
+        atom_option_list : atom_option
+                         | atom_option_list comma_sep atom_option
         """
         if len(p) == 2:
             p[0] = [p[1]]
@@ -209,10 +197,75 @@ class CodspeechParser(PLYParser):
             p[0] = p[1] + [p[3]]
 
 
-    def p_out_param_list(self, p):
+    def p_atom_option(self, p):
         """
-        out_param_list : out_param
-                       | out_param_list comma_sep out_param
+        atom_option : sconst COLON sconst
+        """
+        p[0] = csast.AtomOption(
+            option = p[1].value,
+            value  = p[3].value)
+
+
+    # --------------------------------------------------------------
+    # Network Declaration
+    # --------------------------------------------------------------
+    def p_network_decl(self, p):
+        """
+        network_decl : NETWORK header networkblock
+        """
+        p[0] = csast.Network(
+            header       = p[2],
+            networkblock = p[3])
+
+
+    def p_networkblock(self, p):
+        """
+        networkblock : stmt_block
+        """
+        p[0] = csast.Networkblock(
+            stmts = p[1])
+
+        
+    # ------------------------------------------------------------------
+    # Atom and Network Header
+    # ------------------------------------------------------------------
+    def p_header(self, p):
+        """
+        header : ident docstring cr inputs outputs
+        """
+        p[0] = csast.Header(
+            ident   = p[1],
+            doc     = p[2],
+            inputs  = p[4],
+            outputs = p[5])
+
+
+    def p_inputs(self, p):
+        """
+        inputs : IN lparen input_list rparen cr
+               | IN no_params cr
+        """
+        if len(p) == 6:
+            p[0] = p[3]
+        else:
+            p[0] = []
+
+
+    def p_outputs(self, p):
+        """
+        outputs : OUT lparen output_list rparen cr
+                | OUT no_params cr
+        """
+        if len(p) == 6:
+            p[0] = p[3]
+        else:
+            p[0] = []
+
+
+    def p_input_list(self, p):
+        """
+        input_list : input
+                   | input_list comma_sep input
         """
         if len(p) == 2:
             p[0] = [p[1]]
@@ -220,8 +273,17 @@ class CodspeechParser(PLYParser):
             p[0] = p[1] + [p[3]]
 
 
-    # An empty parenthesis. The left and right parenthesis may be on
-    # different lines.
+    def p_output_list(self, p):
+        """
+        output_list : output
+                    | output_list comma_sep output
+        """
+        if len(p) == 2:
+            p[0] = [p[1]]
+        else:
+            p[0] = p[1] + [p[3]]
+
+
     def p_no_params(self, p):
         """
         no_params : LPAREN opt_cr RPAREN
@@ -229,90 +291,51 @@ class CodspeechParser(PLYParser):
         pass
 
 
-    # A parameter is either just a type and an ident or extended with a
-    # default value.
-    def p_in_param(self, p):
+    def p_input(self, p):
         """
-        in_param : type ident docstring
-                 | OPTIONAL type ident docstring
-                 | type ident DEFAULT constant docstring
+        input : type ident docstring
+              | OPTIONAL type ident docstring
+              | type ident DEFAULT constant docstring
         """
         if len(p) == 4:
-            p[0] = csast.InParameter(p[2], p[1], p[3])
+            p[0] = csast.InParameter(
+                type  = p[2],
+                ident = p[1],
+                doc   = p[3])
         elif len(p) == 5:
-            p[0] = csast.InParameter(p[3], p[2], p[4], True, None)
+            p[0] = csast.InParameter(
+                type     = p[2],
+                ident    = p[3],
+                doc      = p[4],
+                optional = True)
         else:
-            p[0] = csast.InParameter(p[2], p[1], p[5], False, p[4])
+            p[0] = csast.InParameter(
+                type    = p[1],
+                ident   = p[2],
+                doc     = p[5],
+                default = p[4])
 
 
-    def p_out_param(self, p):
+    def p_output(self, p):
         """
-        out_param : type ident docstring
-                  | type ident DEFAULT constant docstring
+        output : type ident docstring
+               | type ident DEFAULT constant docstring
         """
         if len(p) == 4:
-            p[0] = csast.OutParameter(p[2],p[1],p[3])
+            p[0] = csast.OutParameter(
+                type  = p[1],
+                ident = p[2],
+                doc   = p[3])
         else:
-            p[0] = csast.InParameter(p[2],p[1],p[5],p[4])
+            p[0] = csast.InParameter(
+                type    = [1],
+                ident   = p[2],
+                doc     = p[5],
+                default = p[4])
 
 
     # ------------------------------------------------------------------
-    # network statements
-    # ------------------------------------------------------------------
-    # A networks statement consists of either a network and a statement
-    # block, or a network with an associated network controller and a
-    # statement block.
-    def p_network_stmt(self, p):
-        """
-        network_stmt : NETWORK stmt_block
-                     | NETWORK opt_cr network_controller stmt_block
-        """
-        if len(p) == 3:
-            p[0] = csast.Network(p[2])
-        else:
-            p[0] = csast.Network(p[4],p[3])
-
-
-    # A network controller is a component and the controller alias?
-    def p_network_controller(self, p):
-        """
-        network_controller : CONTROLLER ident ident
-        """
-        p[0] = csast.Controller(p[2],p[3])
-
-
-    # ------------------------------------------------------------------
-    # atom statement
-    # ------------------------------------------------------------------
-    # An atom consist of an atom option descrbing what the following atom
-    # block contains.
-    def p_atom_stmt(self, p):
-        """
-        atom_stmt : ATOM ATOMTYPE opt_cr lparen atom_conf_list rparen
-        """
-        p[0] = csast.Atom(csast.AtomType(p[2]), p[5])
-
-
-    def p_atom_conf_list(self, p):
-        """
-        atom_conf_list : atom_conf
-                       | atom_conf_list comma_sep atom_conf
-        """
-        if len(p) == 2:
-            p[0] = [p[1]]
-        else:
-            p[0] = p[1] + [p[3]]
-
-
-    def p_atom_conf(self, p):
-        """
-        atom_conf : sconst COLON sconst
-        """
-        p[0] = csast.AtomOption(p[1].value, p[3].value)
-
-
-    # ------------------------------------------------------------------
-    # statements
+    # Statements
     # ------------------------------------------------------------------
     # A statement block contains a list of statements enclosed in braces.
     def p_stmt_block(self, p):
@@ -348,27 +371,43 @@ class CodspeechParser(PLYParser):
     # Statement types.
     def p_stmt(self, p):
         """
-        stmt : connection
-             | sass
-             | expr
+        stmt : controller_stmt
+             | connection_stmt
+             | assignment_stmt
         """
         p[0] = p[1]
 
 
+    # Controller
+    def p_controller_stmt(self, p):
+        """
+        controller_stmt : CONTROLLER LPAREN ident RPAREN
+        """
+        p[0] = csast.ControllerStmt(
+            ident = p[3],
+            coord = self._coord(p.lineno(1)))
+
+        
     # Connections.
-    def p_connection(self, p):
+    def p_connection_stmt(self, p):
         """
-        connection : param_ref CONNECTION expr
+        connection_stmt : param_ref CONNECTION expr
         """
-        p[0] = csast.Connection(p[1],p[3])
+        p[0] = csast.ConnectionStmt(
+            destination = p[1],
+            source      = p[3],
+            coord       = self._coord(p.lineno(2)))
 
 
     # Assignment.
-    def p_sass(self, p):
+    def p_assignment_stmt(self, p):
         """
-        sass : ident EQUALS component_stmt
+        assignment_stmt : ident EQUALS component_stmt
         """
-        p[0] = csast.Assignment(p[1],p[3])
+        p[0] = csast.AssignmentStmt(
+            ident = p[1],
+            comp  = p[3],
+            coord = self._coord(p.lineno(2)))
 
 
     # A component statement: comp_id (expr_0, ..., expr_n)
@@ -376,7 +415,9 @@ class CodspeechParser(PLYParser):
         """
         component_stmt : ident lparen expr_list rparen
         """
-        p[0] = csast.ComponentStmt(p[1],p[3])
+        p[0] = csast.ComponentStmt(
+            ident  = p[1],
+            inputs = p[3])
 
 
     # ------------------------------------------------------------------
@@ -385,8 +426,8 @@ class CodspeechParser(PLYParser):
     def p_expr(self, p):
         """
         expr : constant
-             | ident
              | param_ref
+             | ident
         """
         p[0] = p[1]
 
@@ -417,38 +458,40 @@ class CodspeechParser(PLYParser):
         """
         fconst : FCONST
         """
-        p[0] = csast.Const(
-            csast.Type('Float'),
-            p[1],
-            self._coord(p.lineno(1)))
+        p[0] = csast.Constant(
+            type  = csast.Type('float'),
+            value = p[1],
+            coord = self._coord(p.lineno(1)))
 
 
     def p_iconst(self, p):
         """
         iconst : ICONST
         """
-        p[0] = csast.Const(
-            csast.Type('Int'),
-            p[1],
-            self._coord(p.lineno(1)))
+        p[0] = csast.Constant(
+            type  = csast.Type('int'),
+            value = p[1],
+            coord = self._coord(p.lineno(1)))
 
 
     def p_sconst(self, p):
         """
         sconst : SCONST
         """
-        p[0] = csast.Const(
-            csast.Type('String'),
-            p[1],
-            self._coord(p.lineno(1)))
+        p[0] = csast.Constant(
+            type  = csast.Type('string'),
+            value = p[1],
+            coord = self._coord(p.lineno(1)))
 
 
     # Idents.
     def p_ident(self, p):
         """
-        ident : ID
+        ident : IDENT
         """
-        p[0] = csast.Ident(p[1],self._coord(p.lineno(1)))
+        p[0] = csast.Ident(
+            name  = p[1],
+            coord = self._coord(p.lineno(1)))
 
 
     # A parameter reference references either the component it's stated
@@ -462,11 +505,20 @@ class CodspeechParser(PLYParser):
                   | lparen component_stmt rparen PERIOD OUT PERIOD ident
         """
         if len(p) == 4:
-            p[0] = csast.ParamRef(None, csast.Ref(p[1]), p[3])
+            p[0] = csast.ParamRef(
+                comp  = None,
+                io    = csast.Ref(p[1]),
+                ident = p[3])
         elif len(p) == 6:
-            p[0] = csast.ParamRef(p[1], csast.Ref(p[3]), p[5])
+            p[0] = csast.ParamRef(
+                comp  = p[1],
+                io    = csast.Ref(p[3]),
+                ident = p[5])
         else:
-            p[0] = csast.ParamRef(p[2], csast.Ref(p[5]), p[7])
+            p[0] = csast.ParamRef(
+                comp  = p[2],
+                io    = csast.Ref(p[5]),
+                ident = p[7])
 
 
     # ------------------------------------------------------------------
@@ -478,7 +530,8 @@ class CodspeechParser(PLYParser):
         type : FILE
              | FLOAT
              | INT
-             | TYPE
+             | STRING
+             | IDENT
              | LBRACKET type RBRACKET
         """
         if len(p) == 2:
