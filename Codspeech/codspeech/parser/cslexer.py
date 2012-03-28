@@ -111,43 +111,55 @@ class CodspeechLexer(object):
         'COMMA', 'PERIOD',
 
         # Other:
-        'CR', 'MODULE', 'OPTIONAL'
+        'CR', 'ATOMTYPE', 'OPTIONAL'
     ] + keyword_map.values()
 
 
     # --------------------------------------------------------------
     # regular expressions for use in tokens
     # --------------------------------------------------------------
-    digits      = r'([0-9])'
-    lowercase   = r'([a-z])'
-    uppercase   = r'([A-Z])'
-    letters     = r'([A-Za-z])'
-    nondigit    = r'([_A-Za-z])'
-    string      = r'([^\\\n]|(\\.))*?'
-    ident       = r'(' + lowercase + r'(' + digits + r'|' + nondigit + r')*)'
-    typeident   = r'(' + uppercase + r'(' + digits + r'|' + nondigit + r')*)'
-    litint      = r'\d+'
-    litfloat    = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
-    litstring   = r'\"' + string + r'\"'
-    description = r'(\{-)' + string + r'(-\})'
-    modulename  = r'(' + nondigit + r'(.' + nondigit + r')*' +  r')'
-    atommodule  = r'<( )*(?P<opt>' + modulename + r'+)( )*>'
-    docstring   = r'(\'\'\')(.|\n)*?(\'\'\')'
 
+    # character groups
+    nondigit     = r'[_A-Za-z]'
+    lowercase    = r'[a-z]'
+    uppercase    = r'[A-Z]'
 
+    # atoms
+    atomtypechar = r'(' + lowercase + r'|' + r'-' + ')'
+    atomtype     = r'<( )*(?P<opt>' + atomtypechar + r'+)( )*>'
+
+    # comments and docstring
+    commentblock = r'/\#(.|\n)*?\#/'
+    commentline  = r'\#[^\\\n]*'
+    docstring    = r'(\'\'\')(.|\n)*?(\'\'\')'
+    
+    # idents
+    identchar    = r'[_A-Za-z0-9]'
+    identvar     = r'(' + lowercase + r'(' + identchar + r')*)'
+    identtype    = r'(' + uppercase + r'(' + identchar + r')*)'
+
+    # literals
+    litfloat     = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
+    litint       = r'\d+'
+    litstring    = r'\"([^\\\n]|(\\.))*?\"'
+
+    # modulename
+    modulename   = r'(' + nondigit + r'(.' + nondigit + r')*' +  r')'
+
+    
     # --------------------------------------------------------------
     # token rules
     # --------------------------------------------------------------
     t_ignore = ' \t\x0c'
 
     
-    @TOKEN(ident)
+    @TOKEN(identvar)
     def t_ID(self, t):
         t.type = self.keyword_map.get(t.value,"ID")
         return t
 
 
-    @TOKEN(typeident)
+    @TOKEN(identtype)
     def t_TYPE(self, t):
         t.type = self.keyword_map.get(t.value,"TYPE")
         return t
@@ -170,11 +182,6 @@ class CodspeechLexer(object):
         t.value = t.value.lstrip('"').rstrip('"')
         return t
 
-
-#    @TOKEN(modulename)
-#    def t_MODULE(self, t):
-#        return t
-
     
     t_EQUALS     = r'='
     t_COLON      = r':'
@@ -188,28 +195,27 @@ class CodspeechLexer(object):
     t_OPTIONAL   = r'\?'
 
     
-    @TOKEN(atommodule)
-    def t_atommodule(self, t):
-        t.type = 'MODULE'
-        t.value = re.search(self.atommodule, t.value).group('opt')
+    @TOKEN(atomtype)
+    def t_atomtype(self, t):
+        t.type = 'ATOMTYPE'
+        t.value = re.search(self.atomtype, t.value).group('opt')
         return t
 
     
     # multline comments (/# comment #/)
-    def t_comment(self, t):
-        r'/\#(.|\n)*?\#/'
+    @TOKEN(commentblock)
+    def t_commentblock(self, t):
         t.type = 'COMMENT'
         t.lexer.lineno += t.value.count('\n')
         pass
 
     
     # single line comment (# comment)
-    def t_comment2(self, t):
-        r'\#[^\\\n]*'
+    @TOKEN(commentline)
+    def t_commentline(self, t):
         t.type = 'COMMENT'
         pass
 
-    
     # new line
     def t_CR(self, t):
         r'\n'
