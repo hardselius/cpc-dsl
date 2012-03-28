@@ -2,10 +2,10 @@ import foo.bar
 import monkey.doodey
 
 
-Component apa      '''dfg'''
-  in  (Int a default 1 ''' foo ''')
-  out (Int b ''' bar ''')
-  Atom <SHIT.for.brains>
+Component apa		'''dfg'''
+  in  (Int a default 1	'''foo''')
+  out (Int b		'''bar''')
+  Atom <shit-for-brains>
     ( "option1" : "value1"
     , "option2" : "value2"
     , "option3" : "value3" )
@@ -13,18 +13,18 @@ Component apa      '''dfg'''
 
 Component c1      '''dfg OLIG'''
   in  ( Float a
-      , ? Int d )
+      , ?Int  d )
   out ( Float b
       , Float c )
   Network
-  Controller apa
+  Controller apa ctrl
   { out.b <- in.a
     temp = apa (temp.in.a)
     temp2 = c1 (1.0, 5)
-    temp3 = test ((apa (temp.out.b)).out.b, in.d)
-    }
+    temp3 = test ((apa (temp.out.b)).out.b, in.d) }
 #/
 
+/#
 Component c3      ''' C '''
   in  ()
   out ()
