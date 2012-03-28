@@ -70,23 +70,34 @@ class CodspeechLexer(object):
     # reserved keywords
     # --------------------------------------------------------------
     keyword_map = {
-        # Module stuff
-        'import'    : 'IMPORT',
+        # Import
+        'import'          : 'IMPORT',
 
-        # Component, Controller, Network, Atom, NewType
-        'Component'  : 'COMPONENT',
-        'Controller' : 'CONTROLLER',
-        'Network'    : 'NETWORK',
-        'Atom'       : 'ATOM',
-        'in'         : 'IN',
-        'out'        : 'OUT',
-        'default'    : 'DEFAULT',
-        'NewType'    : 'NEWTYPE',
+        # Type
+        'type'            : 'TYPE',
+
+        # Atom keywords
+        'atom'            : 'ATOM',
+        'options'         : 'OPTIONS',
+        'python'          : 'ATOMTYPE',
+        'python-extended' : 'ATOMTYPE',
+        'external'        : 'ATOMTYPE',
+
+        # Network
+        'network'         : 'NETWORK',
+        'controller'      : 'CONTROLLER',
+                
+        # Header
+        'in'              : 'IN',
+        'out'             : 'OUT',
+        'default'         : 'DEFAULT',
         
         # Types
-        'File'      : 'FILE',
-        'Float'     : 'FLOAT',
-        'Int'       : 'INT',}
+        'file'            : 'FILE',
+        'float'           : 'FLOAT',
+        'int'             : 'INT',
+        'string'          : 'STRING',
+    }
 
 
     # --------------------------------------------------------------
@@ -95,7 +106,7 @@ class CodspeechLexer(object):
     tokens = [
         # Literals: identifier, type, integer constant, float
         # constant, string constant
-        'ID', 'TYPE', 'ICONST', 'FCONST', 'SCONST', 'DOCSTRING',
+        'IDENT', 'ICONST', 'FCONST', 'SCONST', 'DOCSTRING',
 
         # Assignments: = :
         'EQUALS', 'COLON',
@@ -110,8 +121,8 @@ class CodspeechLexer(object):
         'COMMA', 'PERIOD',
 
         # Other:
-        'CR', 'ATOMTYPE', 'OPTIONAL'
-    ] + keyword_map.values()
+        'CR', 'OPTIONAL'
+    ] + list(set(keyword_map.values()))
 
 
     # --------------------------------------------------------------
@@ -119,13 +130,7 @@ class CodspeechLexer(object):
     # --------------------------------------------------------------
 
     # character groups
-    nondigit     = r'[_A-Za-z]'
     lowercase    = r'[a-z]'
-    uppercase    = r'[A-Z]'
-
-    # atoms
-    atomtypechar = r'(' + lowercase + r'|' + r'-' + ')'
-    atomtype     = r'<( )*(?P<opt>' + atomtypechar + r'+)( )*>'
 
     # comments and docstring
     commentblock = r'/\#(.|\n)*?\#/'
@@ -133,9 +138,8 @@ class CodspeechLexer(object):
     docstring    = r'(\'\'\')(.|\n)*?(\'\'\')'
     
     # idents
-    identchar    = r'[_A-Za-z0-9]'
-    identvar     = r'(' + lowercase + r'(' + identchar + r')*)'
-    identtype    = r'(' + uppercase + r'(' + identchar + r')*)'
+    identchar    = r'[_A-Za-z0-9-]'
+    ident        = r'(' + lowercase + r'(' + identchar + r')*)'
 
     # literals
     litfloat     = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?)'
@@ -143,7 +147,7 @@ class CodspeechLexer(object):
     litstring    = r'\"([^\\\n]|(\\.))*?\"'
 
     # modulename
-    modulename   = r'(' + nondigit + r'(.' + nondigit + r')*' +  r')'
+    modulename   = r'(' + ident + r'(.' + ident + r')*' +  r')'
 
     
     # --------------------------------------------------------------
@@ -152,15 +156,9 @@ class CodspeechLexer(object):
     t_ignore = ' \t\x0c'
 
     
-    @TOKEN(identvar)
-    def t_ID(self, t):
-        t.type = self.keyword_map.get(t.value,"ID")
-        return t
-
-
-    @TOKEN(identtype)
-    def t_TYPE(self, t):
-        t.type = self.keyword_map.get(t.value,"TYPE")
+    @TOKEN(ident)
+    def t_IDENT(self, t):
+        t.type = self.keyword_map.get(t.value,"IDENT")
         return t
 
 
@@ -194,13 +192,6 @@ class CodspeechLexer(object):
     t_COMMA      = r','
     t_PERIOD     = r'\.'
     t_OPTIONAL   = r'\?'
-
-    
-    @TOKEN(atomtype)
-    def t_atomtype(self, t):
-        t.type = 'ATOMTYPE'
-        t.value = re.search(self.atomtype, t.value).group('opt')
-        return t
 
     
     # multline comments (/# comment #/)
@@ -237,14 +228,4 @@ class CodspeechLexer(object):
     def t_error(self, t):
         msg = "Illegal character %s" % repr(t.value[0])
         self._error(msg,t)
-
-
-
-    # test the lexer
-    def test(self,data):
-        self.input(data)
-        while True:
-            tok = self.token()
-            if not tok: break
-            print tok
 
