@@ -20,50 +20,54 @@
 ;; Syntax highlighting using keywords
 ;;------------------------------------------------------------------------------
 
+
 (defvar codspeech-font-lock-keywords 
   (list
     '("\#[^\\\n]*" . font-lock-comment-face)
     '("'''\\(.\\|\n\\)*?'''" . font-lock-string-face)
-    '("\<[^>]*?\>" . font-lock-preprocessor-face)
-    '("\\<\\(import\\|Component\\|Network\\|Controller\\|Atom\\)\\>" . font-lock-keyword-face)
-    '("\\<\\([A-Z][a-zA-Z]*\\)" . font-lock-type-face)
-    '("Component \\([a-z][a-zA-Z0-9]*\\)" . (1 font-lock-function-name-face)))
+    '("\\(atom\\)[ ]+\\(external\\|python-extended\\|python\\)[ ]+\\([a-z][a-zA-Z0-9]*\\)" (1 'font-lock-keyword-face) (2 'font-lock-keyword-face) (3 'font-lock-function-name-face))
+    '("\\(network\\)[ ]+\\([a-z][a-zA-Z0-9]*\\)" (1 'font-lock-keyword-face) (2 'font-lock-function-name-face))
+    '("\\(type\\)[ ]*\\([a-z][_A-Za-z-]*\\)" (1 font-lock-keyword-face) (2 'font-lock-type-face))
+    '("[(,]*\\([a-z][_A-Za-z-]*\\)[ :]+[a-z][a-zA-Z0-9]*" . (1 font-lock-type-face))
+    '("\\<\\(import\\|in\\|out\\|options\\)\\>" . font-lock-keyword-face)
+    '("[=(][ ]*\\([a-z][a-zA-Z0-9]*\\)[ ]*(" . (1 font-lock-function-name-face))
+    '("\\<\\(true\\|false\\)\\>" . font-lock-constant-face))
   "Default highlighting expressions for codspeech mode")
 
 ;;------------------------------------------------------------------------------
 ;; indent?
 ;;------------------------------------------------------------------------------
 
-(defun codspeech-indent-line ()
-  "Indent current line as codspeech code."
-  (interactive)
-  (beginning-of-line)
-  (if (bobp)
-	  (indent-line-to 0)		   ; First line is always non-indented
-	(let ((not-indented t) cur-indent)
-	  (if (looking-at "^[ ]*[})]") ; If the line we are looking at is the end of a block, then decrease the indentation
-		  (progn
-			(save-excursion
-			  (forward-line -1)
-			  (setq cur-indent (- (current-indentation) default-tab-width)))
-			(if (< cur-indent 0) ; We can't indent past the left margin
-				(setq cur-indent 0)))
-		(save-excursion
-		  (while not-indented ; Iterate backwards until we find an indentation hint
-			(forward-line -1)
-			(if (looking-at "^[ ]*[)}]") ; This hint indicates that we need to indent at the level of the END_ token
-				(progn
-				  (setq cur-indent (current-indentation))
-				  (setq not-indented nil))
-			  (if (looking-at "^[ ]*\\(Component\\|Atom\\|Network\\|in\\|out\\)") ; This hint indicates that we need to indent an extra level
-				  (progn
-					(setq cur-indent (+ (current-indentation) default-tab-width)) ; Do the actual indenting
-					(setq not-indented nil))
-				(if (bobp)
-					(setq not-indented nil)))))))
-	  (if cur-indent
-		  (indent-line-to cur-indent)
-		(indent-line-to 0))))) ; If we didn't see an indentation hint, then allow no indentation
+;(defun codspeech-indent-line ()
+;  "Indent current line as codspeech code."
+;  (interactive)
+;  (beginning-of-line)
+;  (if (bobp)
+;	  (indent-line-to 0)		   ; First line is always non-indented
+;	(let ((not-indented t) cur-indent)
+;	  (if (looking-at "^[ ]*[})]") ; If the line we are looking at is the end of a block, then decrease the indentation
+;		  (progn
+;			(save-excursion
+;			  (forward-line -1)
+;			  (setq cur-indent (- (current-indentation) default-tab-width)))
+;			(if (< cur-indent 0) ; We can't indent past the left margin
+;				(setq cur-indent 0)))
+;		(save-excursion
+;		  (while not-indented ; Iterate backwards until we find an indentation hint
+;			(forward-line -1)
+;			(if (looking-at "^[ ]*[)}]") ; This hint indicates that we need to indent at the level of the END_ token
+;				(progn
+;				  (setq cur-indent (current-indentation))
+;				  (setq not-indented nil))
+;			  (if (looking-at "^[ ]*\\(Component\\|Atom\\|Network\\|in\\|out\\)") ; This hint indicates that we need to indent an extra level
+;				  (progn
+;					(setq cur-indent (+ (current-indentation) default-tab-width)) ; Do the actual indenting
+;					(setq not-indented nil))
+;				(if (bobp)
+;					(setq not-indented nil)))))))
+;	  (if cur-indent
+;		  (indent-line-to cur-indent)
+;		(indent-line-to 0))))) ; If we didn't see an indentation hint, then allow no indentation
 
 ;;------------------------------------------------------------------------------
 ;; Syntax table

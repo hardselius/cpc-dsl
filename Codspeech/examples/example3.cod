@@ -1,6 +1,6 @@
-NewType Setting
-  ( Int   : a
-  , Float : b
+NewType Setting '''An individual grompp mdp setting'''
+  ( String : name
+  , String : value
   )
 
 Component grompp '''The gromacs pre-processor: prepares run files for mdrun'''
@@ -9,7 +9,7 @@ Component grompp '''The gromacs pre-processor: prepares run files for mdrun'''
       , File   top               '''A .top topology file'''
       , ?Int   gen_vel           '''here for backward compatibility'''
       , ?Array include           '''array of files to include'''
-      , ?Array settings          '''array of settings'''
+      , ?Setting settings        '''array of settings'''
       , ?File  ndx               '''An .ndx index file'''
       )
   out ( File   tpr               '''the tpr file from mdrun'''
@@ -36,6 +36,12 @@ Component mdrun '''Runs an MD simulation'''
   , "import"         : "cpc.lib.gromacs"
   , "persistant_dir" : "true" )
 
+Component test
+  in  ( File conf1 )
+  out ( File conf )
+  Atom <python>
+  ("nothing" : "non")
+
 Component gmxtest
   in  ( File conf
       , File mdp
@@ -44,8 +50,7 @@ Component gmxtest
   out ( File stdout )
   Network 
   {
-    c1 = grompp (in.conf, in.mdp, in.top)
-    c2 = mdrun (c1.out.tpr)
-
+    c2 = mdrun ((grompp ((test (in.conf)).out.conf, in.mdp, in.top)).out.tpr)
+    
     out.stdout <- c2.out.stdout
   }

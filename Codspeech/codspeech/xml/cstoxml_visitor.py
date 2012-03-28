@@ -274,7 +274,7 @@ class XMLGenerator(csast.NodeVisitor):
         for i, x in enumerate(node.inputs):
             if type(x.comp) == csast.ComponentStmt:
                 self.temp += 1
-                ident = csast.Ident("TEMP%s" % self.temp)
+                ident = csast.Ident("_t%s" % self.temp)
                 outRef = csast.ParamRef(ident, x.io, x.ident)
                 c = self.visit(x.comp)
                 self._putInstance(ident,x.comp.ident)
