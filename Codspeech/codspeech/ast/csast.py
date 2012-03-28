@@ -145,16 +145,23 @@ class Import(Node):
 
     attr_names = ('path',)
 
-class NewType(Node):
-    def __init__(self, type, typedecl, doc, coord=None):
+
+# ------------------------------------------------------------------
+# New Types
+# ------------------------------------------------------------------
+class Newtype(Node):
+    def __init__(self, type, doc, typedecl, coord=None):
         self.type = type
-        self.typedecl = typedecl
         self.doc = doc
+        self.typedecl = typedecl
         self.coord = coord
 
     def children(self):
         nodelist = []
-        if self.type is not None: nodelist.append(("type", self.type))
+        if self.type is not None:
+            nodelist.append(("type", self.type))
+        if self.doc is not None:
+            nodelist.append(("doc", self.doc))
         for i, child in enumerate(self.typedecl or []):
             nodelist.append(("typedecl[%d]" % i, child))
         return tuple(nodelist)
@@ -176,120 +183,28 @@ class TypeDecl(Node):
     attr_names = ()
 
 
-class Component(Node):
-    def __init__(self, header, body, coord=None):
-        self.header = header
-        self.body = body
-        self.coord = coord
-
-    def children(self):
-        nodelist = []
-        if self.header is not None: nodelist.append(("header", self.header))
-        if self.body is not None: nodelist.append(("body", self.body))
-        return tuple(nodelist)
-
-    attr_names = ()
-
-class Header(Node):
-    def __init__(self, ident, doc, inputs, outputs, coord=None):
-        self.ident = ident
-        self.doc = doc
-        self.inputs = inputs
-        self.outputs = outputs
-        self.coord = coord
-
-    def children(self):
-        nodelist = []
-        if self.ident is not None: nodelist.append(("ident", self.ident))
-        if self.doc is not None: nodelist.append(("doc", self.doc))
-        for i, child in enumerate(self.inputs or []):
-            nodelist.append(("inputs[%d]" % i, child))
-        for i, child in enumerate(self.outputs or []):
-            nodelist.append(("outputs[%d]" % i, child))
-        return tuple(nodelist)
-
-    attr_names = ()
-
-class InParameter(Node):
-    def __init__(self, ident, type, doc, optional=False, default=None, coord=None):
-        self.ident = ident
-        self.type = type
-        self.doc = doc
-        self.optional = Optional(optional)
-        self.default = default
-        self.coord = coord
-
-    def children(self):
-        nodelist = []
-        if self.ident is not None: nodelist.append(("ident", self.ident))
-        if self.type is not None: nodelist.append(("type", self.type))
-        if self.doc is not None: nodelist.append(("doc", self.doc))
-        if self.optional is not None: nodelist.append(("optional", self.optional))
-        if self.default is not None: nodelist.append(("default", self.default))
-        return tuple(nodelist)
-
-    attr_names = ()
-
-class OutParameter(Node):
-    def __init__(self, ident, type, doc, default=None, coord=None):
-        self.ident = ident
-        self.type = type
-        self.doc = doc
-        self.default = default
-        self.coord = coord
-
-    def children(self):
-        nodelist = []
-        if self.ident is not None: nodelist.append(("ident", self.ident))
-        if self.type is not None: nodelist.append(("type", self.type))
-        if self.doc is not None: nodelist.append(("doc", self.doc))
-        if self.default is not None: nodelist.append(("default", self.default))
-        return tuple(nodelist)
-
-    attr_names = ()
-
-class Network(Node):
-    def __init__(self, body, controller=None, coord=None):
-        self.body = body
-        self.controller = controller
-        self.coord = coord
-
-    def children(self):
-        nodelist = []
-        if self.controller is not None: nodelist.append(("controller", self.controller))
-        for i, child in enumerate(self.body or []):
-            nodelist.append(("body[%d]" % i, child))
-        return tuple(nodelist)
-
-    attr_names = ()
-
-class Controller(Node):
-    def __init__(self, type, ident, coord=None):
-        self.type = type
-        self.ident = ident
-
-    def children(self):
-        nodelist = []
-        if self.type is not None: nodelist.append(("type", self.type))
-        if self.ident is not None: nodelist.append(("ident", self.ident))
-        return tuple(nodelist)
-
-    attr_names = ()
-
+# ------------------------------------------------------------------
+# Atoms
+# ------------------------------------------------------------------
 class Atom(Node):
-    def __init__(self, atomtype, options, coord=None):
+    def __init__(self, atomtype, header, optionblock, coord=None):
         self.atomtype = atomtype
-        self.options = options
+        self.header = header
+        self.optionblock = optionblock
         self.coord = coord
 
     def children(self):
         nodelist = []
-        if self.atomtype is not None: nodelist.append(("atomtype", self.atomtype))
-        for i, child in enumerate(self.options or []):
-            nodelist.append(("options[%d]" % i, child))
+        if self.atomtype is not None:
+            nodelist.append(("atomtype", self.atomtype))
+        if self.header is not None:
+            nodelist.append(("header", self.header))
+        if self.optionblock is not None:
+            nodelist.append(("options", self.optionblock))
         return tuple(nodelist)
 
     attr_names = ()
+
 
 class AtomType(Node):
     def __init__(self, type, coord=None):
@@ -301,6 +216,21 @@ class AtomType(Node):
         return tuple(nodelist)
 
     attr_names = ('type',)
+
+
+class Optionblock(Node):
+    def __init__(self, options, coord=None):
+        self.options = options
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        for i, child in enumerate(self.options or []):
+            nodelist.append(("options[%d]" % i, child))
+        return tuple(nodelist)
+
+    attr_names = ()
+
 
 class AtomOption(Node):
     def __init__(self, option, value, coord=None):
@@ -314,21 +244,162 @@ class AtomOption(Node):
 
     attr_names = ('option','value')
 
-class Connection(Node):
-    def __init__(self, left, right, coord=None):
-        self.left = left
-        self.right = right
+
+# ------------------------------------------------------------------
+# Networks
+# ------------------------------------------------------------------
+class Network(Node):
+    def __init__(self, header, networkblock, coord=None):
+        self.header = header
+        self.networkblock = networkblock
         self.coord = coord
 
     def children(self):
         nodelist = []
-        if self.left is not None: nodelist.append(("left", self.left))
-        if self.right is not None: nodelist.append(("right", self.right))
+        if self.header is not None:
+            nodelist.append(("header", self.header))
+        if self.networkblock is not None:
+            nodelist.append(("networkblock", self.networkblock))
         return tuple(nodelist)
 
     attr_names = ()
 
-class Assignment(Node):
+
+class Networkblock(Node):
+    def __init__(self, stmts, coord=None):
+        self.stmts = stmts
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        for i, child in enumerate(self.stmts or []):
+            nodelist.append(("stmts[%d]" % i, child))
+        return tuple(nodelist)
+
+    attr_names = ()
+
+    
+# ------------------------------------------------------------------
+# Atom and Network Header
+# ------------------------------------------------------------------
+class Header(Node):
+    def __init__(self, ident, doc, inputs, outputs, coord=None):
+        self.ident = ident
+        self.doc = doc
+        self.inputs = inputs
+        self.outputs = outputs
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        if self.ident is not None:
+            nodelist.append(("ident", self.ident))
+        if self.doc is not None:
+            nodelist.append(("doc", self.doc))
+        for i, child in enumerate(self.inputs or []):
+            nodelist.append(("inputs[%d]" % i, child))
+        for i, child in enumerate(self.outputs or []):
+            nodelist.append(("outputs[%d]" % i, child))
+        return tuple(nodelist)
+
+    attr_names = ()
+
+
+# ------------------------------------------------------------------
+# Parameters
+# ------------------------------------------------------------------
+class InParameter(Node):
+    def __init__(self, type, ident, doc, optional=False, default=None, coord=None):
+        self.type = type
+        self.ident = ident
+        self.doc = doc
+        self.optional = Optional(optional)
+        self.default = default
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        if self.type is not None:
+            nodelist.append(("type", self.type))
+        if self.ident is not None:
+            nodelist.append(("ident", self.ident))
+        if self.doc is not None:
+            nodelist.append(("doc", self.doc))
+        if self.optional is not None:
+            nodelist.append(("optional", self.optional))
+        if self.default is not None:
+            nodelist.append(("default", self.default))
+        return tuple(nodelist)
+
+    attr_names = ()
+
+class OutParameter(Node):
+    def __init__(self, type, ident, doc, default=None, coord=None):
+        self.type = type
+        self.ident = ident
+        self.doc = doc
+        self.default = default
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        if self.type is not None:
+            nodelist.append(("type", self.type))
+        if self.ident is not None:
+            nodelist.append(("ident", self.ident))
+        if self.doc is not None:
+            nodelist.append(("doc", self.doc))
+        if self.default is not None:
+            nodelist.append(("default", self.default))
+        return tuple(nodelist)
+
+    attr_names = ()
+
+
+class Optional(Node):
+    def __init__(self, bool, coord=None):
+        self.bool = bool
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        return tuple(nodelist)
+
+    attr_names = ('bool',)
+
+
+# ------------------------------------------------------------------
+# Statements
+# ------------------------------------------------------------------
+class ControllerStmt(Node):
+    def __init__(self, ident, coord=None):
+        self.ident = ident
+
+    def children(self):
+        nodelist = []
+        if self.ident is not None: nodelist.append(("ident", self.ident))
+        return tuple(nodelist)
+
+    attr_names = ()
+
+
+class ConnectionStmt(Node):
+    def __init__(self, destination, source, coord=None):
+        self.destination = destination
+        self.source = source
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        if self.destination is not None:
+            nodelist.append(("destination", self.destination))
+        if self.source is not None:
+            nodelist.append(("source", self.source))
+        return tuple(nodelist)
+
+    attr_names = ()
+
+class AssignmentStmt(Node):
     def __init__(self, ident, comp, coord=None):
         self.ident = ident
         self.comp = comp
@@ -357,7 +428,11 @@ class ComponentStmt(Node):
 
     attr_names = ()
 
-class Const(Node):
+
+# ------------------------------------------------------------------
+# Expressions
+# ------------------------------------------------------------------
+class Constant(Node):
     def __init__(self, type, value, coord=None):
         self.type = type
         self.value = value
@@ -386,49 +461,6 @@ class ParamRef(Node):
 
     attr_names = ()
 
-class Ident(Node):
-    def __init__(self, name, coord=None):
-        self.name = name
-        self.coord = coord
-
-    def children(self):
-        nodelist = []
-        return tuple(nodelist)
-
-    attr_names = ('name',)
-
-class Type(Node):
-    def __init__(self, type, coord=None):
-        self.type = type
-        self.coord = coord
-
-    def children(self):
-        nodelist = []
-        return tuple(nodelist)
-
-    attr_names = ('type',)
-
-class DocString(Node):
-    def __init__(self, doc, coord=None):
-        self.doc = doc
-        self.coord = coord
-
-    def children(self):
-        nodelist = []
-        return tuple(nodelist)
-
-    attr_names = ('doc',)
-
-class Optional(Node):
-    def __init__(self, bool, coord=None):
-        self.bool = bool
-        self.coord = coord
-
-    def children(self):
-        nodelist = []
-        return tuple(nodelist)
-
-    attr_names = ('bool',)
 
 class Ref(Node):
     def __init__(self, ref, coord=None):
@@ -440,3 +472,45 @@ class Ref(Node):
         return tuple(nodelist)
 
     attr_names = ('ref',)
+
+
+class Ident(Node):
+    def __init__(self, name, coord=None):
+        self.name = name
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        return tuple(nodelist)
+
+    attr_names = ('name',)
+
+
+# ------------------------------------------------------------------
+# Type container
+# ------------------------------------------------------------------
+class Type(Node):
+    def __init__(self, type, coord=None):
+        self.type = type
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        return tuple(nodelist)
+
+    attr_names = ('type',)
+
+
+# ------------------------------------------------------------------
+# Docstring container
+# ------------------------------------------------------------------
+class DocString(Node):
+    def __init__(self, doc, coord=None):
+        self.doc = doc
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        return tuple(nodelist)
+
+    attr_names = ('doc',)
