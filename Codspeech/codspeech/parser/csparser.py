@@ -358,7 +358,7 @@ class CodspeechParser(PLYParser):
     # Connections.
     def p_connection(self, p):
         """
-        connection : param_ref CONNECTION param_ref
+        connection : param_ref CONNECTION expr
         """
         p[0] = csast.Connection(p[1],p[3])
 
@@ -418,9 +418,9 @@ class CodspeechParser(PLYParser):
         fconst : FCONST
         """
         p[0] = csast.Const(
-            csast.Type('FLOAT'),
+            csast.Type('Float'),
             p[1],
-            self._coord(lineno(1)))
+            self._coord(p.lineno(1)))
 
 
     def p_iconst(self, p):
@@ -428,7 +428,7 @@ class CodspeechParser(PLYParser):
         iconst : ICONST
         """
         p[0] = csast.Const(
-            csast.Type('INT'),
+            csast.Type('Int'),
             p[1],
             self._coord(p.lineno(1)))
 
@@ -438,7 +438,7 @@ class CodspeechParser(PLYParser):
         sconst : SCONST
         """
         p[0] = csast.Const(
-            csast.Type('STRING'),
+            csast.Type('String'),
             p[1],
             self._coord(p.lineno(1)))
 
