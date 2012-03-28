@@ -23,6 +23,7 @@ class CodspeechParser(PLYParser):
             module=self,
             start='entrypoint',
         )
+        self.dim = ''
 
         
     def parse(self, text, filename=''):
@@ -41,8 +42,8 @@ class CodspeechParser(PLYParser):
             return self.csparser.parse(text, lexer=self.cslex)
 
 
-    # --------------------------------------------------------------
-    # PRIVATE
+    # ------------------------------------------------------ PRIVATE
+    # Internal auxiliary methods
     # --------------------------------------------------------------
     def _lex_error_func(self, msg, line, column):
         self._parse_error(msg, self._coord(line, column))
@@ -478,8 +479,14 @@ class CodspeechParser(PLYParser):
              | FLOAT
              | INT
              | TYPE
+             | LBRACKET type RBRACKET
         """
-        p[0] = csast.Type(p[1])
+        if len(p) == 2:
+            p[0] = csast.Type(p[1] + self.dim)
+            self.dim = ''
+        else:
+            self.dim += ('*')
+            p[0] = p[2]
 
 
     # ------------------------------------------------------------------
