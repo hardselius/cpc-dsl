@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import foo.bar
 
 type setting
@@ -14,6 +15,21 @@ atom external grompp '''The gromacs pre-processor: prepares run files for mdrun'
       , ?array include           '''array of files to include'''
       , ?array settings          '''array of settings'''
       , ?file  ndx               '''An .ndx index file'''
+=======
+NewType Setting '''An individual grompp mdp setting'''
+  ( String : name
+  , String : value
+  )
+
+Component grompp '''The gromacs pre-processor: prepares run files for mdrun'''
+  in  ( File   conf              '''a .gro configuration file'''
+      , File   mdp               '''a .mpp settings file'''
+      , File   top               '''A .top topology file'''
+      , ?Int   gen_vel           '''here for backward compatibility'''
+      , ?Array include           '''array of files to include'''
+      , ?Setting settings        '''array of settings'''
+      , ?File  ndx               '''An .ndx index file'''
+>>>>>>> d7554fff1fa511f7b81216ddfa3ebc01dccb3d90
       )
   out ( file   tpr               '''the tpr file from mdrun'''
       , file   stdout            '''stdout generated during grompp run'''
@@ -40,16 +56,34 @@ atom python-extended mdrun '''Runs an MD simulation'''
           , "persistant_dir" : "true" )
 #/
 
+<<<<<<< HEAD
 
 network gmxtest '''docstring'''
   in  ( file conf
       , file mdp
       , file top
+=======
+Component test
+  in  ( File conf1 )
+  out ( File conf )
+  Atom <python>
+  ("nothing" : "non")
+
+Component gmxtest
+  in  ( File conf
+      , File mdp
+      , File top
+>>>>>>> d7554fff1fa511f7b81216ddfa3ebc01dccb3d90
       )
   out ( file stdout ) 
   {
+<<<<<<< HEAD
     controller(grompp)
     c2 = mdrun ((grompp (in.conf, in.mdp, in.top)).out.tpr)
+=======
+    c2 = mdrun ((grompp ((test (in.conf)).out.conf, in.mdp, in.top)).out.tpr)
+    
+>>>>>>> d7554fff1fa511f7b81216ddfa3ebc01dccb3d90
     out.stdout <- c2.out.stdout
   }
 #/

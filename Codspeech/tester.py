@@ -4,7 +4,7 @@ sys.path.insert(0,"../..")
 import copy
 import codspeech.parser.csparser as csparse
 
-import codspeech.typechecker.cstypechecker_visitor as cstype
+import codspeech.typechecker.cstypechecker as cstype
 import codspeech.xml.cstoxml_visitor as xml
 
 
@@ -39,7 +39,8 @@ def test(testfile):
       print ast
       print ""
     try:
-      env = tc.typecheck(ast)
+      tc.typecheck(ast)
+      env = tc.getEnv()
     except cstype.TypeError as e:
       print "Type Error" + str(e)
     except cstype.ReferenceError as e:
@@ -47,7 +48,7 @@ def test(testfile):
     else:
       if pctx:
         print "Context:"
-        print env
+        tc.print_env()
       gXML = xml.XMLGenerator()
       gXML.generateXML(ast,env)
   else:
