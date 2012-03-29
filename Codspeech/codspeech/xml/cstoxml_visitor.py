@@ -29,6 +29,7 @@ class XMLGenerator(csast.NodeVisitor):
         self.f = open(file,"w")
         self.temp = 0
         self.visit(ast)
+        self.f.close()
 
 
     def print_debug(self, node, msg):
@@ -48,15 +49,6 @@ class XMLGenerator(csast.NodeVisitor):
         self.indent = self.indent[:len(self.indent)-self.ind]
 
 
-    def _init(self):
-        self.f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
-
-
-    def _end(self):
-        self.f.write("</cpc>\n")
-        self.f.close()
-
-
     def _startFun(self,id,type):
         self.f.write(
             self.indent + "<function id=\"" + id \
@@ -67,26 +59,6 @@ class XMLGenerator(csast.NodeVisitor):
     def _endFun(self):
         self._unind()
         self.f.write(self.indent + "</function>\n")
-
-
-    def _startInput(self):
-        self.f.write(self.indent + "<inputs>\n")
-        self._ind()
-
-
-    def _endInput(self):
-        self._unind()
-        self.f.write(self.indent + "</inputs>\n")
-
-
-    def _startOutput(self):
-        self.f.write(self.indent + "<outputs>\n")
-        self._ind()
-
-
-    def _endOutput(self):
-        self._unind()
-        self.f.write(self.indent + "</outputs>\n")
 
 
     def _putParam(self,node):
@@ -106,11 +78,6 @@ class XMLGenerator(csast.NodeVisitor):
             self.f.write(" />\n")
 
 
-    def _putDoc(self,desc):
-        if desc != None:
-            self.f.write(self.indent + "<desc>" + desc + "</desc>\n")
-
-
     def _putController(self,opts):
         self.f.write(self.indent + "<controller ")
         for x in opts:
@@ -126,16 +93,6 @@ class XMLGenerator(csast.NodeVisitor):
     def _putImport(self,module):
         self.f.write(self.indent + "<import name=\"" \
                                  + module + "\" />\n")
-
-
-    def _startNet(self):
-        self.f.write(self.indent + "<network>\n")
-        self._ind()
-
-
-    def _endNet(self):
-        self._unind()
-        self.f.write(self.indent + "</network>\n")
 
 
     def _startType(self,type):
@@ -185,9 +142,9 @@ class XMLGenerator(csast.NodeVisitor):
 
     
     def visit_Program(self, node):
-        self._init()
+        self.f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
         self.generic_visit(node)
-        self._end()
+        self.f.write("</cpc>\n")
 
 
     def visit_Import(self,node):
@@ -203,14 +160,18 @@ class XMLGenerator(csast.NodeVisitor):
 
     def visit_Header(self, node):
         self.visit(node.doc)
-        self._startInput()
+        self.f.write(self.indent + "<inputs>\n")
+        self._ind()
         map(self.visit,node.inputs)
-        self._endInput()
-        self._startOutput()
+        self._unind()
+        self.f.write(self.indent + "</inputs>\n")
+        self.f.write(self.indent + "<outputs>\n")
+        self._ind()
         map(self.visit,node.outputs)
-        self._endOutput()
+        self._unind()
+        self.f.write(self.indent + "</outputs>\n")
 
-        
+
     def visit_Atom(self, node):
         self._startFun(
             self.visit(node.header.ident),
@@ -233,9 +194,11 @@ class XMLGenerator(csast.NodeVisitor):
             self.visit(node.header.ident),
             "network")
         self.visit(node.header)
-        self._startNet()
+        self.f.write(self.indent + "<network>\n")
+        self._ind()
         self.visit(node.networkblock)
-        self._endNet()
+        self._unind()
+        self.f.write(self.indent + "</network>\n")
         self._endFun()
 
 
@@ -257,16 +220,16 @@ class XMLGenerator(csast.NodeVisitor):
 
     def visit_AssignmentStmt(self, node):
         pass
-#        cs = self.visit(node.comp)
-#        self._putInstance(node.ident,node.comp.ident)
-#        for src,dest in cs:
-#            self._putConnection(
-#                src,
-#                csast.ParamRef(
-#                    node.ident,
-#                    csast.Ref('in'),
-#                    csast.Ident(dest)))
-#        self.f.write("\n")
+        cs = self.visit(node.comp)
+        self._putInstance(node.ident,node.comp.ident)
+        for src,dest in cs:
+            self._putConnection(
+                src,
+                csast.ParamRef(
+                    node.ident,
+                    csast.Ref('in'),
+                    csast.Ident(dest)))
+        self.f.write("\n")
 
 
     def visit_ComponentStmt(self, node):
@@ -325,7 +288,9 @@ class XMLGenerator(csast.NodeVisitor):
 
 
     def visit_DocString(self, node):
-        self._putDoc(node.doc)
+        if node.doc != None:
+            self.f.write(
+                self.indent + "<desc>" + node.doc + "</desc>\n")
 
 
     def visit_Optional(self, node):

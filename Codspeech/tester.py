@@ -50,8 +50,8 @@ def test(testfile):
 #        print "Context:"
 #        tc.print_env()
     gXML = xml.XMLGenerator()
-    gXML.generateXML(ast,{})
+    gXML.generateXML(ast,{'apa':{'in':[('a','int')],'out':['b','int']}})
   else:
     print "No abstract syntax tree was generated."
 
-test('examples/example3.cod')
+test('examples/example1.cod')
