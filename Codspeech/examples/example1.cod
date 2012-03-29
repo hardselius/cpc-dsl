@@ -1,32 +1,18 @@
 import foo.bar
 import monkey.doodey
 
+type testtype
+    ( int : a
+	, float : b
+	)
 
-Component apa		'''dfg'''
-  in  (Int a default 1	'''foo''')
-  out (Int b		'''bar''')
-  Atom <shit-for-brains>
-    ( "option1" : "value1"
-    , "option2" : "value2"
-    , "option3" : "value3" )
-#/
+atom python apa		'''dfg'''
+  in  ( int a default 1	'''foo''')
+  out ( int b		'''bar''')
+  options ( "option1" : "value1" )
 
-Component c1      '''dfg OLIG'''
-  in  ( Float a
-      , ?Int  d )
-  out ( Float b
-      , Float c )
-  Network
-  Controller apa ctrl
-  { out.b <- in.a
-    temp = apa (temp.in.a)
-    temp2 = c1 (1.0, 5)
-    temp3 = test ((apa (temp.out.b)).out.b, in.d) }
-#/
 
-/#
-Component c3      ''' C '''
-  in  ()
-  out ()
-  Network {}
-#/
+network c1      '''dfg OLIG'''
+  in  ( ?int a )
+  out ( int b )
+  { temp2 = apa ((apa (in.a)).out.b) }

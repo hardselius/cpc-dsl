@@ -36,22 +36,22 @@ def test(testfile):
   if ast != None:
     if past:
       print "Abstrac syntax tree:"
-      print ast
+      ast.show()
       print ""
-    try:
-      tc.typecheck(ast)
-      env = tc.getEnv()
-    except cstype.TypeError as e:
-      print "Type Error" + str(e)
-    except cstype.ReferenceError as e:
-      print "Reference Error" + str(e)
-    else:
-      if pctx:
-        print "Context:"
-        tc.print_env()
-      gXML = xml.XMLGenerator()
-      gXML.generateXML(ast,env)
+#    try:
+#      tc.typecheck(ast)
+#      env = tc.getEnv()
+#    except cstype.TypeError as e:
+#      print "Type Error" + str(e)
+#    except cstype.ReferenceError as e:
+#      print "Reference Error" + str(e)
+#    else:
+#      if pctx:
+#        print "Context:"
+#        tc.print_env()
+    gXML = xml.XMLGenerator()
+    gXML.generateXML(ast,{'apa':{'in':[('a','int')],'out':['b','int']}})
   else:
     print "No abstract syntax tree was generated."
 
-test('examples/example3.cod')
+test('examples/example1.cod')
