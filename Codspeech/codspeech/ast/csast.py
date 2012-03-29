@@ -46,7 +46,8 @@ class Node(object):
         """
         lead = ' ' * offset
         if nodenames and _my_node_name is not None:
-            buf.write(lead + self.__class__.__name__+ ' <' + _my_node_name + '>: ')
+            buf.write(
+                lead + self.__class__.__name__+ ' <' + _my_node_name + '>: ')
         else:
             buf.write(lead + self.__class__.__name__+ ': ')
 

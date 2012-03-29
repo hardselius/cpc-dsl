@@ -299,8 +299,8 @@ class CodspeechParser(PLYParser):
         """
         if len(p) == 4:
             p[0] = csast.InParameter(
-                type  = p[2],
-                ident = p[1],
+                type  = p[1],
+                ident = p[2],
                 doc   = p[3])
         elif len(p) == 5:
             p[0] = csast.InParameter(

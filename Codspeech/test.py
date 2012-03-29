@@ -22,3 +22,4 @@ def test():
     ast = parse('examples/example3.cod')
     t = cstc.TypeChecker(debug=True)
     return ast, t
+    

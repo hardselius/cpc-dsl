@@ -31,6 +31,9 @@ class TypeChecker(csast.NodeVisitor):
         
         """
         self.visit(ast)
+        ctx = self.getEnv().copy()
+        self.env = [{}]
+        return ctx
 
 
     def print_env(self):
@@ -52,9 +55,9 @@ class TypeChecker(csast.NodeVisitor):
         return self.env[-1]
 
         
-    # ---------------------------------------------------------- PRIVATE
-    # Internal auxiliary methods
-    # ------------------------------------------------------------------
+    ## 
+    ## INTERNAL AUXILIARY METHODS -- PRIVATE
+    ## 
 
     def _print_debug(self, node, msg):
         """Prints debug messages if debugmode is on."""
@@ -91,49 +94,79 @@ class TypeChecker(csast.NodeVisitor):
         raise ReferenceError("%s: %s" % (coord,msg))
 
 
-    # ------------------------------------------------------------------
-    # Visitor methods
-    # ------------------------------------------------------------------
-            
+    ## 
+    ## VISITOR METHODS
+    ##
+
+    ## PROGRAM
+    
     def visit_Program(self, node):
-        self._print_debug(node, 'lol')
-        for cname, c in node.children():
-            if type(c) == csast.Import:
-                pass
-            elif type(c) == csast.Component:
-                self._add(
-                    c.header.ident,
-                    self.visit(c.header))
-            elif type(c) == csast.NewType:
-                pass
-            else:
-                pass
+        """Will add the top-level definitions to the context before
+        continuing with type checking of Atoms and Networks.
+
+        """
+        self._print_debug(node, "Checking top-level definitions")
         self.generic_visit(node)
         
 
-    def visit_Component(self, node):
-        self._print_debug(node, '')
-        self.component = node
-        self._push()
-        self.visit(node.body)
-        if self.debug: self.print_env()
-        self._pop()
-
+    ## IMPORT
 
     def visit_Import(self, node):
         pass
 
 
-    def visit_NewType(self, node):
+    ## NEWTYPE
+        
+    def visit_Newtype(self, node):
         pass
 
 
+    def visit_TypeDecl(self, node):
+        pass
+
+            
+    ## ATOM
+
+    def visit_Atom(self, node):
+        self._print_debug(node, '')
+        self.generic_visit(node)
+        
+
+    def visit_AtomType(self, node):
+        self._print_debug(node, 'Nothing to do here...')
+
+
+    def visit_Optionblock(self, node):
+        self._print_debug(node, 'Nothing to do here...')
+
+
+    def visit_AtomOption(self, node):
+        self._print_debug(node, 'Nothing to do here...')
+
+
+    ## NETWORK
+        
+    def visit_Network(self, node):
+        self._print_debug(node, '')
+        self.scope = node
+        self.generic_visit(node)
+
+
+    def visit_Networkblock(self, node):
+        self._print_debug(node, 'Entering new scope')
+        self._push()
+        self.generic_visit(node)
+        self._pop()
+
+
+    ## HEADER
+
     def visit_Header(self, node):
-        self._print_debug(node, 'Adding component types')
+        self._print_debug(node, 'Adding header types')
         inp  = []
         outp = []
         for i in node.inputs:
-            if self._getParamType(i.ident.name, inp):
+            if dict(inp).get(i.ident.name):
                 self._ref_error(
                     i.ident.coord,
                     "multiple definitions of '%s'" % i.ident.name)
@@ -141,14 +174,13 @@ class TypeChecker(csast.NodeVisitor):
                 inp.append((i.ident.name, self.visit(i)))
                 
         for o in node.outputs:
-            if self._getParamType(o.ident.name, inp):
+            if dict(outp).get(o.ident.name):
                 self._ref_error(
                     o.ident.coord,
                     "multiple definitions of '%s'" % o.ident.name)
             else:
                 outp.append((o.ident.name, self.visit(o)))
-        return { 'in'  : inp,
-                 'out' : outp }
+        self._add(node.ident, {'in':inp, 'out':outp})
 
             
     def visit_InParameter(self, node):
@@ -169,35 +201,34 @@ class TypeChecker(csast.NodeVisitor):
         return self.visit(node.type)
 
 
-    def visit_Atom(self, node):
-        self._print_debug(node, '')
-
-
-    def visit_Network(self, node):
-        self._print_debug(node, '')
-        self.generic_visit(node)
+    ## STATEMENTS
         
 
-    def visit_Controller(self, node):
-        self._print_debug(node, '')
-        self._add(node.ident, self.visit(node.comp))
+    def visit_ControllerStmt(self, node):
+        self._print_debug(
+            node,
+            "Checking if '%s' is in scope" % node.ident.name)
+        if not self.getEnv().has_key(node.ident.name):
+            self._ref_error(
+                node.coord,
+                "'%s' not in scope" % node.ident.name)
 
 
-    def visit_Connection(self, node):
-        self._print_debug(node, '')
-        tl = self.visit(node.left)
-        tr = self.visit(node.right)
-        if tl != tr:
+    def visit_ConnectionStmt(self, node):
+        self._print_debug(node, "Checking 'source' and 'destination' types")
+        t_dest   = self.visit(node.destination)
+        t_source = self.visit(node.source)
+        if t_dest != t_source:
             self._type_error(
-                left.coord,
-                "type '%s' does not match type of left hand side ('%s')"\
-                % tr, tl)
+                node.coord,
+                "destination type '%s' does not match source type '%s'"\
+                % t_dest, t_source)
         else:
-            return tl
+            return t_source
         
 
-    def visit_Assignment(self, node):
-        self._print_debug(node, '')
+    def visit_AssignmentStmt(self, node):
+        self._print_debug(node, "Adding new component to the context")
         self._add(
             node.ident,
             self.visit(node.comp.ident))
@@ -207,39 +238,51 @@ class TypeChecker(csast.NodeVisitor):
     def visit_ComponentStmt(self, node):
         self._print_debug(node, '')
         inparams = copy(self.visit(node.ident)['in'])
+        print "Checking '%s'" % node.ident.name
         for i in node.inputs:
             if inparams:
                 name, par_typ = inparams.pop(0)
                 inp_typ       = self.visit(i)
+                print par_typ, inp_typ
                 if inp_typ != par_typ:
                     self._type_error(
                         node.ident.coord,
-                        "componentstmt error")
+                        "input '{0}' has type '{1}', expected '{2}'".format(
+                            i.__class__.__name__,
+                            inp_typ,
+                            par_typ))
             
 
-
-    def visit_Const(self, node):
+    ## EXPRESSIONS
+    
+    def visit_Constant(self, node):
         self._print_debug(node, '')
         return self.visit(node.type)
 
         
     def visit_ParamRef(self, node):
         self._print_debug(node, '')
-        try:
-            io = node.io.ref
-            pname = node.ident.name
-            c = node.comp
-            if type(c) == csast.Ident:
-                cname = c.name
-            elif type(c) == csast.ComponentStmt:
-                cname = c.ident.name
-            else:
-                cname = self.component.header.ident.name
-            return self._getParamType(pname, self.getEnv()[cname][io])
-        except KeyError:
+        io = node.io.ref
+        pname = node.ident.name
+        c = node.comp
+        if type(c) == csast.Ident:
+            cname = c.name
+        elif type(c) == csast.ComponentStmt:
+            self.visit(c)
+            cname = c.ident.name
+        else:
+            cname = self.scope.header.ident.name
+        t = dict(self.getEnv()[cname][io]).get(pname)
+        if t: return t
+        else:
             self._ref_error(
                 node.ident.coord,
                 "'%s' not defined" % (cname + '.' + pname))
+
+
+    def visit_Ref(self, node):
+        self._print_debug(node, node.ref)
+        return node.ref
 
         
     def visit_Ident(self, node):
@@ -252,12 +295,8 @@ class TypeChecker(csast.NodeVisitor):
                 "ident '%s': not defined" % node.name)
         
 
+    ## TYPE
+            
     def visit_Type(self, node):
         self._print_debug(node, '')
         return node.type
-
-
-    def visit_Ref(self, node):
-        self._print_debug(node, node.ref)
-        return node.ref
-        
