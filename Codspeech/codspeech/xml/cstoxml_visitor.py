@@ -150,10 +150,10 @@ class XMLGenerator(csast.NodeVisitor):
         self.f.write(self.indent + "</type>\n")
 
 
-    def _putTypeField(self,ident,type):
+    def _putTypeField(self,option,value):
         self.f.write(
-            self.indent + "<field id=\"" + self.visit(ident) + \
-                "\" type=\"" + self.visit(type) + "\" />\n")
+            self.indent + "<field id=\"" + option + \
+                "\" type=\"" + value + "\" />\n")
 
 
     def _putConnection(self,src,dest):
@@ -194,29 +194,11 @@ class XMLGenerator(csast.NodeVisitor):
         pass
 
 
-    def visit_NewType(self,node):
+    def visit_Newtype(self,node):
         self._startType(node.type)
         map(self.visit,node.typedecl)
         self.visit(node.doc)
         self._endType()
-
-
-    def visit_TypeDecl(self,node):
-        self._putTypeField(node.ident,node.type)
-
-        
-    def visit_Component(self, node):
-        if type(node.body) == csast.Network:
-            self._startFun(
-                self.visit(node.header.ident),
-                "network")
-        else:
-            self._startFun(
-                self.visit(node.header.ident),
-                self.visit(node.body.atomtype))
-        self.visit(node.header)
-        self.visit(node.body)
-        self._endFun()
 
 
     def visit_Header(self, node):
@@ -228,6 +210,38 @@ class XMLGenerator(csast.NodeVisitor):
         map(self.visit,node.outputs)
         self._endOutput()
 
+        
+    def visit_Atom(self, node):
+        self._startFun(
+            self.visit(node.header.ident),
+            self.visit(node.atomtype))
+        self.visit(node.header)
+        self.visit(node.optionblock)
+        self._endFun()
+
+
+    def visit_AtomType(self, node):
+        return node.type
+
+
+    def visit_Optionblock(self,node):
+        self._putController(node.options)
+
+
+    def visit_Network(self, node):
+        self._startFun(
+            self.visit(node.header.ident),
+            "network")
+        self.visit(node.header)
+        self._startNet()
+        self.visit(node.networkblock)
+        self._endNet()
+        self._endFun()
+
+
+    def visit_Networkblock(self,node):
+        map(self.visit,node.stmts)
+
 
     def visit_InParameter(self, node):
         self._putParam(node)
@@ -237,35 +251,22 @@ class XMLGenerator(csast.NodeVisitor):
         self._putParam(node)
 
 
-    def visit_Atom(self, node):
-        self._putController(node.options)
+#    def visit_Controller(self, node):
+#        pass
 
 
-    def visit_AtomType(self, node):
-        return node.type
-
-
-    def visit_Network(self, node):
-        self._startNet()
-        self.generic_visit(node)        
-        self._endNet()
-
-
-    def visit_Controller(self, node):
+    def visit_AssignmentStmt(self, node):
         pass
-
-
-    def visit_Assignment(self, node):
-        cs = self.visit(node.comp)
-        self._putInstance(node.ident,node.comp.ident)
-        for src,dest in cs:
-            self._putConnection(
-                src,
-                csast.ParamRef(
-                    node.ident,
-                    csast.Ref('in'),
-                    csast.Ident(dest)))
-        self.f.write("\n")
+#        cs = self.visit(node.comp)
+#        self._putInstance(node.ident,node.comp.ident)
+#        for src,dest in cs:
+#            self._putConnection(
+#                src,
+#                csast.ParamRef(
+#                    node.ident,
+#                    csast.Ref('in'),
+#                    csast.Ident(dest)))
+#        self.f.write("\n")
 
 
     def visit_ComponentStmt(self, node):
@@ -292,12 +293,12 @@ class XMLGenerator(csast.NodeVisitor):
         return cs
 
 
-    def visit_Connection(self, node):
-        self._putConnection(node.left,node.right)
+    def visit_ConnectionStmt(self, node):
+        self._putConnection(node.source,node.destination)
 
 
     def visit_Constant(self, node):
-        pass
+        return node.value
 
         
     def visit_Ident(self, node):
