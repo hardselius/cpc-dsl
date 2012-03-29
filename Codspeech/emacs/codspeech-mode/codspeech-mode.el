@@ -29,7 +29,7 @@
     '("atom[ ]+\\(external\\|python-extended\\|python\\)[ ]+\\([a-z][a-zA-Z0-9]*\\)" (1 'font-lock-keyword-face) (2 'font-lock-function-name-face))
     '("network[ ]+\\([a-z][a-zA-Z0-9]*\\)" . (1 'font-lock-function-name-face))
     '("type[ ]*\\([a-z][_A-Za-z-]*\\)" . (1 'font-lock-type-face))
-    '("[(,][ ]*\\([a-z][_A-Za-z-]*\\)[ :]+[a-z][a-zA-Z0-9]*" . (1 font-lock-type-face))
+    '("[(,?][ ]*\\([a-z][_A-Za-z-]*\\)[ :]+[a-z][a-zA-Z0-9]*" . (1 font-lock-type-face))
     '("[=(][ ]*\\([a-z][a-zA-Z0-9]*\\)[ ]*(" . (1 font-lock-function-name-face))
 	'("\\(controller\\)[ ]*([ ]*\\([a-z][a-zA-Z0-9]*\\)[ ]*)" (1 font-lock-builtin-face) (2 font-lock-function-name-face))
     '("\\<\\(true\\|false\\)\\>" . font-lock-constant-face))

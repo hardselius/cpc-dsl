@@ -38,20 +38,19 @@ def test(testfile):
       print "Abstrac syntax tree:"
       ast.show()
       print ""
-#    try:
-#      tc.typecheck(ast)
-#      env = tc.getEnv()
-#    except cstype.TypeError as e:
-#      print "Type Error" + str(e)
-#    except cstype.ReferenceError as e:
-#      print "Reference Error" + str(e)
-#    else:
-#      if pctx:
-#        print "Context:"
-#        tc.print_env()
+    try:
+      env = tc.typecheck(ast)
+    except cstype.TypeError as e:
+      print "Type Error" + str(e)
+    except cstype.ReferenceError as e:
+      print "Reference Error" + str(e)
+    else:
+      if pctx:
+        print "Context:"
+        print env
     gXML = xml.XMLGenerator()
-    gXML.generateXML(ast,{'apa':{'in':[('a','int')],'out':['b','int']}})
+    gXML.generateXML(ast,env)
   else:
     print "No abstract syntax tree was generated."
 
-test('examples/example1.cod')
+test('examples/example3.cod')
