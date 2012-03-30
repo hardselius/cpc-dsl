@@ -25,7 +25,7 @@
   (list
     '("\#[^\\\n]*" . font-lock-comment-face)
     '("'''\\(.\\|\n\\)*?'''" . font-lock-string-face)
-    '("\\<\\(import\\|in\\|out\\|network\\|atom\\|type\\|options\\)\\>" . font-lock-keyword-face)
+    '("\\(\\s-\\|\\s.\\|\\`\\)+\\<\\(import\\|in\\|out\\|network\\|atom\\|type\\|options\\)\\>" (2 'font-lock-keyword-face))
     '("atom[ ]+\\(external\\|python-extended\\|python\\)[ ]+\\([a-z][a-zA-Z0-9]*\\)" (1 'font-lock-keyword-face) (2 'font-lock-function-name-face))
     '("network[ ]+\\([a-z][a-zA-Z0-9]*\\)" . (1 'font-lock-function-name-face))
     '("type[ ]*\\([a-z][_A-Za-z-]*\\)" . (1 'font-lock-type-face))
