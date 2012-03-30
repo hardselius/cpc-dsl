@@ -1,111 +1,143 @@
-# ------------------------------------------------------------------
-# Codspeech/codspeech/xml: cstoxml.py
+# This file is part of Copernicus
+# http://www.copernicus-computing.org/
+# 
+# Copyright (C) 2011, Sander Pronk, Iman Pouya, Erik Lindahl, Viktor Almqvist, Martin Hardselius, and others.
 #
-# An xml generator for Codspeech
-# ------------------------------------------------------------------
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as published 
+# by the Free Software Foundation
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import copy
+
+from copy import copy
 from ..ast import csast
-
-class XMLGenerator:
-    def __init__(self,ind = 4):
-        self.i = ind
+from ..parser.plyparser import Coord
+    
+class XMLGenerator(csast.NodeVisitor):
+    def __init__(self, debug=False, ind = 4):
+        self.ind = ind
         self.indent = ' '*ind
-        self.ctx = None
-        self.f = None
-        self.tempName = 0
+        self.debug = debug
+        if self.debug:
+            print '\nDebug: ON'
 
-    def _ind(self):
-        self.indent += ' '*self.i
+            
+    def generateXML(self, ast, ctx, types = [], file = "output.xml"):
+        """ Generate XML from the AST
 
-    def _unind(self):
-        self.indent = self.indent[:len(self.indent)-self.i]
-
-    #---------------------------------------------------------------------
-    # Write XML functions
-    #---------------------------------------------------------------------
-
-    def _init(self):
-        self.f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
-
-    def _end(self):
-        self.f.write("</cpc>\n")
+        Keyword arguments:
+        ast - Duh...
+        
+        """
+        self.ctx = ctx
+        self.types = types
+        self.f = open(file,"w")
+        self.temp = 0
+        self.visit(ast)
         self.f.close()
 
+
+    def print_debug(self, node, msg):
+        if self.debug:
+            print "Visiting: '%s'" % node.__class__.__name__, msg
+
+
+    ##################################################################
+    # Write XML functions
+
+    def _ind(self):
+        self.indent += ' '*self.ind
+
+
+    def _unind(self):
+        self.indent = self.indent[:len(self.indent)-self.ind]
+
+
     def _startFun(self,id,type):
-        self.f.write(self.indent + "<function id=\"" + id
-                                 + "\" type=\"" + type + "\">\n")
+        self.f.write(
+            self.indent + "<function id=\"" + id \
+            + "\" type=\"" + type + "\">\n")
         self._ind()
+
 
     def _endFun(self):
         self._unind()
         self.f.write(self.indent + "</function>\n")
 
-    def _startInput(self):
-        self.f.write(self.indent + "<inputs>\n")
-        self._ind()
 
-    def _endInput(self):
-        self._unind()
-        self.f.write(self.indent + "</inputs>\n")
-
-    def _startOutput(self):
-        self.f.write(self.indent + "<outputs>\n")
-        self._ind()
-
-    def _endOutput(self):
-        self._unind()
-        self.f.write(self.indent + "</outputs>\n")
-
-    def _putParam(self,param):
-        self.f.write(self.indent + "<field type=\"" + param.type.lower() \
-                                 + "\" id=\"" + param.ident.name + "\"")
-        if type(param) == csast.InParameter and param.optional:
-            self.f.write(" opt=\"true\"")
-        if param.doc == None:
-            self.f.write(" />\n")
-        else:
+    def _putParam(self,node):
+        self.f.write(
+            self.indent + "<field type=\"" + self.visit(node.ident) \
+            + "\" id=\"" + self.visit(node.type) + "\"")
+        if type(node) == csast.InParameter:
+            if self.visit(node.optional):
+                self.f.write(" opt=\"true\"")
+        if node.doc.doc:
             self.f.write(">\n")
             self._ind()
-            self._putDoc(param.doc)
+            self.visit(node.doc)
             self._unind()
             self.f.write(self.indent + "</field>\n")
+        else:
+            self.f.write(" />\n")
 
-    def _putDoc(self,desc):
-        if desc != None:
-            self.f.write(self.indent + "<desc>" + desc + "</desc>\n")
 
     def _putController(self,opts):
         self.f.write(self.indent + "<controller ")
         for x in opts:
-            self.f.write(x.option.value.translate(None, '"') + \
-                         "=" + x.value.value)
+            self.f.write(
+                x.option.translate(None, '"') + \
+                    "=\"" + x.value + "\"")
             if x == opts[-1]:
                 self.f.write(" />\n")
             else:
                 self.f.write("\n" + self.indent + "            ")
 
+
     def _putImport(self,module):
         self.f.write(self.indent + "<import name=\"" \
                                  + module + "\" />\n")
 
-    def _startNet(self):
-        self.f.write(self.indent + "<network>\n")
+
+    def _startType(self,type):
+        self.f.write(
+            self.indent + "<type id=\"" + self.visit(type) + \
+                "\" base=\"list\">\n")
         self._ind()
 
-    def _endNet(self):
+
+    def _endType(self):
         self._unind()
-        self.f.write(self.indent + "</network>\n")
+        self.f.write(self.indent + "</type>\n")
+
+
+    def _putTypeField(self,option,value):
+        self.f.write(
+            self.indent + "<field id=\"" + option + \
+                "\" type=\"" + value + "\" />\n")
+
 
     def _putConnection(self,src,dest):
-        self.f.write(self.indent + "<connection src=\""    \
-                   + self._showIdent(src) + "\" dest=\"" \
-                   + self._showIdent(dest) + "\" />\n")
+        self.f.write(
+            self.indent + "<connection src=\"" + \
+                self.visit(src) + "\" dest=\"" + \
+                self.visit(dest) + "\" />\n")
+
 
     def _putInstance(self,id,fun):
-        self.f.write(self.indent + "<instance id=\""                \
-                   + self._showIdent(id) + "\" function=\"" \
-                   + self._showIdent(fun) + "\" />\n")
+        self.f.write(
+            self.indent + "<instance id=\"" + \
+                self.visit(id) + "\" function=\"" + \
+                self.visit(fun) + "\" />\n")
+
 
     def _showIdent(self,a):
         if type(a) == csast.This:
@@ -118,71 +150,161 @@ class XMLGenerator:
         else:
             return a.name
 
-    #-----------------------------------------------------------------
-    # Build a cpc XML from abstract syntax tree
-    #-----------------------------------------------------------------
-    def generateXML(self,csast,context,file = "output.xml"):
-        self.ctx = context
-        self.f = open(file,"w")
-        self._toXML(csast)
+    ##################################################################
+    # Visitor defenitions
 
-    def _toXML(self,t):
-        #elif t[0] == 'IMPORT':
-        #    putImport('.'.join(t[1]))
+    
+    def visit_Program(self, node):
+        self.f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
+        self.generic_visit(node)
+        self.f.write("</cpc>\n")
 
-        if type(t) == csast.Program:
-            self._init()
-            map(self._toXML,t.imports)
-            map(self._toXML,t.components)
-            self._end()    
 
-        elif type(t) == csast.Network:
-            self._startNet()
-            self._toXML(t.controller)
-            map(self._toXML,t.body)
-            self._endNet()
+    def visit_Import(self,node):
+        pass
 
-        elif type(t) == csast.Component:
-            if type(t.body) == csast.Network:
-                self._startFun(t.header.ident.name,"network")
+
+    def visit_Newtype(self,node):
+        self._startType(node.type)
+        map(self.visit,node.typedecl)
+        self.visit(node.doc)
+        self._endType()
+
+
+    def visit_Header(self, node):
+        self.visit(node.doc)
+        self.f.write(self.indent + "<inputs>\n")
+        self._ind()
+        map(self.visit,node.inputs)
+        self._unind()
+        self.f.write(self.indent + "</inputs>\n")
+        self.f.write(self.indent + "<outputs>\n")
+        self._ind()
+        map(self.visit,node.outputs)
+        self._unind()
+        self.f.write(self.indent + "</outputs>\n")
+
+
+    def visit_Atom(self, node):
+        self._startFun(
+            self.visit(node.header.ident),
+            self.visit(node.atomtype))
+        self.visit(node.header)
+        self.visit(node.optionblock)
+        self._endFun()
+
+
+    def visit_AtomType(self, node):
+        return node.type
+
+
+    def visit_Optionblock(self,node):
+        self._putController(node.options)
+
+
+    def visit_Network(self, node):
+        self._startFun(
+            self.visit(node.header.ident),
+            "network")
+        self.visit(node.header)
+        self.f.write(self.indent + "<network>\n")
+        self._ind()
+        self.visit(node.networkblock)
+        self._unind()
+        self.f.write(self.indent + "</network>\n")
+        self._endFun()
+
+
+    def visit_Networkblock(self,node):
+        map(self.visit,node.stmts)
+
+
+    def visit_InParameter(self, node):
+        self._putParam(node)
+        
+
+    def visit_OutParameter(self, node):
+        self._putParam(node)
+
+
+#    def visit_Controller(self, node):
+#        pass
+
+
+    def visit_AssignmentStmt(self, node):
+        pass
+        cs = self.visit(node.comp)
+        self._putInstance(node.ident,node.comp.ident)
+        for src,dest in cs:
+            self._putConnection(
+                src,
+                csast.ParamRef(
+                    node.ident,
+                    csast.Ref('in'),
+                    csast.Ident(dest)))
+        self.f.write("\n")
+
+
+    def visit_ComponentStmt(self, node):
+        cs = []
+        args = self.ctx[self.visit(node.ident)]['in']
+        for i, x in enumerate(node.inputs):
+            if type(x.comp) == csast.ComponentStmt:
+                self.temp += 1
+                ident = csast.Ident("_t%s" % self.temp)
+                outRef = csast.ParamRef(ident, x.io, x.ident)
+                c = self.visit(x.comp)
+                self._putInstance(ident,x.comp.ident)
+                for src,dest in c:
+                    self._putConnection(
+                        src,
+                        csast.ParamRef(
+                            ident,
+                            csast.Ref('in'),
+                            csast.Ident(dest)))
+                self.f.write("\n")
+                cs.append((outRef,args[i][0]))
             else:
-                self._startFun(t.header.ident.name,t.body.type)
-            self._putDoc(t.header.doc)
-            self._startInput()
-            map(self._putParam,t.header.inputs)
-            self._endInput()
-            self._startOutput()
-            map(self._putParam,t.header.outputs)
-            self._endOutput()
-            self._toXML(t.body)
-            self._endFun()
+                cs.append((x,args[i][0]))
+        return cs
 
-        elif type(t) == csast.Assignment:
-            self._putInstance(t.ident,t.component.ident)
-            args = copy.copy(self.ctx[t.component.ident.name]['in'])
-            for x in t.component.inputs:
-                y = args.pop(0)
-                if type(x) == csast.ComponentStmt:
-                    print "STMT"
-                    if self.ctx.has_key("temp"+str(tempName)):
-                        print "ZOMFG"
-                    self._putConnection(x, csast.Other(y.ident \
-                                                    ,'in'    \
-                                                    ,"temp"+str(tempName)))
-                else:
-                    self._putConnection(x, csast.Other(y.ident \
-                                                    ,'in'    \
-                                                    ,t.component.ident))
-            self.f.write("\n")
-                
-        elif type(t) == csast.Connection:
-            self._putConnection(t.left,t.right)
-            
-        elif type(t) == csast.Atom:
-            self._putController(t.options)
-            
-        #elif t[0] == 'CONTROLLER':
-        #    putController(t[1])
 
+    def visit_ConnectionStmt(self, node):
+        self._putConnection(node.source,node.destination)
+
+
+    def visit_Constant(self, node):
+        return node.value
+
+        
+    def visit_Ident(self, node):
+        return node.name
+
+
+    def visit_Type(self, node):
+        return node.type.lower()
+
+
+    def visit_ParamRef(self, node):
+        s = ""
+        if node.comp:
+            s += self.visit(node.comp) + ":"
         else:
-            pass
+            s += "self:ext_"
+        s += self.visit(node.io) + "."
+        s += self.visit(node.ident)
+        return s
+
+
+    def visit_Ref(self,node):
+        return node.ref
+
+
+    def visit_DocString(self, node):
+        if node.doc != None:
+            self.f.write(
+                self.indent + "<desc>" + node.doc + "</desc>\n")
+
+
+    def visit_Optional(self, node):
+        return node.bool

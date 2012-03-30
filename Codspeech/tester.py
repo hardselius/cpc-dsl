@@ -5,7 +5,7 @@ import copy
 import codspeech.parser.csparser as csparse
 
 import codspeech.typechecker.cstypechecker as cstype
-import codspeech.xml.cstoxml_visitor as xml
+import codspeech.xml.cstoxml as xml
 
 
 example1 = '../examples/example1.cod'
