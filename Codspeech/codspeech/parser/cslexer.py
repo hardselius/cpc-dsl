@@ -65,10 +65,18 @@ class CodspeechLexer(object):
     def _make_tok_location(self, token):
         return (token.lineno, self._find_tok_column(token))
 
+
+    ##
+    ## LEXER STATES
+    ##
         
-    # --------------------------------------------------------------
-    # reserved keywords
-    # --------------------------------------------------------------
+    states = (('options','inclusive'),)
+
+    
+    ##
+    ## RESERVED KEYWORDS
+    ##
+    
     keyword_map = {
         # Import
         'import'          : 'IMPORT',
@@ -78,7 +86,7 @@ class CodspeechLexer(object):
 
         # Atom keywords
         'atom'            : 'ATOM',
-        'options'         : 'OPTIONS',
+        #'options'         : 'OPTIONS',
         'python'          : 'ATOMTYPE',
         'python-extended' : 'ATOMTYPE',
         'external'        : 'ATOMTYPE',
@@ -100,9 +108,10 @@ class CodspeechLexer(object):
     }
 
 
-    # --------------------------------------------------------------
-    # tokens
-    # --------------------------------------------------------------
+    ##
+    ## TOKENS
+    ##
+    
     tokens = [
         # Literals: identifier, type, integer constant, float
         # constant, string constant
@@ -121,13 +130,13 @@ class CodspeechLexer(object):
         'COMMA', 'PERIOD',
 
         # Other:
-        'CR', 'OPTIONAL'
+        'CR', 'OPTIONAL', 'OPTIONS'
     ] + list(set(keyword_map.values()))
 
 
-    # --------------------------------------------------------------
-    # regular expressions for use in tokens
-    # --------------------------------------------------------------
+    ##
+    ## REGULAR EXPRESSIONS
+    ##
 
     # character groups
     lowercase    = r'[a-z]'
@@ -149,13 +158,38 @@ class CodspeechLexer(object):
     # modulename
     modulename   = r'(' + ident + r'(.' + ident + r')*' +  r')'
 
+
+    ##
+    ## TOKEN RULES
+    ##
     
-    # --------------------------------------------------------------
-    # token rules
-    # --------------------------------------------------------------
     t_ignore = ' \t\x0c'
 
-    
+
+    # LEXER-STATE: options (inclusive)
+    beginoptions = r'options'
+    endoptions   = r'\)'
+
+
+    @TOKEN(beginoptions)
+    def t_begin_options(self, t):
+        t.type = 'OPTIONS'
+        t.lexer.begin('options')
+        return t
+
+
+    t_options_IDENT = ident
+
+
+    @TOKEN(endoptions)
+    def t_options_end(self, t):
+        t.type = 'RPAREN'
+        t.lexer.begin('INITIAL')
+        return t
+        
+
+    ## LEXER-STATE: INITIAL
+
     @TOKEN(ident)
     def t_IDENT(self, t):
         t.type = self.keyword_map.get(t.value,"IDENT")

@@ -199,11 +199,22 @@ class CodspeechParser(PLYParser):
 
     def p_atom_option(self, p):
         """
-        atom_option : sconst COLON sconst
+        atom_option : option_ident COLON option_ident
         """
         p[0] = csast.AtomOption(
-            option = p[1].value,
-            value  = p[3].value)
+            option = p[1],
+            value  = p[3])
+
+
+    def p_option_ident(self, p):
+        """
+        option_ident : IDENT
+                     | option_ident PERIOD IDENT
+        """
+        if len(p) == 2:
+            p[0] = p[1]
+        else:
+            p[0] = p[1] + p[2] + p[3]
 
 
     # --------------------------------------------------------------

@@ -375,6 +375,7 @@ class Optional(Node):
 class ControllerStmt(Node):
     def __init__(self, ident, coord=None):
         self.ident = ident
+        self.coord = coord
 
     def children(self):
         nodelist = []
