@@ -9,6 +9,15 @@
 \BOOKMARK [1][-]{section.2.1}{Requirements}{chapter.2}
 \BOOKMARK [1][-]{section.2.2}{Specification}{chapter.2}
 \BOOKMARK [0][-]{chapter.3}{Codspeech}{}
+\BOOKMARK [1][-]{section.3.1}{Project overview}{chapter.3}
+\BOOKMARK [1][-]{section.3.2}{Designing the dsl}{chapter.3}
+\BOOKMARK [1][-]{section.3.3}{The resulting BNF}{chapter.3}
+\BOOKMARK [1][-]{section.3.4}{Choosing tools}{chapter.3}
+\BOOKMARK [1][-]{section.3.5}{Implementation}{chapter.3}
+\BOOKMARK [2][-]{subsection.3.5.1}{Parser}{section.3.5}
+\BOOKMARK [2][-]{subsection.3.5.2}{Typechecker}{section.3.5}
+\BOOKMARK [2][-]{subsection.3.5.3}{XML generation}{section.3.5}
+\BOOKMARK [2][-]{subsection.3.5.4}{emacs mode}{section.3.5}
 \BOOKMARK [0][-]{chapter.4}{Conclusions}{}
 \BOOKMARK [0][-]{chapter*.3}{ Bibliography}{}
 \BOOKMARK [0][-]{appendix.A}{Source Code}{}
