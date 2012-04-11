@@ -1,5 +1,8 @@
-\documentclass[11pt,a4paper]{report}
-
+%\documentclass[11pt,a4paper]{report}
+\documentclass[ openright,titlepage,numbers=noenddot,headinclude,
+                footinclude=true,cleardoublepage=empty,abstractoff
+                BCOR=5mm,paper=a4,fontsize=11pt,%11pt,a4paper,%
+                ]{scrreprt}
 
 % Packages and commands file
 \input{include/packagescommands}
@@ -20,13 +23,13 @@
 \pagenumbering{roman}
 \setcounter{page}{1}
 \pagestyle{fancy}
-\setspecialhdr
+%\setspecialhdr
 \tableofcontents
 
 
 % Main area
 \newpage
-\setdefaulthdr
+%\setdefaulthdr
 \pagenumbering{arabic}	
 \setcounter{page}{1}
 
@@ -47,13 +50,13 @@
 
 \bibliography{references} % references.bib
 \addcontentsline{toc}{chapter}{\numberline{} Bibliography} % For pdf
-\setspecialhdr
+%\setspecialhdr
 
 \newpage
 
 
 % Appendices
 \appendix
-\setdefaulthdr
+%\setdefaulthdr
 \input{frontbackmatter/sourcecode}
 \end{document}

@@ -2,41 +2,41 @@
 \bibliographystyle{elsart-num}
 
 % PDF Metadata and link styles
-\hypersetup{
-  pdftitle={Master's Thesis: },%
-  pdfauthor={Jonas Einarsson},%
-  colorlinks=true,%
-  citecolor=black,%
-  filecolor=black,%
-  linkcolor=black,%
-  urlcolor=black
-}
+%\hypersetup{
+%  pdftitle={Master's Thesis: },%
+%  pdfauthor={Jonas Einarsson},%
+%  colorlinks=true,%
+%  citecolor=black,%
+%  filecolor=black,%
+%  linkcolor=black,%
+%  urlcolor=black
+%}
 
 % Dropping initial letter color
 \renewcommand{\LettrineFontHook}{\color[gray]{0.5}}
 
 % Chapter headings style (fncychap)
-\makeatletter
-\ChNumVar{} % sets the style for digit
-\ChTitleVar{\Huge\bfseries\centering} % sets the style for title
-\ChRuleWidth{4pt} % Set RW=4pt
-\ChNameUpperCase % Make name uppercase
-\renewcommand{\DOCH}{
-\centering
-{\CNoV {\fontsize{60pt}{20pt}\selectfont\thechapter} }
-\vskip 40\p@}
-\renewcommand{\DOTI}[1]{%
-\CTV\FmTi{#1}\par\nobreak
-\vskip 40\p@}
-\renewcommand{\DOTIS}[1]{%
-\CTV\FmTi{#1}\par\nobreak
-\vskip 40\p@}
-\makeatother
+%\makeatletter
+%\ChNumVar{} % sets the style for digit
+%\ChTitleVar{\Huge\bfseries\centering} % sets the style for title
+%\ChRuleWidth{4pt} % Set RW=4pt
+%\ChNameUpperCase % Make name uppercase
+%\renewcommand{\DOCH}{
+%\centering
+%{\CNoV {\fontsize{60pt}{20pt}\selectfont\thechapter} }
+%\vskip 40\p@}
+%\renewcommand{\DOTI}[1]{%
+%\CTV\FmTi{#1}\par\nobreak
+%\vskip 40\p@}
+%\renewcommand{\DOTIS}[1]{%
+%\CTV\FmTi{#1}\par\nobreak
+%\vskip 40\p@}
+%\makeatother
 
 % Single page abstract
-\renewenvironment{abstract}%
-{\begin{center} \bfseries \abstractname \end{center}}%
-{\vspace{2\baselineskip}}%
+%\renewenvironment{abstract}%
+%{\begin{center} \bfseries \abstractname \end{center}}%
+%{\vspace{2\baselineskip}}%
 
 % Figure & Table captions
 \captionsetup{margin=10pt,font=small,labelfont=bf}
@@ -45,8 +45,8 @@
 \addtolength{\headheight}{\baselineskip}
 
 % Fancyheader (see packagescommands.tex for default/special)
-\pagestyle{fancy}
-\setdefaulthdr
+%\pagestyle{fancy}
+%\setdefaulthdr
 
 % Stolen settings (unknown origin):
 % Alter some LaTeX defaults for better treatment of figures:
