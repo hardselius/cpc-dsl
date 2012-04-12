@@ -87,13 +87,9 @@
 %******************************************************************
 % Frontmatter
 % ******************************************************************
-%\include{FrontBackmatter/DirtyTitlepage}
 \include{FrontBackmatter/Titlepage}
 \include{FrontBackmatter/Titleback}
-%\cleardoublepage\include{FrontBackmatter/Dedication}
-%\cleardoublepage\include{FrontBackmatter/Foreword}
 \cleardoublepage\include{FrontBackmatter/Abstract}
-%\cleardoublepage\include{FrontBackmatter/Publication}
 \cleardoublepage\include{FrontBackmatter/Acknowledgments}
 \pagestyle{scrheadings}
 \cleardoublepage\include{FrontBackmatter/Contents}
@@ -107,7 +103,19 @@
 % use \cleardoublepage here to avoid problems with pdfbookmark
 \cleardoublepage
 
-\ctparttext{A short text about distributed computing. \citep{pronk:2011}}
+\ctparttext{
+  \begin{flushright}{\slshape
+      A large-scale distributed computing paradigm that is driven by
+      economies of scale, in which a pool of abstracted, virtualized,
+      dynamically-scalable, managed computing power, storage,
+      platforms, and services are delivered on demand to external
+      customers over the Internet.}
+    \\ \medskip
+    -- from \defcitealias{foster:2008}{Cloud Computing and Grid
+      Computing 360-Degree Compared}\citetalias{foster:2008}
+    \citep{foster:2008}
+  \end{flushright}
+}
 \part{Distributed Computing}
 \include{Chapters/introduction}
 \cleardoublepage
@@ -135,7 +143,7 @@
 \appendix
 \cleardoublepage
 \part{Appendix}
-%\include{Chapters/Chapter0A}
+\include{Appendices/sourcecode}
 
 
 %******************************************************************
