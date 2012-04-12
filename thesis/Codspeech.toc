@@ -1,21 +1,31 @@
-\select@language {english}
+\select@language {american}
 \vspace {-\cftbeforepartskip }
 \select@language {american}
-\contentsline {chapter}{\numberline {1}\spacedlowsmallcaps {Introduction}}{1}{chapter.1}
-\contentsline {section}{\numberline {1.1}Problem statement}{1}{section.1.1}
-\contentsline {subsection}{\numberline {1.1.1}Background}{2}{subsection.1.1.1}
-\contentsline {subsection}{\numberline {1.1.2}Delimitations}{2}{subsection.1.1.2}
-\contentsline {subsection}{\numberline {1.1.3}Purpose}{2}{subsection.1.1.3}
-\contentsline {section}{\numberline {1.2}Literature}{2}{section.1.2}
-\contentsline {section}{\numberline {1.3}Remaining chapters}{2}{section.1.3}
-\contentsline {chapter}{\numberline {2}\spacedlowsmallcaps {Method}}{3}{chapter.2}
-\contentsline {section}{\numberline {2.1}Requirements}{4}{section.2.1}
-\contentsline {section}{\numberline {2.2}Specification}{4}{section.2.2}
-\contentsline {chapter}{\numberline {3}\spacedlowsmallcaps {Codspeech}}{5}{chapter.3}
-\contentsline {chapter}{\numberline {4}\spacedlowsmallcaps {Conclusions}}{7}{chapter.4}
-\contentsline {part}{i\hspace {1em}\spacedlowsmallcaps {Appendix}}{9}{part.1}
-\contentsline {chapter}{\numberline {A}\spacedlowsmallcaps {Appendix Test}}{11}{appendix.A}
-\contentsline {section}{\numberline {A.1}Appendix Section Test}{11}{section.A.1}
-\contentsline {section}{\numberline {A.2}Another Appendix Section Test}{11}{section.A.2}
+\contentsline {part}{i\hspace {1em}\spacedlowsmallcaps {Distributed Computing}}{1}{part.1}
+\contentsline {chapter}{\numberline {1}\spacedlowsmallcaps {Introduction}}{3}{chapter.1}
+\contentsline {section}{\numberline {1.1}Problem statement}{3}{section.1.1}
+\contentsline {subsection}{\numberline {1.1.1}Background}{4}{subsection.1.1.1}
+\contentsline {subsection}{\numberline {1.1.2}Delimitations}{4}{subsection.1.1.2}
+\contentsline {subsection}{\numberline {1.1.3}Purpose}{4}{subsection.1.1.3}
+\contentsline {section}{\numberline {1.2}Literature}{4}{section.1.2}
+\contentsline {section}{\numberline {1.3}Related work}{4}{section.1.3}
+\contentsline {section}{\numberline {1.4}Remaining chapters}{4}{section.1.4}
+\contentsline {part}{ii\hspace {1em}\spacedlowsmallcaps {A Domain-specific Langauge}}{5}{part.2}
+\contentsline {chapter}{\numberline {2}\spacedlowsmallcaps {Method}}{7}{chapter.2}
+\contentsline {section}{\numberline {2.1}Requirements}{8}{section.2.1}
+\contentsline {section}{\numberline {2.2}Specification}{8}{section.2.2}
+\contentsline {chapter}{\numberline {3}\spacedlowsmallcaps {Codspeech}}{9}{chapter.3}
+\contentsline {section}{\numberline {3.1}Project overview}{11}{section.3.1}
+\contentsline {section}{\numberline {3.2}Designing the dsl}{11}{section.3.2}
+\contentsline {section}{\numberline {3.3}The resulting BNF}{11}{section.3.3}
+\contentsline {section}{\numberline {3.4}Choosing tools}{11}{section.3.4}
+\contentsline {section}{\numberline {3.5}Implementation}{11}{section.3.5}
+\contentsline {subsection}{\numberline {3.5.1}Parser}{11}{subsection.3.5.1}
+\contentsline {subsection}{\numberline {3.5.2}Typechecker}{11}{subsection.3.5.2}
+\contentsline {subsection}{\numberline {3.5.3}XML generation}{11}{subsection.3.5.3}
+\contentsline {subsection}{\numberline {3.5.4}emacs mode}{11}{subsection.3.5.4}
+\contentsline {subsection}{\numberline {3.5.5}Future work}{11}{subsection.3.5.5}
+\contentsline {chapter}{\numberline {4}\spacedlowsmallcaps {Conclusions}}{13}{chapter.4}
+\contentsline {part}{iii\hspace {1em}\spacedlowsmallcaps {Appendix}}{15}{part.3}
 \vspace {\beforebibskip }
-\contentsline {chapter}{\spacedlowsmallcaps {Bibliography}}{13}{dummy.2}
+\contentsline {chapter}{\spacedlowsmallcaps {Bibliography}}{17}{dummy.2}
