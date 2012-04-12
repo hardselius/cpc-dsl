@@ -10,10 +10,10 @@
 \BOOKMARK [1][-]{section.1.2}{1.2 Literature}{chapter.1}
 \BOOKMARK [1][-]{section.1.3}{1.3 Related work}{chapter.1}
 \BOOKMARK [1][-]{section.1.4}{1.4 Remaining chapters}{chapter.1}
-\BOOKMARK [-1][]{part.2}{A Domain-specific Langauge}{}
-\BOOKMARK [0][]{chapter.2}{2 Method}{part.2}
+\BOOKMARK [0][]{chapter.2}{2 Method}{part.1}
 \BOOKMARK [1][-]{section.2.1}{2.1 Requirements}{chapter.2}
 \BOOKMARK [1][-]{section.2.2}{2.2 Specification}{chapter.2}
+\BOOKMARK [-1][]{part.2}{A Domain-specific Langauge}{}
 \BOOKMARK [0][]{chapter.3}{3 Codspeech}{part.2}
 \BOOKMARK [1][-]{section.3.1}{3.1 Project overview}{chapter.3}
 \BOOKMARK [1][-]{section.3.2}{3.2 Designing the dsl}{chapter.3}

@@ -42,27 +42,38 @@
 %    * [medium] mathbb in section-titles/chapter-titles => disappears
 %      somehow in headlines!!!
 % ******************************************************************
-\documentclass[ twoside,openright,titlepage,numbers=noenddot,headinclude,%1headlines,% letterpaper a4paper
-                footinclude=true,cleardoublepage=empty,abstractoff, % <--- obsolete, remove (todo)
-                BCOR=5mm,paper=a4,fontsize=11pt,%11pt,a4paper,%
-                american,%
-                ]{scrreprt}
+\documentclass[
+  twoside,
+  openright,
+  titlepage,
+  numbers=noenddot,
+  headinclude,
+  %1headlines,% letterpaper a4paper
+  footinclude=true,
+  cleardoublepage=empty,
+  abstractoff, % <--- obsolete, remove (todo)
+  BCOR=5mm,
+  paper=a4,
+  fontsize=11pt,%11pt,a4paper,%
+  american%
+]{scrreprt}
 
 
-% ------------------------------------------------------------------
+% ******************************************************************
 % Note: Make all your adjustments in here
-% ------------------------------------------------------------------
+% ******************************************************************
+\input{classicthesis-config}
 
 
-%------------------------------------------------------------------
+%******************************************************************
 % Hyphenation
-% ------------------------------------------------------------------
+% ******************************************************************
 %\hyphenation{put special hyphenation here}
 
 
-% ------------------------------------------------------------------
+% ******************************************************************
 % GO!GO!GO! MOVE IT!
-% ------------------------------------------------------------------
+% ******************************************************************
 \begin{document}
 \frenchspacing
 \raggedbottom
@@ -73,9 +84,9 @@
 \pagestyle{plain}
 
 
-%------------------------------------------------------------------
+%******************************************************************
 % Frontmatter
-% ------------------------------------------------------------------
+% ******************************************************************
 %\include{FrontBackmatter/DirtyTitlepage}
 \include{FrontBackmatter/Titlepage}
 \include{FrontBackmatter/Titleback}
@@ -88,49 +99,55 @@
 \cleardoublepage\include{FrontBackmatter/Contents}
 
 
-%------------------------------------------------------------------
+%******************************************************************
 % Mainmatter
-% ------------------------------------------------------------------
+% ******************************************************************
 \pagenumbering{arabic}
 %\setcounter{page}{90}
 % use \cleardoublepage here to avoid problems with pdfbookmark
 \cleardoublepage
+
+\ctparttext{A short text about distributed computing.}
 \part{Distributed Computing}
 \include{Chapters/introduction}
 \cleardoublepage
-\ctparttext{You can put some informational part preamble text here. 
-Illo principalmente su nos. Non message \emph{occidental} angloromanic
-da. Debitas effortio simplificate sia se, auxiliar summarios da que,
-se avantiate publicationes via. Pan in terra summarios, capital
-interlingua se que. Al via multo esser specimen, campo responder que
-da. Le usate medical addresses pro, europa origine sanctificate nos se.}
-\part{A Domain-specific Langauge}
+
 \include{Chapters/method}
-%\addtocontents{toc}{\protect\clearpage} % <--- just debug stuff, ignore
+\cleardoublepage
+
+\ctparttext{You can put some informational part preamble text here.
+  Illo principalmente su nos. Non message \emph{occidental}
+  angloromanic da. Debitas effortio simplificate sia se, auxiliar
+  summarios da que, se avantiate publicationes via. Pan in terra
+  summarios, capital interlingua se que. Al via multo esser specimen,
+  campo responder que da. Le usate medical addresses pro, europa
+  origine sanctificate nos se.}
+\part{A Domain-specific Langauge}
 \include{Chapters/codspeech}
-%\include{multiToC} % <--- just debug stuff, ignore for your documents
+\cleardoublepage
+
 \include{Chapters/conclusions}
 
 
-% ------------------------------------------------------------------
+% ******************************************************************
 % Backmatter
-% ------------------------------------------------------------------
+% ******************************************************************
 \appendix
 \cleardoublepage
 \part{Appendix}
-\include{Chapters/Chapter0A}
+%\include{Chapters/Chapter0A}
 
 
-%------------------------------------------------------------------
+%******************************************************************
 % Other Stuff in the Back
-% ------------------------------------------------------------------
+% ******************************************************************
 \cleardoublepage\include{FrontBackmatter/Bibliography}
 \cleardoublepage\include{FrontBackmatter/Colophon}
 \cleardoublepage\include{FrontBackmatter/Declaration}
 
 
-% ------------------------------------------------------------------
+% ******************************************************************
 % Game Over: Restore, Restart, or Quit?
-% ------------------------------------------------------------------
+% ******************************************************************
 \end{document}
-% ------------------------------------------------------------------
+% ******************************************************************
