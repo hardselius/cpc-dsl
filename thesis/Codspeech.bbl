@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{2}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -10,5 +10,13 @@ Donald~E. Knuth.
 \newblock {C}omputer {P}rogramming as an {A}rt.
 \newblock \emph{Communications of the ACM}, 17\penalty0 (12):\penalty0
   667--673, December 1974.
+
+\bibitem[Pronk et~al.()Pronk, Larsson, Pouya, Bowman, Haque, Beauchamp, Hess,
+  Pande, Kasson, and Lindahl]{pronk:2011}
+Sander Pronk, Per Larsson, Iman Pouya, Gregory~R. Bowman, Imran~S. Haque, Kyle
+  Beauchamp, Berk Hess, Vija~S. Pande, Peter~M. Kasson, and Erik Lindahl.
+\newblock {C}opernicus: {A} new paradigm for parallel adaptive melcular
+  dynamics.
+\newblock SC11.
 
 \end{thebibliography}

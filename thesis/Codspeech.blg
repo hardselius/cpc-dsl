@@ -9,55 +9,51 @@ A level-1 auxiliary file: Chapters/introduction.aux
 A level-1 auxiliary file: Chapters/method.aux
 A level-1 auxiliary file: Chapters/codspeech.aux
 A level-1 auxiliary file: Chapters/conclusions.aux
-I couldn't open auxiliary file Chapters/Chapter0A.aux
----line 48 of file Codspeech.aux
- : \@input{Chapters/Chapter0A.aux
- :                               }
-I'm skipping whatever remains of this command
 A level-1 auxiliary file: FrontBackmatter/Bibliography.aux
 The style file: plainnat.bst
 A level-1 auxiliary file: FrontBackmatter/Colophon.aux
 A level-1 auxiliary file: FrontBackmatter/Declaration.aux
 Database file #1: Bibliography.bib
-You've used 1 entry,
+Warning--empty year in pronk:2011
+You've used 2 entries,
             2773 wiz_defined-function locations,
-            614 strings with 5298 characters,
-and the built_in function-call counts, 426 in all, are:
-= -- 38
-> -- 10
+            617 strings with 5542 characters,
+and the built_in function-call counts, 1182 in all, are:
+= -- 91
+> -- 103
 < -- 1
-+ -- 4
-- -- 3
-* -- 33
-:= -- 69
-add.period$ -- 3
-call.type$ -- 1
-change.case$ -- 4
-chr.to.int$ -- 1
-cite$ -- 2
-duplicate$ -- 20
-empty$ -- 41
-format.name$ -- 4
-if$ -- 83
++ -- 35
+- -- 33
+* -- 107
+:= -- 193
+add.period$ -- 6
+call.type$ -- 2
+change.case$ -- 17
+chr.to.int$ -- 2
+cite$ -- 5
+duplicate$ -- 36
+empty$ -- 74
+format.name$ -- 35
+if$ -- 230
 int.to.chr$ -- 1
 int.to.str$ -- 1
 missing$ -- 1
-newline$ -- 13
-num.names$ -- 4
-pop$ -- 7
+newline$ -- 18
+num.names$ -- 8
+pop$ -- 42
 preamble$ -- 1
-purify$ -- 3
+purify$ -- 15
 quote$ -- 0
-skip$ -- 13
+skip$ -- 31
 stack$ -- 0
-substring$ -- 27
-swap$ -- 2
+substring$ -- 29
+swap$ -- 3
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 11
-warning$ -- 0
-while$ -- 5
+type$ -- 22
+warning$ -- 1
+while$ -- 8
 width$ -- 0
-write$ -- 20
-(There was 1 error message)
+write$ -- 31
+(There was 1 warning)
