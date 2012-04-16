@@ -119,17 +119,24 @@ class XMLGenerator(csast.NodeVisitor):
         self.f.write(self.indent + "</type>\n")
 
 
-    def _putTypeField(self,option,value):
+    def _putTypeField(self,id,type):
         self.f.write(
-            self.indent + "<field id=\"" + option + \
-                "\" type=\"" + value + "\" />\n")
+            self.indent + "<field id=\"" + self.visit(id) + \
+                "\" type=\"" + self.visit(type) + "\" />\n")
 
 
     def _putConnection(self,src,dest):
-        self.f.write(
-            self.indent + "<connection src=\"" + \
-                self.visit(src) + "\" dest=\"" + \
-                self.visit(dest) + "\" />\n")
+        if type(src) == csast.Constant:
+            self.f.write(
+                self.indent + "<assign type=\"" + \
+                    self.visit(src.type) + "\" value=\"" + \
+                    src.value.__str__() + "\" dest=\"" + \
+                    self.visit(dest) + "\" />\n")
+        else:
+            self.f.write(
+                self.indent + "<connection src=\"" + \
+                    self.visit(src) + "\" dest=\"" + \
+                    self.visit(dest) + "\" />\n")
 
 
     def _putInstance(self,id,fun):
@@ -169,6 +176,10 @@ class XMLGenerator(csast.NodeVisitor):
         map(self.visit,node.typedecl)
         self.visit(node.doc)
         self._endType()
+
+
+    def visit_TypeDecl(self,node):
+        self._putTypeField(node.ident,node.type)
 
 
     def visit_Header(self, node):
@@ -249,7 +260,8 @@ class XMLGenerator(csast.NodeVisitor):
         cs = []
         args = self.ctx[self.visit(node.ident)]['in']
         for i, x in enumerate(node.inputs):
-            if type(x.comp) == csast.ComponentStmt:
+            if type(x) == csast.ParamRef and \
+                    type(x.comp) == csast.ComponentStmt:
                 self.temp += 1
                 ident = csast.Ident("_t%s" % self.temp)
                 outRef = csast.ParamRef(ident, x.io, x.ident)
