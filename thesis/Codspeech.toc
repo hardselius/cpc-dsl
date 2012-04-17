@@ -24,7 +24,7 @@
 \contentsline {subsection}{\numberline {3.5.2}Typechecker}{11}{subsection.3.5.2}
 \contentsline {subsection}{\numberline {3.5.3}XML generation}{11}{subsection.3.5.3}
 \contentsline {subsection}{\numberline {3.5.4}emacs mode}{11}{subsection.3.5.4}
-\contentsline {subsection}{\numberline {3.5.5}Future work}{11}{subsection.3.5.5}
+\contentsline {section}{\numberline {3.6}Future work}{11}{section.3.6}
 \contentsline {chapter}{\numberline {4}\spacedlowsmallcaps {Conclusions}}{13}{chapter.4}
 \contentsline {part}{iii\hspace {1em}\spacedlowsmallcaps {Appendix}}{15}{part.3}
 \contentsline {chapter}{\numberline {A}\spacedlowsmallcaps {Source Code}}{17}{appendix.A}
