@@ -1,9 +1,18 @@
-\begin{thebibliography}{3}
+\begin{thebibliography}{4}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Chervenak et~al.(2001)Chervenak, Foster, Kesselman, Salisbury, and
+  Tuecke]{chervenak:2001}
+Ann Chervenak, Ian Foster, Carl Kesselman, Charles Salisbury, and Steven
+  Tuecke.
+\newblock The data grid: Towards an architecture for the distributed management
+  and analysis of large scientific datasets.
+\newblock \emph{Journal of Network and Computer Applications}, 23:\penalty0
+  187--200, 2001.
 
 \bibitem[Foster et~al.(2008)Foster, Zhao, Raicu, and Lu]{foster:2008}
 I.~Foster, Yong Zhao, I.~Raicu, and S.~Lu.
