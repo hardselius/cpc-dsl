@@ -1,4 +1,4 @@
-\begin{thebibliography}{4}
+\begin{thebibliography}{6}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -11,28 +11,37 @@ Ann Chervenak, Ian Foster, Carl Kesselman, Charles Salisbury, and Steven
   Tuecke.
 \newblock The data grid: Towards an architecture for the distributed management
   and analysis of large scientific datasets.
-\newblock \emph{Journal of Network and Computer Applications}, 23:\penalty0
-  187--200, 2001.
+\newblock \emph{Journal of Network and Computer Applications}, 23, 2001.
 
 \bibitem[Foster et~al.(2008)Foster, Zhao, Raicu, and Lu]{foster:2008}
 I.~Foster, Yong Zhao, I.~Raicu, and S.~Lu.
-\newblock {C}loud {C}omputing and {G}rid {C}omputing 360-{D}egree {C}ompared.
-\newblock In \emph{{G}rid {C}omputing {E}nvironments {W}orkshop, 2008. GCE
-  '08}, pages 1 --10, November 2008.
-\newblock \doi{10.1109/GCE.2008.4738445}.
+\newblock Cloud computing and grid computing 360-degree compared.
+\newblock In \emph{Grid Computing Environments Workshop}, GCE '08, November
+  2008.
 
 \bibitem[Knuth(1974)]{knuth:1974}
 Donald~E. Knuth.
-\newblock {C}omputer {P}rogramming as an {A}rt.
+\newblock Computer programming as an art.
 \newblock \emph{Communications of the ACM}, 17\penalty0 (12):\penalty0
   667--673, December 1974.
 
+\bibitem[Morrison(2010)]{morrison:2010}
+J.~Paul Morrison.
+\newblock \emph{Flow-Based Programing: A New Aproach to Application
+  Developement}.
+\newblock Createspace, 2nd edition, 2010.
+
+\bibitem[Morrison(2012)]{morrison:2012:url}
+J.~Paul Morrison.
+\newblock Flow-based programming.
+\newblock \url{http://www.jpaulmorrison.com/fbp/}, April 2012.
+
 \bibitem[Pronk et~al.(2011)Pronk, Larsson, Pouya, Bowman, Haque, Beauchamp,
   Hess, Pande, Kasson, and Lindahl]{pronk:2011}
-S.~Pronk, P.~Larsson, I.~Pouya, G.R. Bowman, I.S. Haque, K.~Beauchamp, B.~Hess,
-  V.S. Pande, P.M. Kasson, and E.~Lindahl.
+Sander Pronk, Per Larsson, Iman Pouya, Gregory~R. Bowman, Imran~S. Haque, Kyle
+  Beauchamp, Berk Hess, Vijay~S. Pande, Peter~M. Kasson, and Erik Lindahl.
 \newblock Copernicus: A new paradigm for parallel adaptive molecular dynamics.
-\newblock In \emph{High Performance Computing, Networking, Storage and Analysis
-  (SC), 2011 International Conference for}, pages 1 --10, November 2011.
+\newblock In \emph{Proceedings of 2011 International Conference for High
+  Performance Computing, Networking, Storage and Analysis}, pages 1--10, 2011.
 
 \end{thebibliography}
