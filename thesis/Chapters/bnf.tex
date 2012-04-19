@@ -1,0 +1,302 @@
+\newcommand{\pn}[1]{\langle \textnormal{#1} \rangle}
+\newcommand{\pp}{\models}
+\newcommand{\oo}{\; \mid \;}
+\newcommand{\sk}{\dots }
+\newcommand{\ww}{\;}
+\newcommand{\nn}{\perp}
+\newcommand{\sm}[1]{\textnormal{#1}}
+\newcommand{\sd}[1]{\textnormal{\it #1}}
+
+
+Grammar production
+\begin{eqnarray*}
+  \pn{entrypoint} &\pp&
+    \pn{opt{\textunderscore}cr} \ww \pn{program} \oo
+    \pn{empty} \\
+  \pn{program} &\pp&
+    \pn{top{\textunderscore}def{\textunderscore}list} \ww
+    \pn{opt{\textunderscore}cr} \\
+  \pn{top{\textunderscore}def{\textunderscore}list} &\pp&
+    \pn{top{\textunderscore}def} \oo
+    \pn{top{\textunderscore}def{\textunderscore}list} \ww
+    \pn{cr} \ww
+    \pn{top{\textunderscore}def} \\
+  \pn{top{\textunderscore}def} &\pp&
+    \pn{import{\textunderscore}stmt} \oo
+    \pn{newtype{\textunderscore}decl} \oo
+    \pn{atom{\textunderscore}decl} \oo
+    \pn{network{\textunderscore}decl} \\
+\end{eqnarray*}
+
+Import Statment
+\begin{eqnarray*}
+  \pn{import{\textunderscore}stmt} &\pp&
+    \sm{import} \ww
+    \pn{package{\textunderscore}path} \\
+  \pn{package{\textunderscore}path} &\pp& 
+    \pn{package{\textunderscore}identifier} \oo
+    \pn{package{\textunderscore}path} \ww
+    \sm{.} \ww
+    \pn{package{\textunderscore}identifier} \\
+  \pn{package{\textunderscore}identifier} &\pp& \pn{ident} \\
+\end{eqnarray*}
+
+Newtype
+\begin{eqnarray*}
+  \pn{newtype{\textunderscore}decl} &\pp&
+    \sm{type} \ww
+    \pn{type} \ww
+    \pn{docstring} \ww
+    \pn{cr} \ww
+    \sm{(} \ww
+    \pn{type{\textunderscore}decl{\textunderscore}list} \ww
+    \sm{)} \\
+  \pn{type{\textunderscore}decl{\textunderscore}list} &\pp&
+    \pn{type{\textunderscore}decl} \oo
+    \pn{type{\textunderscore}decl{\textunderscore}list} \ww
+    \pn{comma{\textunderscore}sep} \ww
+    \pn{type{\textunderscore}decl} \\
+  \pn{type{\textunderscore}decl} &\pp&
+    \pn{type} \ww
+    \sm{:} \ww
+    \pn{ident} \\
+\end{eqnarray*}
+
+Atom Declaration
+\begin{eqnarray*}
+  \pn{atom{\textunderscore}decl} &\pp&
+    \sm{atom} \ww
+    \pn{atomtype} \ww
+    \pn{header} \ww
+    \pn{optionblock} \\
+  \pn{atomtype} &\pp&
+    \sm{python} \oo
+    \sm{python-extended} \oo
+    \sm{external} \oo \\
+  \pn{optionblock} &\pp&
+    \sm{option} \ww
+    \pn{opt{\textunderscore}cr} \ww
+    \sm{(} \ww
+    \pn{atom{\textunderscore}optio{\textunderscore}list} \ww
+    \sm{)} \\
+  \pn{atom{\textunderscore}option{\textunderscore}list} &\pp&
+    \pn{atom{\textunderscore}option} \oo
+    \pn{atom{\textunderscore}option{\textunderscore}list} \ww
+    \pn{comma{\textunderscore}sep} \ww
+    \pn{atom{\textunderscore}option} \\
+  \pn{atom{\textunderscore}option} &\pp&
+    \pn{option{\textunderscore}ident} \ww
+    \sm{:} \ww
+    \pn{option{\textunderscore}ident} \ww\\
+  \pn{option{\textunderscore}ident} &\pp&
+    \pn{ident} \oo
+    \pn{option{\textunderscore}ident} \ww
+    \sm{.} \ww
+    \pn{ident} \\
+\end{eqnarray*}
+
+Network Declaration
+\begin{eqnarray*}
+  \pn{network{\textunderscore}decl} &\pp&
+    \sm{network} \ww
+    \pn{header} \ww
+    \pn{networkblock} \\
+  \pn{networkblock} &\pp&
+    \pn{stmt{\textunderscore}block} \\
+\end{eqnarray*}
+
+Atom and Network Header
+\begin{eqnarray*}
+  \pn{header} &\pp&
+    \pn{ident} \ww
+    \pn{docstring} \ww
+    \pn{cr} \ww
+    \pn{inputs} \ww
+    \pn{outputs} \\
+  \pn{inputs} &\pp&
+    \sm{in} \ww
+    \sm{(} \ww
+    \pn{input{\textunderscore}list} \ww
+    \sm{)} \ww
+    \pn{cr} \oo
+    \sm{in} \ww
+    \pn{no{\textunderscore}params} \ww
+    \pn{cr} \\
+  \pn{outputs} &\pp&
+    \sm{out} \ww
+    \sm{(} \ww
+    \pn{output{\textunderscore}list} \ww
+    \sm{)} \ww
+    \pn{cr} \oo
+    \sm{out} \ww
+    \pn{no{\textunderscore}params} \ww
+    \pn{cr} \\
+  \pn{input{\textunderscore}list} &\pp&
+    \pn{input} \oo
+    \pn{input{\textunderscore}list} \ww
+    \pn{comma{\textunderscore}sep} \ww
+    \pn{input} \\
+  \pn{output{\textunderscore}list} &\pp&
+    \pn{output} \oo
+    \pn{output{\textunderscore}list} \ww
+    \pn{comma{\textunderscore}sep} \ww
+    \pn{output} \\
+  \pn{no{\textunderscore}params} &\pp&
+    \sm{(} \ww
+    \pn{opt{\textunderscore}cr} \ww
+    \sm{)} \\
+  \pn{input} &\pp&
+    \pn{type} \ww
+    \pn{ident} \ww
+    \pn{docstring} \oo
+    \sm{?} \ww
+    \pn{type} \ww
+    \pn{ident} \ww
+    \pn{docstring} \oo \\
+    & & \pn{type} \ww
+    \pn{ident} \ww
+    \sm{default} \ww
+    \pn{constant} \ww
+    \pn{docstring} \\
+  \pn{output} &\pp&
+    \pn{type} \ww
+    \pn{ident} \ww
+    \pn{docstring} \oo \\
+    & & \pn{type} \ww
+    \pn{ident} \ww
+    \sm{default} \ww
+    \pn{constant} \ww
+    \pn{docstring} \\
+\end{eqnarray*}
+
+Statements
+\begin{eqnarray*}
+  \pn{stmt{\textunderscore}block} &\pp&
+    \pn{opt{\textunderscore}cr} \ww
+    \pn{lbrace} \ww
+    \pn{stmt{\textunderscore}list} \ww
+    \pn{rbrace} \oo \\
+    & & \pn{opt{\textunderscore}cr} \ww
+    \pn{stmt{\textunderscore}block{\textunderscore}empty} \\
+  \pn{stmt{\textunderscore}block{\textunderscore}empty} &\pp&
+    \sm{(} \ww
+    \pn{opt{\textunderscore}cr} \ww
+    \sm{)} \\
+  \pn{stmt{\textunderscore}list} &\pp&
+    \pn{stmt} \oo
+    \pn{stmt{\textunderscore}list} \ww
+    \pn{cr} \ww
+    \pn{stmt} \\
+  \pn{stmt} &\pp&
+    \pn{controller{\textunderscore}stmt} \oo
+    \pn{connection{\textunderscore}stmt} \oo
+    \pn{assignment{\textunderscore}stmt} \\
+  \pn{controller{\textunderscore}stmt} &\pp&
+    \sm{controller} \ww
+    \sm{(} \ww
+    \pn{ident} \ww
+    \sm{)} \\
+  \pn{connection{\textunderscore}stmt} &\pp&
+    \pn{param{\textunderscore}ref} \ww
+    \sm{<-} \ww
+    \pn{expr} \\
+  \pn{assignment{\textunderscore}stmt} &\pp&
+    \pn{ident} \ww
+    \sm{=} \ww
+    \pn{component{\textunderscore}stmt} \\
+  \pn{component{\textunderscore}stmt} &\pp&
+    \pn{ident} \ww
+    \pn{lparen} \ww
+    \pn{expr{\textunderscore}list} \ww
+    \pn{rparen} \\
+\end{eqnarray*}
+
+Expressions
+\begin{eqnarray*}
+  \pn{expr} &\pp&
+    \pn{constant} \oo
+    \pn{param{\textunderscore}ref} \oo
+    \pn{ident} \\
+  \pn{expr{\textunderscore}list} &\pp&
+    \pn{expr} \oo
+    \pn{expr{\textunderscore}list} \ww
+    \pn{comma{\textunderscore}sep} \ww
+    \pn{expr} \\
+  \pn{constant} &\pp&
+    \pn{fconst} \oo
+    \pn{iconst} \oo
+    \pn{sconst} \\
+  \pn{fconst} &\pp&
+    \sd{floating point constant} \\
+  \pn{iconst} &\pp&
+    \sd{integer constant} \\
+  \pn{sconst} &\pp&
+    \sd{string constant} \\
+  \pn{ident} &\pp&
+    \sd{identifier} \\
+  \pn{param{\textunderscore}ref} &\pp&
+    \sm{in} \ww
+    \sm{.} \ww
+    \pn{ident} \oo
+    \sm{out} \ww
+    \sm{.} \ww
+    \pn{ident} \oo \\
+    & & \pn{ident} \ww
+    \sm{.} \ww
+    \sm{in} \ww
+    \sm{.} \ww
+    \sm{ident} \oo
+    \pn{ident} \ww
+    \sm{.} \ww
+    \sm{out} \ww
+    \sm{.} \ww
+    \pn{ident} \oo \\
+    & & \sm{(} \ww
+    \pn{component{\textunderscore}stmt} \ww
+    \sm{)} \ww
+    \sm{.} \ww
+    \sm{out} \ww
+    \sm{.} \ww
+    \pn{ident} \\
+\end{eqnarray*}
+
+Types and docstrings
+\begin{eqnarray*}
+  \pn{type} &\pp&
+    \sm{file} \oo
+    \sm{float} \oo
+    \sm{int} \oo
+    \sm{string} \oo
+    \sm{[} \ww
+    \pn{type} \ww
+    \sm{]} \oo
+    \pn{ident} \\
+  \pn{docstring} &\pp&
+    \sd{an optional documentation} \\
+\end{eqnarray*}
+
+Special productions
+\begin{eqnarray*}
+  \pn{cr} &\pp&
+    \sd{A non-empty sequence of new lines} \\
+  \pn{opt{\textunderscore}cr} &\pp&
+    \sd{A sequence of new lines which may be empty} \\
+  \pn{lbrace} &\pp&
+    \sm{\{} \ww
+    \pn{opt{\textunderscore}cr} \\
+  \pn{rbrace} &\pp&
+    \pn{opt{\textunderscore}cr} \ww
+    \sm{\}} \\
+  \pn{lbrace} &\pp&
+    \sm{(} \ww
+    \pn{opt{\textunderscore}cr} \\
+  \pn{rbrace} &\pp&
+    \pn{opt{\textunderscore}cr} \ww
+    \sm{)} \\
+  \pn{empty} &\pp&
+    \nn \\
+  \pn{comma{\textunderscore}sep} &\pp&
+    \pn{opt{\textunderscore}cr} \ww
+    \sm{,} \ww
+    \pn{opt{\textunderscore}cr} \\
+\end{eqnarray*}
