@@ -27,8 +27,43 @@ resources they rely on.
 %provider.''
 
 \section{Problem statement}
+The objective is to find and implement a solution for the need of a
+new way of giving Copernicus information of the users projects. The
+developers specifically stated that the wanted a domain-specific
+language(DSL) for this solution, and that they later on want to add a
+graphical solution using this DSL.
+
+The DSL should allow users of Copernicus to define their computational
+projects. The projects should be able to be defined as piping
+computations in a data-flow network, which means that the DSL needs to
+be able to describe data-flow networks in plain text.
+
+The intended users are assumed to possess some knowledge of
+programming, but are not necessarily adept programmers. The design of
+the DSL should therefore be simple and intuitive. The DSL needs to be
+easy to understand so it becomes an asset instead of an hindrance.
+
+The DSL should be fully functional in Copernicus. The users needs to
+be able to use all the features and properties available in
+Copernicus.
+
+Copernicus has plug-in libraries which needs to be usable in the
+language. This implies a certain amount of flexibility since there are
+not a static amount of plug-ins, as new ones can be added. The DSL
+should be able to cope with any new plug-ins.
+
+The implementation should have an output of a form so that it can
+easilly be integrated in the Copernicus system. The implementation
+also needs to be easy to install on any system, supercomputer or
+other.
 
 \subsection{Delimitations}
+not graphical solution
+
+programming language
+
+tools
+
 \subsection{Purpose}
 
 \section{Literature}
