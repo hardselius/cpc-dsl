@@ -59,14 +59,14 @@
 \paragraph{Import statement}
 
 \begin{grammar}
-  <import_stmt> ::= \tn{import} <package_path>
+  <import_stmt> ::= `import' <package_path>
 \end{grammar}
 
 \vs
 
 \begin{grammar}
   <package_path> ::= <package_identifier>
-  \alt <package_path> \tn{.} <package_identifier>
+  \alt <package_path> `.' <package_identifier>
 \end{grammar}
 
 \vs
@@ -82,8 +82,8 @@
 \paragraph{Newtype}
 
 \begin{grammar}
-  <newtype_decl> ::= \tn{type} <type> <docstring> <cr> \tn{(}
-  <type_decl_list> \tn{)}
+  <newtype_decl> ::= `type' <type> <docstring> <cr> `('
+  <type_decl_list> `)'
 \end{grammar}
 
 \vs
@@ -96,7 +96,7 @@
 \vs
 
 \begin{grammar}
-  <type_decl> ::= <type> \tn{:} <ident>
+  <type_decl> ::= <type> `:' <ident>
 \end{grammar}
 
 
@@ -106,22 +106,21 @@
 \paragraph{Atom Declaration}
 
 \begin{grammar}
-  <atom_declaration> ::= \tn{atom} <atomtype> <header> <optionblock>
+  <atom_declaration> ::= `atom' <atomtype> <header> <optionblock>
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <atomtype> ::= \tn{python}
-  \alt \tn{python-extended}
-  \alt \tn{external}
+  <atomtype> ::= `python'
+  \alt `python-extended'
+  \alt `external'
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <optionblock> ::= \tn{option} <opt_cr> \tn{(} <atom_option_list>
-  \tn{)}
+  <optionblock> ::= `option' <opt_cr> `(' <atom_option_list> `)'
 \end{grammar}
 
 \vs
@@ -134,14 +133,14 @@
 \vs
 
 \begin{grammar}
-  <atom_option> ::= <option_ident> \tn{:} <option_ident>
+  <atom_option> ::= <option_ident> `:' <option_ident>
 \end{grammar}
 
 \vs
 
 \begin{grammar}
   <option_ident> ::= <ident>
-  \alt <option_ident> \tn{.} <ident>
+  \alt <option_ident> `.' <ident>
 \end{grammar}
 
 
@@ -151,7 +150,7 @@
 \paragraph{Network Declaration}
 
 \begin{grammar}
-  <network_decl> ::= \tn{network} <header> <network_block>
+  <network_decl> ::= `network' <header> <network_block>
 \end{grammar}
 
 \vs
@@ -173,15 +172,15 @@
 \vs
 
 \begin{grammar}
-  <inputs> ::= \tn{in} \tn{(} <input_list> \tn{)} <cr>
-  \alt \tn{in} <no_params> <cr>
+  <inputs> ::= `in' `(' <input_list> `)' <cr>
+  \alt `in' <no_params> <cr>
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <outputs> ::= \tn{out} \tn{(} <output_list> \tn{)} <cr>
-  \alt \tn{out} <no_params> <cr>
+  <outputs> ::= `out' `(' <output_list> `)' <cr>
+  \alt `out' <no_params> <cr>
 \end{grammar}
 
 \vs
@@ -201,22 +200,22 @@
 \vs
 
 \begin{grammar}
-  <no_params> ::= \tn{(} <opt_cr> \tn{)}
+  <no_params> ::= `(' <opt_cr> `)'
 \end{grammar}
 
 \vs
 
 \begin{grammar}
   <input> ::= <type> <ident> <docstring>
-  \alt \tn{?} <type> <ident> <docstring>
-  \alt <type> <ident> \tn{default} <constant> <docstring>
+  \alt `?' <type> <ident> <docstring>
+  \alt <type> <ident> `default' <constant> <docstring>
 \end{grammar}
 
 \vs
 
 \begin{grammar}
   <output> ::= <type> <ident> <docstring>
-  \alt <type> <ident> \tn{default} <constant> <docstring>
+  \alt <type> <ident> `default' <constant> <docstring>
 \end{grammar}
 
 
@@ -233,7 +232,7 @@
 \vs
 
 \begin{grammar}
-  <stmt_block_empty> ::= \tn{$\{$} <opt_cr> \tn{$\}$}
+  <stmt_block_empty> ::= `{' <opt_cr> `}'
 \end{grammar}
 
 \vs
@@ -254,19 +253,19 @@
 \vs
 
 \begin{grammar}
-  <controller_stmt> ::= \tn{controller} \tn{$($} <ident> \tn{$)$}
+  <controller_stmt> ::= `controller' `(' <ident> `)'
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <connection_stmt> ::= <param_ref> \tn{\textless-} <expr>
+  <connection_stmt> ::= <param_ref> `\textless-' <expr>
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <assignment_stmt> ::= <ident> \tn{=} <component_stmt>
+  <assignment_stmt> ::= <ident> `=' <component_stmt>
 \end{grammar}
 
 \vs
@@ -305,35 +304,35 @@
 \vs
 
 \begin{grammar}
-  <fconst> ::= floating point constant
+  <fconst> ::= \emph{floating point constant}
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <iconst> ::= integer constant
+  <iconst> ::= \emph{integer constant}
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <sconst> ::= string constant
+  <sconst> ::= \emph{string constant}
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <ident> ::= identifier
+  <ident> ::= \emph{identifier}
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <param_ref> ::= \tn{in} \tn{.} <ident>
-  \alt \tn{out} \tn{.} <ident>
-  \alt <ident> \tn{.} \tn{in} \tn{.} <ident>
-  \alt <ident> \tn{.} \tn{out} \tn{.} <ident>
-  \alt \tn{(} <component_stmt> \tn{)} \tn{.} \tn{out} \tn{.} <ident>
+  <param_ref> ::= `in' `.' <ident>
+  \alt `out' `.' <ident>
+  \alt <ident> `.' `in' `.' <ident>
+  \alt <ident> `.' `out' `.' <ident>
+  \alt `(' <component_stmt> `)' `.' `out' `.' <ident>
 \end{grammar}
 
 
@@ -343,18 +342,18 @@
 \paragraph{Types and Docstrings}
 
 \begin{grammar}
-  <type> ::= \tn{file}
-  \alt \tn{float}
-  \alt \tn{int}
-  \alt \tn{string}
-  \alt \tn{$[$} <type> \tn{$]$}
+  <type> ::= `file'
+  \alt `float'
+  \alt `int'
+  \alt `string'
+  \alt `[' <type> `]'
   \alt <ident>
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <docstring> ::= an optional docstring
+  <docstring> ::= \emph{an optional docstring}
 \end{grammar}
 
 
@@ -364,49 +363,49 @@
 \paragraph{Special productions}
 
 \begin{grammar}
-  <cr> ::= A non-empty sequence of new lines
+  <cr> ::= \emph{a non-empty sequence of new lines}
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <opt_cr> ::= A sequence of new lines that may be empty
+  <opt_cr> ::= \emph{a sequence of new lines that may be empty}
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <lbrace> ::= \tn{$\{$} <opt_cr>
+  <lbrace> ::= `{' <opt_cr>
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <rbrace> ::= <opt_cr> \tn{$\}$}
+  <rbrace> ::= <opt_cr> `}'
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <lparen> ::= \tn{(} <opt_cr>
+  <lparen> ::= `(' <opt_cr>
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <rparen> ::= <opt_cr> \tn{)}
+  <rparen> ::= <opt_cr> `)'
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <empty> ::= empty production
+  <empty> ::= \emph{empty production}
 \end{grammar}
 
 \vs
 
 \begin{grammar}
-  <comma_sep> ::= <opt_cr> \tn{,} <opt_cr>
+  <comma_sep> ::= <opt_cr> `,' <opt_cr>
 \end{grammar}
 
 
