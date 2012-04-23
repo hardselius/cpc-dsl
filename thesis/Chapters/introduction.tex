@@ -26,6 +26,24 @@ resources they rely on.
 %different software and hardware abstraction layers within on
 %provider.''
 
+\subsection{Copernicus}
+Copernicus is a software system that is made to distribute and
+parallelize large molecular dynamics simulations. The system
+integrates elements from distributed computing, and applies them to
+more traditional high-performance compute clusters. By taking
+advantage of the fast interconnects that may be available on these
+compute environments, individual simulations are parallelized as far
+as possible. This approach enables Copernicus to use
+orders-of-magnitude more cores than a traditional simulation run on a
+sumpercompute, and it allows for larger-scale simulations than would
+be possible with purely distributed systems, while it reduces
+time-to-solution significantly.
+
+The idea behind Copernicus is to exploit the inherent parallelism of
+ensemble simulation and to make use of advanced sampling algorithms,
+while keeping the performance advantages of massively parallel
+simulations.
+
 \section{Problem statement}
 The objective is to find and implement a solution for the need of a
 new way of giving Copernicus information of the users projects. The
