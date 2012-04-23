@@ -1,19 +1,62 @@
 \chapter{Method}
 
-\section{Programming Paradigms}
+\section{Research}
+
+\subsection{Programming Paradigms}
 We researched programming paradigms and programming languages similar
 to what we wanted to build.
 
-\subsection{Dataflow Programming}
+\subsubsection{Dataflow Programming}
 
-\subsection{Flowbased Programming}
+\subsubsection{Flowbased Programming}
 
-\subsection{Reactive Programming}
+\subsubsection{Reactive Programming}
 Oriented around data flows and the propagation of change. THe
 underlying execution model will automatically propagate changes
 through the data flow.
 
-\section{Requirements}
 
-\section{Specification}
+\section{Design}
+
+
+
+\section{Implementation}
+intro...
+
+
+\subsection{Language}
+The candidates for implementation language were: C, C++, C#, F#,
+Haskell, Java, OCamel. These candidates were discussed as because of
+the tool \emph{BNF converter}(BNFC) supports them. Haskell was
+excluded first of all, mainly because of the restricted set of
+users. The developers of Copernicus needs to easily be able to modify
+the implementation when necessary. The next candidate was Java, but it
+was excluded because of the possible difficulties when installing java
+runtime environment on supercomputers. C was a good candidate since
+Copernicus is written in Python and C is easy to extend in Python, and
+most systems has a C compiler as default.
+
+The the implementation chosen was Python. As the rest of the system is
+written in Python, it is only natural to write extensions in the same
+language. Unix systems have Python interpreter as default, which makes
+the extension easy to install aswell. The decision was also based on
+easy integration and maintenance against easy implementation. As BNFC
+is a powerfull tool, generating lexer, parser and abstract syntax tree
+from a simple BNF description, it is the easy implementation
+choice. Though this is important, easy integration and maintenance was
+prioritized.
+
+
+\subsection{Tools}
+using BNF to build lexer parser ast
+
+BNFC, ply, YAPPS, Spark
+
+
+\subsection{Datastructures \& Methods}
+AST - visitor, node, children, typechecker/xml visitor methods
+environment - dict (components/functions,variables)
+
+
+\section{Requirements \& Specification}
 
