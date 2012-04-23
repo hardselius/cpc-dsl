@@ -17,15 +17,17 @@ through the data flow.
 
 
 \section{Design}
-
+from research -> inspiration from programming paradigms and graphical implementations
+inspiration from programming languages, functional...imperative
+drafts
+discussion
 
 
 \section{Implementation}
-intro...
-
+intro?...
 
 \subsection{Language}
-The candidates for implementation language were: C, C++, C#, F#,
+The candidates for implementation language were: C, C++, C\#, F\#,
 Haskell, Java, OCamel. These candidates were discussed as because of
 the tool \emph{BNF converter}(BNFC) supports them. Haskell was
 excluded first of all, mainly because of the restricted set of
@@ -48,13 +50,26 @@ prioritized.
 
 
 \subsection{Tools}
-using BNF to build lexer parser ast
+BNFC was the first tool considered to be used. The main reason for
+this is that BNFC is a part of both \emph{Programming Languages} and
+\emph{Compiler Construction} which are courses tought at
+Chalmers. Experience and knowledge would have made it easy and
+effective to use. The reason why another tool was chosen is stated in
+the previous section.
 
-BNFC, ply, YAPPS, Spark
+When the implementation language was established, the tools considered
+was ply, YAPPS and Spark.
 
 
 \subsection{Datastructures \& Methods}
-AST - visitor, node, children, typechecker/xml visitor methods
+The abstract syntax tree is designed with a visitor pattern. The
+elements in the visitor pattern is build like a tree where each node
+has children. A node is a syntactic object where its children are
+values or other syntactic objects. By defining the visit methods for
+each sort of node, one perform operations based on a abstract syntax
+tree simply by visiting its top node. This way it is easy to write a
+typechecker and XML generator.
+
 environment - dict (components/functions,variables)
 
 
