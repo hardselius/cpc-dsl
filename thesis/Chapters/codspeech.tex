@@ -1,21 +1,73 @@
 \chapter{Codspeech}
-\lipsum
 
 \section{Project overview}
 
-\section{Designing the dsl}
 
-\section{The resulting BNF}
-\input{Chapters/bnf}
+\section{Designing the DSL}
 
-\section{Ply}
 
 \section{Implementation}
+
+
+\section{PLY (Python Lex-Yacc)}
+PLY is an implementation of lex and yacc parsing tools, written purely
+in python, by David Beazley \citep{ply:online}. It was originally
+developed for an intrdoctory class on compilers back in 2001. It
+provides most of the standard lex/yacc features including support for
+empty productions, precedence rules, error recovery, and support for
+ambigous grammars. It uses LR-parsing, which is a reasonabe parsing
+scheme for larger grammars, but slightly restrics the type of grammars
+that can be written (\highlight{citation needed}). PLY is
+straightforward to use, and one its many advantages is the \emph{very}
+extensive error checking, which certainly makes life easier.
+
+\subsection{Python Lex}
+The first step to implement the language is to write a tokenizer. This
+is done with the Lex module of PLY. Language tokens are recognized
+using regular expressions, and the steps are straighforward.
+
+The names of all the token types are declard as a list of string named
+\texttt{tokens}.
+\begin{lstlisting}
+  tokens = (
+    'NUMBER',
+    'PLUS',
+)
+\end{lstlisting}
+
+Tokens that require no special processing are declared using
+module-level variables prefixed by \texttt{t_}, where the name
+following \texttt{t_} has to exactly match some string in the tokens
+list. Each such variable contains a regular expression string that
+matches the respective token (Python raw strings are usually used
+since they are the most convenient way to write regular expression
+strings).
+\begin{lstlisting}
+  t_PLUS = r'\+'
+\end{lstlisting}
+
+When tokens do require special processing, a token rule can be
+specified as a function. For example, this rule matches numbers and
+converts the string into a Python integer.
+\begin{lstlisting}
+  def t_NUMBER(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+\end{lstlisting}
+
+
+\subsection{Python Yacc}
+The next implementation step is to write the parser using Python Yacc.
+
+\section{Codspeech Backus-Naur Form}
+\input{Chapters/bnf}
 
 \subsection{Abstract Syntax Tree}
 \subsection{Parser}
 \subsection{Typechecker}
 \subsection{XML generation}
 \subsection{emacs mode}
+
 
 \section{Future work}
