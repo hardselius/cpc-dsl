@@ -30,7 +30,7 @@ class XMLGenerator(csast.NodeVisitor):
             print '\nDebug: ON'
 
             
-    def generateXML(self, ast, ctx, types = [], file = "output.xml"):
+    def generateXML(self, ast, ctx, types, arrays, file):
         """ Generate XML from the AST
 
         Keyword arguments:
@@ -39,7 +39,8 @@ class XMLGenerator(csast.NodeVisitor):
         """
         self.ctx = ctx
         self.types = types
-        self.f = open(file,"w")
+        self.arrays = arrays
+        self.f = file
         self.temp = 0
         self.visit(ast)
         self.f.close()
@@ -109,7 +110,7 @@ class XMLGenerator(csast.NodeVisitor):
 
     def _startType(self,type):
         self.f.write(
-            self.indent + "<type id=\"" + self.visit(type) + \
+            self.indent + "<type id=\"" + type + \
                 "\" base=\"list\">\n")
         self._ind()
 
@@ -121,9 +122,14 @@ class XMLGenerator(csast.NodeVisitor):
 
     def _putTypeField(self,id,type):
         self.f.write(
-            self.indent + "<field id=\"" + self.visit(id) + \
-                "\" type=\"" + self.visit(type) + "\" />\n")
+            self.indent + "<field id=\"" + id + \
+                "\" type=\"" + type + "\" />\n")
 
+    def _putArray(self,a):
+        self.f.write(
+            self.indent + "<type id=\"" + a + \
+                "\" base=\"array\" member-type=\"" + \
+                a[:-2] + "\"/>\n")
 
     def _putConnection(self,src,dest):
         if type(src) == csast.Constant:
@@ -163,23 +169,32 @@ class XMLGenerator(csast.NodeVisitor):
     
     def visit_Program(self, node):
         self.f.write("<?xml version=\"1.0\" ?>\n<cpc>\n")
+
+        for t,d in self.types.items():
+            self._startType(t)
+            for i,tt in d.items():
+                self._putTypeField(i,tt)
+            self._endType()
+
+        map(self._putArray,self.arrays)
+
         self.generic_visit(node)
         self.f.write("</cpc>\n")
 
 
     def visit_Import(self,node):
-        pass
+        self.generic_visit(node.program)
 
 
-    def visit_Newtype(self,node):
-        self._startType(node.type)
-        map(self.visit,node.typedecl)
-        self.visit(node.doc)
-        self._endType()
+#    def visit_Newtype(self,node):
+#        self._startType(node.type)
+#        map(self.visit,node.typedecl)
+#        self.visit(node.doc)
+#        self._endType()
 
 
-    def visit_TypeDecl(self,node):
-        self._putTypeField(node.ident,node.type)
+#    def visit_TypeDecl(self,node):
+#        self._putTypeField(node.ident,node.type)
 
 
     def visit_Header(self, node):

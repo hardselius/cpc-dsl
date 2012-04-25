@@ -136,15 +136,17 @@ class Program(Node):
     attr_names = ()
 
 class Import(Node):
-    def __init__(self, path, coord=None):
-        self.path = path
+    def __init__(self, program, filename = "", coord=None):
+        self.program = program
+        self.filename = filename
         self.coord = coord
 
     def children(self):
         nodelist = []
+        nodelist.append(("program",self.program))
         return tuple(nodelist)
 
-    attr_names = ('path',)
+    attr_names = ('filename',)
 
 
 # ------------------------------------------------------------------
@@ -448,11 +450,12 @@ class Constant(Node):
     attr_names = ('value',)
 
 class ParamRef(Node):
-    def __init__(self, comp, io, ident, coord=None):
+    def __init__(self, comp, io, ident, settId = None, coord=None):
         self.comp = comp
         self.io = io
         self.ident = ident
         self.coord = coord
+        self.settId = settId
 
     def children(self):
         nodelist = []

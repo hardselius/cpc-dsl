@@ -32,25 +32,28 @@ def test(testfile):
   x = f.read()
   tc = cstype.TypeChecker()
   parser = csparse.CodspeechParser()
-  ast = parser.parse(x)
+  ast = parser.parse(x,testfile)
   if ast != None:
     if past:
       print "Abstrac syntax tree:"
       ast.show()
       print ""
     try:
-      env = tc.typecheck(ast)
+      tc.typecheck(ast)
+      env = tc.getEnv()
+      arrays = tc.arrays
+      newtypes = tc.newtypes
     except cstype.TypeError as e:
-      print "Type Error" + str(e)
+      print str(e)
     except cstype.ReferenceError as e:
-      print "Reference Error" + str(e)
+      print str(e)
     else:
       if pctx:
         print "Context:"
         print env
-    gXML = xml.XMLGenerator()
-    gXML.generateXML(ast,env)
+      gXML = xml.XMLGenerator()
+      gXML.generateXML(ast,env,newtypes,arrays)
   else:
     print "No abstract syntax tree was generated."
 
-test('examples/example2.cod')
+test('examples/addmul.cod')

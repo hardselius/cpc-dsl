@@ -18,6 +18,8 @@ class ReferenceError(Exception): pass
 class TypeChecker(csast.NodeVisitor):
     def __init__(self, debug=False):
         self.env = [{}]
+        self.newtypes = {}
+        self.arrays = []
         self.debug = debug
         if self.debug:
             print '\nDebug: ON'
@@ -30,10 +32,10 @@ class TypeChecker(csast.NodeVisitor):
         ast - Duh...
         
         """
-        self.visit(ast)
-        ctx = self.getEnv().copy()
         self.env = [{}]
-        return ctx
+        self.newtypes = {}
+        self.arrays = []
+        self.visit(ast)
 
 
     def print_env(self):
@@ -73,12 +75,12 @@ class TypeChecker(csast.NodeVisitor):
         self.env.append(copy(self.getEnv()))
 
     
-    def _add(self, ident, type):
+    def _add(self, ident, t):
         id = ident.name
         if self.getEnv().has_key(id):
             self._ref_error(ident.coord, "ident already defined")
         else:
-            self.getEnv()[id] = type
+            self.getEnv()[id] = t
 
 
     def _getParamType(self, id, tupleList):
@@ -86,12 +88,12 @@ class TypeChecker(csast.NodeVisitor):
             if i == id: return t
 
 
-    def _type_error(self, coord,msg):
-        raise TypeError("%s: %s" % (coord,msg))
+    def _type_error(self, coord, msg):
+        raise TypeError("Type Error %s: %s" % (coord,msg))
 
-        
-    def _ref_error(self, coord,msg):
-        raise ReferenceError("%s: %s" % (coord,msg))
+
+    def _ref_error(self, coord, msg):
+        raise ReferenceError("Reference Error %s: %s" % (coord,msg))
 
 
     ## 
@@ -112,17 +114,18 @@ class TypeChecker(csast.NodeVisitor):
     ## IMPORT
 
     def visit_Import(self, node):
-        pass
+        self.generic_visit(node)
 
 
     ## NEWTYPE
         
     def visit_Newtype(self, node):
-        pass
+        t = dict(map(self.visit_TypeDecl,node.typedecl))
+        self.newtypes[node.type.type] = t
 
 
     def visit_TypeDecl(self, node):
-        pass
+        return (node.ident.name,node.type.type)
 
             
     ## ATOM
@@ -185,21 +188,34 @@ class TypeChecker(csast.NodeVisitor):
             
     def visit_InParameter(self, node):
         self._print_debug(node, '')
+        t = self.visit(node.type)
         if node.default:
-            t = self.visit(node.type)
             d = self.visit(node.default)
             if not t == d:
                 self._type_error(
                     node.default.coord,
                     "Constant type '%s' does not match '%s'" % d, t)
-        else:
-            return self.visit(node.type)
+
+        self._addArrays(t)
+        return t
         
 
     def visit_OutParameter(self, node):
         self._print_debug(node, '')
-        return self.visit(node.type)
+        t = self.visit(node.type)
+        self._addArrays(t)
+        return t
 
+
+    def _addArrays(self,t):
+        temp = t
+        tempA = []
+        while self._isArray(temp):
+            if not any(temp == s for s in self.arrays):
+                tempA.append(temp)
+            temp = temp[:-2]
+        tempA.reverse()
+        self.arrays += tempA
 
     ## STATEMENTS
         
@@ -222,7 +238,7 @@ class TypeChecker(csast.NodeVisitor):
             self._type_error(
                 node.coord,
                 "destination type '%s' does not match source type '%s'"\
-                % t_dest, t_source)
+                % (t_dest, t_source))
         else:
             return t_source
         
@@ -238,12 +254,10 @@ class TypeChecker(csast.NodeVisitor):
     def visit_ComponentStmt(self, node):
         self._print_debug(node, '')
         inparams = copy(self.visit(node.ident)['in'])
-        print "Checking '%s'" % node.ident.name
         for i in node.inputs:
             if inparams:
                 name, par_typ = inparams.pop(0)
                 inp_typ       = self.visit(i)
-                print par_typ, inp_typ
                 if inp_typ != par_typ:
                     self._type_error(
                         node.ident.coord,
@@ -273,7 +287,28 @@ class TypeChecker(csast.NodeVisitor):
         else:
             cname = self.scope.header.ident.name
         t = dict(self.getEnv()[cname][io]).get(pname)
-        if t: return t
+        if t:
+            if node.settId:
+                if type(node.settId) == int:
+                    if self._isArray(t):
+                        if self._isArray(t[:-2]):
+                            return t[:-2]
+                        else:
+                            return self._checkNew(t[:-2])
+                    else:
+                        self._type_error(
+                            node.ident.coord,
+                            "'%s' is not an array" % \
+                                (cname + '.' + pname))
+                elif t.has_key(node.settId.name):
+                    return t[node.settId.name]
+                else:
+                    self._ref_error(
+                        node.ident.coord,
+                        "'%s' has no variable %s" % \
+                            (cname + '.' + pname,node.settId.name))
+            else:
+                return t
         else:
             self._ref_error(
                 node.ident.coord,
@@ -299,4 +334,15 @@ class TypeChecker(csast.NodeVisitor):
             
     def visit_Type(self, node):
         self._print_debug(node, '')
-        return node.type
+        return self._checkNew(node.type)
+
+
+    def _isArray(self,t):
+        return type(t) == str and t[-2:] == '[]'
+
+
+    def _checkNew(self,t):
+        if self.newtypes.has_key(t):
+            return self.newtypes[t]
+        else:
+            return t

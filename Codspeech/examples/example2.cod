@@ -1,6 +1,3 @@
-type test '''test crap'''
-  (int : a)
-
 atom python add      '''Add two floating point numbers: q=a+b'''
   in  ( float a
       , float b )
@@ -16,13 +13,3 @@ atom python mul      '''Multiply two floating point numbers: q=a*b'''
       )
   options ( function : builtin.float.add
           , import   : buitlin.float )
-
-network addmul      '''Test function that adds and multiplies'''
-  in  ()
-  out ( float q       '''q = (a+b)*c'''
-      )
-  {
-    cMul = mul ((add (3.0, 4.0)).out.q, 5.0)
-	cAdd = add (cMul.out.q, 6.0)
-    out.q <- cMul.out.q
-  }

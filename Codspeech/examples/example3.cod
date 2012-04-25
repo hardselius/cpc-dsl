@@ -18,7 +18,7 @@ atom python-extended grompp '''The gromacs pre-processor: prepares run files for
       )
   options ( function : cpc.lib.gromacs.grompp
           , import   : cpc.lib.gromacs )
-#/
+
 
 
 atom python-extended mdrun	'''Runs an MD simulation'''
@@ -36,20 +36,23 @@ atom python-extended mdrun	'''Runs an MD simulation'''
   options ( function       : cpc.lib.gromacs.mdrun
           , import         : cpc.lib.gromacs
           , persistant_dir : true )
-#/
+
 
 network gmxtest
   in  ( file conf
       , file mdp
       , file top
+	  , setting test
       )
-  out ( file stdout ) 
+  out ( file stdout
+      , int a ) 
   {
     controller(grompp)
     c2 = mdrun ((grompp (in.conf, in.mdp, in.top)).out.tpr)
     out.stdout <- c2.out.stdout
+	out.a <- in.test.a
   }
-#/
+
 
 /# Ideas for controllers:
 
