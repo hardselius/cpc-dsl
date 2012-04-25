@@ -30,7 +30,7 @@ class XMLGenerator(csast.NodeVisitor):
             print '\nDebug: ON'
 
             
-    def generateXML(self, ast, ctx, types = {}, arrays = [], file = "output.xml"):
+    def generateXML(self, ast, ctx, types, arrays, file):
         """ Generate XML from the AST
 
         Keyword arguments:
@@ -40,7 +40,7 @@ class XMLGenerator(csast.NodeVisitor):
         self.ctx = ctx
         self.types = types
         self.arrays = arrays
-        self.f = open(file,"w")
+        self.f = file
         self.temp = 0
         self.visit(ast)
         self.f.close()

@@ -13,10 +13,10 @@ import os
 import argparse
 import textwrap
 
-from codspeechparser import CodspeechParser
+from codspeech.parser.csparser import CodspeechParser
 
-import codspeechtypechecker as cstype
-import codspeechtoxml       as csxml
+from codspeech.typechecker.cstypechecker import TypeChecker
+from codspeech.xml.cstoxml import XMLGenerator
 
 
 
@@ -33,11 +33,31 @@ def main(*args):
         default     = False,
         help        = 'print the abstract syntax tree of FILE')
     parser.add_argument(
+        '-o',
+        nargs  = 1,
+        type   = argparse.FileType('wt'),
+        action = 'store',
+        dest   = 'xml',
+        help   = 'output XML to this file')
+    parser.add_argument(
         '-f',
         nargs=1,
         type = file,
         dest = 'file',
         help = 'input Codspeech file')
+
+    args = parser.parse_args()
+
+    if (args.file):
+        cs_file = CodspeechFile(
+            file         = args.file[0],
+            print_ast    = args.ast,
+            do_typecheck = True,
+            gen_xml      = args.xml)
+    else:
+        parser.print_help()
+
+
 #    )
 #    cmdparser.add_option(
 #        '-t','--typecheck',
@@ -59,7 +79,8 @@ def main(*args):
 #        do_typecheck = options.typecheck)
 #
 #    return None
-    parser.print_help()
+#    parser.print_help()
+
     
 def print_header(s,f):
     print "\n\t{1} - {0}:\n".format(s,f)
@@ -68,42 +89,69 @@ def print_header(s,f):
 class CodspeechFile(object):
     def __init__(
         self,
-        filename,
-        build_ast=False,
-        do_typecheck=False):
+        file,
+        print_ast = False,
+        do_typecheck = False,
+        gen_xml = None):
 
-        self.filename       = filename
-        self.file           = None
-        self.ext            = None
-        self.ast            = None
-        self.file, self.ext = os.path.splitext(filename)
-        
-        if ext != '.cod':
-            raise IOError('%s is not a Codspeech file.')
+        self.file    = file
+        self.ast     = None
+        self.text    = None
+        self.context = None
+        self.newtype = None
+        self.arrays  = None
+
+        if not self.file.name.endswith('.cod'):
+            raise IOError('%s is not a Codspeech file.' % file.name)
         else:
-            self._read_file()
+            self.text = self.file.read()
         
-        if build_ast: self.ast = self._parse_file
-        if do_typecheck:
-            if not self.ast: self.ast = self._parse_file
-            pass
+        self._parse_file()
+        if print_ast: self.ast.show()
+        if do_typecheck: self._typecheck_ast()
+        if gen_xml: self._generate_xml(gen_xml[0])
 
-    def _read_file():
-        self.text = open(this.filename, 'rU').read()
+    def _parse_file(self):
+        """Parse a Codspeech file using csparser.
 
-
-    def _parse_file():
-        """Parse a Codspeech file using codspeechparser.
-
-        Keyword arguments:
-        filename -- Name of the file to parse.
-
-        When successful, an AST is returned. ParseError can be thrown if
+        When successful, an AST is set. ParseError can be thrown if
         the file does not parse successfully.
 
         """
-        self.parser = CodspeechParser()
-        self.ast    = parser.parse(text, filename)
+        parser   = CodspeechParser()
+        self.ast = parser.parse(self.text, self.file.name)
+
+
+    def _typecheck_ast(self):
+        """Type check an abstract syntax tree using cstypechecker.
+
+        When successful, a context, new types set,
+        and an new array list is set.
+        TypeError and RefError can be thrown if the ast does not
+        typecheck successfully.
+
+        """
+        tc = TypeChecker()
+        tc.typecheck(self.ast)
+        self.context  = tc.getEnv()
+        self.newtypes = tc.newtypes
+        self.arrays   = tc.arrays
+
+
+    def _generate_xml(self,file):
+        """Type check an abstract syntax tree using cstypechecker.
+
+        Keyword arguments:
+        'file' is where the XML code will be written
+
+        """
+        xmlgen = XMLGenerator()
+        xmlgen.generateXML(
+            ast    = self.ast,
+            ctx    = self.context,
+            types  = self.newtypes,
+            arrays = self.arrays,
+            file   = file)
 
 
 _DESCRIPTION = \
