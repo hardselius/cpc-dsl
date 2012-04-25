@@ -9,6 +9,7 @@ from ..ast      import csast
 from .cslexer   import CodspeechLexer
 from .plyparser import PLYParser, Coord, ParseError
 
+class ImportError(Exception): pass
 
 class CodspeechParser(PLYParser):
     def __init__(self):
@@ -23,10 +24,9 @@ class CodspeechParser(PLYParser):
             module=self,
             start='entrypoint',
         )
-        self.dim = ''
 
         
-    def parse(self, text, filename=''):
+    def parse(self, text, filename='', imports = []):
         """Parses Codspeech Code and returns an AST.
 
         Keyword arguments:
@@ -35,6 +35,7 @@ class CodspeechParser(PLYParser):
 
         """
         self.cslex.filename = filename
+        self.imports = imports
         self.cslex.reset_lineno()
         if not text or text.isspace():
             return []
@@ -104,7 +105,19 @@ class CodspeechParser(PLYParser):
         """
         import_stmt : IMPORT package_path
         """
-        p[0] = csast.Import(p[2])
+        if not any(p[2][-1] == s for s in self.imports):
+            self.imports.append(p[2][-1])
+            path = self.cslex.filename.split('/')
+            path.pop()
+            path += p[2]
+            pathString = '/'.join(n for n in path)
+            text = open(pathString).read()
+            tempParser = CodspeechParser()
+            ast = tempParser.parse(text,pathString)
+            p[0] = csast.Import(ast, p[2][-1], self.imports)
+        else:
+            print "Warning: %s has already been imported" % p[2][-1]
+            p[0] = csast.Import(csast.Program([]))
 
 
     def p_package_path(self, p):
@@ -113,9 +126,9 @@ class CodspeechParser(PLYParser):
                      | package_path PERIOD package_identifier
         """
         if len(p) == 2:
-            p[0] = p[1]
+            p[0] = [p[1] + ".cod"]
         else:
-            p[0] = p[1] + p[2] + p[3]
+            p[0] = [p[1]] + p[3]
 
 
     def p_package_identifier(self, p):
@@ -511,25 +524,37 @@ class CodspeechParser(PLYParser):
         """
         param_ref : IN PERIOD ident
                   | OUT PERIOD ident
-                  | ident PERIOD IN PERIOD ident
-                  | ident PERIOD OUT PERIOD ident
-                  | lparen component_stmt rparen PERIOD OUT PERIOD ident
+                  | IN PERIOD ident typeExt
+                  | OUT PERIOD ident typeExt
+                  | ident PERIOD param_ref
+                  | lparen component_stmt rparen PERIOD param_ref
         """
-        if len(p) == 4:
-            p[0] = csast.ParamRef(
-                comp  = None,
-                io    = csast.Ref(p[1]),
-                ident = p[3])
-        elif len(p) == 6:
-            p[0] = csast.ParamRef(
-                comp  = p[1],
-                io    = csast.Ref(p[3]),
-                ident = p[5])
+        if p[1] == 'in' or p[1] == 'out':
+            if len(p) == 4:
+                p[0] = csast.ParamRef(
+                    comp  = None,
+                    io    = csast.Ref(p[1]),
+                    ident = p[3])
+            else:
+                p[0] = csast.ParamRef(
+                    comp   = None,
+                    io     = csast.Ref(p[1]),
+                    ident  = p[3],
+                    settId = p[4])
+        elif len(p) == 4:
+            p[3].comp = p[1]
+            p[0] = p[3]
         else:
-            p[0] = csast.ParamRef(
-                comp  = p[2],
-                io    = csast.Ref(p[5]),
-                ident = p[7])
+            p[5].comp = p[2]
+            p[0] = p[5]
+
+
+    def p_typeExt(self, p):
+        """
+        typeExt : PERIOD ident
+                | LBRACKET ICONST RBRACKET
+        """
+        p[0] = p[2]
 
 
     # ------------------------------------------------------------------
@@ -543,14 +568,24 @@ class CodspeechParser(PLYParser):
              | INT
              | STRING
              | IDENT
-             | LBRACKET type RBRACKET
+             | type arrays
         """
         if len(p) == 2:
-            p[0] = csast.Type(p[1] + self.dim)
-            self.dim = ''
+            p[0] = csast.Type(p[1])
         else:
-            self.dim += ('*')
-            p[0] = p[2]
+            p[1].type += p[2]
+            p[0] = p[1]
+
+
+    def p_arrays(self, p):
+        """
+        arrays : LBRACKET RBRACKET
+               | LBRACKET RBRACKET arrays
+        """
+        if len(p) == 3:
+            p[0] = '[]'
+        else:
+            p[0] = '[]' + p[3]
 
 
     # ------------------------------------------------------------------
