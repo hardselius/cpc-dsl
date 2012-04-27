@@ -26,13 +26,33 @@ The first step to implement the language is to write a tokenizer. This
 is done with the Lex module of PLY. Language tokens are recognized
 using regular expressions, and the steps are straighforward.
 
-The names of all the token types are declard as a list of string named
-\texttt{tokens}.
+The names of all the token types are declard as a list of strings
+named \texttt{tokens}.
 \begin{lstlisting}
-  tokens = (
-    'NUMBER',
-    'PLUS',
-)
+class CodspeechLexer(object):
+
+...
+
+    tokens = [
+        # Literals: identifier, type, integer constant, float
+        # constant, string constant
+        'IDENT', 'ICONST', 'FCONST', 'SCONST', 'DOCSTRING',
+
+        # Assignments: = :
+        'EQUALS', 'COLON',
+
+        # Connection: <-
+        'CONNECTION',
+
+        # Delimeters: ( ) { } [ ] , .
+        'LPAREN', 'RPAREN',
+        'LBRACE', 'RBRACE',
+        'LBRACKET', 'RBRACKET',
+        'COMMA', 'PERIOD',
+
+        # Other:
+        'CR', 'OPTIONAL', 'OPTIONS'
+    ]
 \end{lstlisting}
 
 Tokens that require no special processing are declared using
@@ -43,22 +63,135 @@ matches the respective token (Python raw strings are usually used
 since they are the most convenient way to write regular expression
 strings).
 \begin{lstlisting}
-  t_PLUS = r'\+'
+class CodspeechLexer(object):
+
+...
+
+    t_EQUALS     = r'='
+    t_COLON      = r':'
+    t_CONNECTION = r'<-'
+    t_LPAREN     = r'\('
+    t_RPAREN     = r'\)'
+    t_LBRACKET   = r'\['
+    t_RBRACKET   = r'\]'
+    t_LBRACE     = r'\{'
+    t_RBRACE     = r'\}'
+    t_COMMA      = r','
+    t_PERIOD     = r'\.'
+    t_OPTIONAL   = r'\?'
 \end{lstlisting}
 
 When tokens do require special processing, a token rule can be
 specified as a function. For example, this rule matches numbers and
 converts the string into a Python integer.
 \begin{lstlisting}
-  def t_NUMBER(t):
-    r'\d+'
-    t.value = int(t.value)
-    return t
+    def t_ICONST(self, t):
+        r'\d+'
+        t.value = int(t.value)
+        return t
 \end{lstlisting}
+
+In some cases, we may want to build tokens from more complex regular
+expressions. For example:
+\begin{lstlisting}
+class CodspeechLexer(object):
+
+...
+
+    lowercase    = r'[a-z]'
+    identchar    = r'[_A-Za-z0-9-]'
+    ident        = r'(' + lowercase + r'(' + identchar + r')*)'
+
+    def t_IDENT(self, t):
+        # we want the docstring to be the identifier above
+        ...
+\end{lstlisting}
+
+\noindent This is not possible to specify using a normal docstring. The
+programmer would have to write the full RE, defeating the purpose of
+re-usable code. However, there is a way around this by using the
+\texttt{@TOKEN} decorator.
+\begin{lstlisting}
+from ply.lex import TOKEN
+
+class CodspeechLexer(object):
+
+...
+
+
+    lowercase    = r'[a-z]'
+    identchar    = r'[_A-Za-z0-9-]'
+    ident        = r'(' + lowercase + r'(' + identchar + r')*)'
+
+    @TOKEN(ident)
+    def t_IDENT(self, t):
+        t.type = self.keyword_map.get(t.value,"IDENT")
+        return t
+\end{lstlisting}
+
+The observant reader might notice something special goind on in the
+function \texttt{t_IDENT}. The processed string is checked against a
+keyword map to decide wheter the token type should actually be
+\texttt{IDENT} or something else. The keyword map is defined as a
+dictionary, and the values are appended to the token list.
+\begin{lstlisting}
+class CodspeechLexer(object):
+
+...
+
+    keyword_map = {
+        # Import
+        'import'          : 'IMPORT',
+
+        # Type
+        'type'            : 'TYPE',
+
+        # Atom keywords
+        'atom'            : 'ATOM',
+        #'options'         : 'OPTIONS',
+        'python'          : 'ATOMTYPE',
+        'python-extended' : 'ATOMTYPE',
+        'external'        : 'ATOMTYPE',
+
+        # Network
+        'network'         : 'NETWORK',
+        'controller'      : 'CONTROLLER',
+                
+        # Header
+        'in'              : 'IN',
+        'out'             : 'OUT',
+        'default'         : 'DEFAULT',
+        
+        # Types
+        'file'            : 'FILE',
+        'float'           : 'FLOAT',
+        'int'             : 'INT',
+        'string'          : 'STRING',
+    }
+
+
+    tokens = [
+        ...
+    ] + list(set(keyword_map.values()))
+\end{lstlisting}
+
+\noindent Since our keyword map contains multiple keys mapping to the
+same value and the token list can not contain any duplicates, the list
+of values is converted to a set before it is converted back into a
+list.
 
 
 \subsection{Python Yacc}
-The next implementation step is to write the parser using Python Yacc.
+The next implementation step is to write the parser using Python
+Yacc. The list of tokens is imported from the tokenzer module and a
+series of functions describing the grammar productions are defnied.
+
+
+\subsection{Alternative specification of Lexer and Parser}
+As seen in the above examples, both the lexer and parser are defined
+from instances of their own classes. The easiest way, however, is to
+specify them directly in their own modules. The PLY documentation
+explains this quite well, complete with examples. \citep{ply:online}
 
 \section{Codspeech Backus-Naur Form}
 \input{Chapters/bnf}
