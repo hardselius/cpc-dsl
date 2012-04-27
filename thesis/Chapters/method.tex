@@ -7,17 +7,25 @@ We researched programming paradigms and programming languages similar
 to what we wanted to build.
 
 \subsubsection{Dataflow Programming}
+Dataflow programming is a paradigm that models programs as a directed
+graph of the data flowing between operations. It focuses on how
+components of the program \emph{connects} instead of, as in imperative
+programming, \emph{how they happen}. \highlight{Expand on this.}
 
-\subsubsection{Flowbased Programming}
+\subsubsection{Flow-based Programming}
+In flow-based programming, applications are defined as networks of
+``black box'' processes. Data is exchanged across predefined
+connections via message passing. \highlight{Expand on this.}
 
 \subsubsection{Reactive Programming}
 Oriented around data flows and the propagation of change. THe
 underlying execution model will automatically propagate changes
-through the data flow.
+through the data flow. \highlight{Expand on this.}
 
 
 \section{Design}
-from research -> inspiration from programming paradigms and graphical implementations
+from research -> inspiration from programming paradigms and graphical
+implementations
 
 inspiration from programming languages, functional...imperative
 
@@ -31,19 +39,19 @@ intro?...
 
 \subsection{Language}
 The candidates for implementation language were: C, C++, C\#, F\#,
-Haskell, Java, OCamel. These candidates were discussed as because of
-the tool \emph{BNF converter}(BNFC) supports them. Haskell was
-excluded first of all, mainly because of the restricted set of
-users. The developers of Copernicus needs to easily be able to modify
-the implementation when necessary. The next candidate was Java, but it
-was excluded because of the possible difficulties when installing java
-runtime environment on supercomputers. C was a good candidate since
-Copernicus is written in Python and C is easy to extend in Python, and
-most systems has a C compiler as default.
+Haskell, Java, OCamel. These candidates were discussed since the
+\emph{BNF converter} (BNFC) tool supports them. \citep{bnfc:online}
+Haskell was excluded first of all, mainly because of the restricted
+set of users. The developers of Copernicus needs to easily be able to
+modify the implementation when necessary. The next candidate was Java,
+but it was excluded because of the possible difficulties when
+installing java runtime environment on supercomputers. C was a good
+candidate since Copernicus is written in Python and C is easy to
+extend in Python, and most systems has a C compiler as default.
 
 The the implementation chosen was Python. As the rest of the system is
 written in Python, it is only natural to write extensions in the same
-language. Unix systems have Python interpreter as default, which makes
+language. UNIX systems have Python interpreter as default, which makes
 the extension easy to install aswell. The decision was also based on
 easy integration and maintenance against easy implementation. As BNFC
 is a powerfull tool, generating lexer, parser and abstract syntax tree
@@ -61,7 +69,7 @@ effective to use. The reason why another tool was chosen is stated in
 the previous section.
 
 When the implementation language was established, the tools considered
-was ply, YAPPS and Spark.
+was PLY, YAPPS and SPARK\citep{ply:online,yapps:online,spark:online}.
 
 
 \subsection{Datastructures \& Methods}
