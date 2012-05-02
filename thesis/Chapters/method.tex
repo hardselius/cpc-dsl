@@ -1,4 +1,10 @@
 \chapter{Method}
+The project contained three main stages: research, design and
+implementation. The first plan was to sequentially work through them
+one by one. In practice a more parallel approach was taken, where
+designing the DSL started before the research ended and then the
+implementation and design stages continued through the entire project.
+
 
 \section{Research}
 
@@ -24,18 +30,44 @@ through the data flow. \highlight{Expand on this.}
 
 
 \section{Design}
-from research -> inspiration from programming paradigms and graphical
-implementations
+Designing the DSL was a process which continued through the entire
+project. As there are no text based solution to similar problems, the
+DSL had no real starting base. The initial inspiration came from the
+reasearch on programming praradigms and graphical implementations
+related to network based programming.
 
-inspiration from programming languages, functional...imperative
+Inspiration from well known programming languages was included for the
+DSL to be simple and intuitive to the common user. Both functional and
+imperative languages were considered when developing the design.
 
-drafts
-
-discussion
+The most important steps in this process was a continuing discussion
+with the developers of Copernicus. It was important to have a DSL
+which they were satisfied with, but also to get input on what design
+choices to make. The developers perspective was important for the DSL
+to reflect realistic scenarios and to get a better collective view of
+the different solutions. At each meeting the developers was presented
+with a draft of the latest version of the DSL.
 
 
 \section{Implementation}
-intro?...
+The implementation stage started when the first design prototype was
+done. This stage was developed parallel to the design, as both parts
+influenced eachother.
+
+The first step was to write a parser for building abstract syntax
+trees. The objective was to write a BNF grammar which represented our
+design. The grammar contains definitions of statements, expressions,
+types, etc.
+
+A type checker was the next step to be implemented. A type checker can
+provide the user with more expressive error reporting, and will also
+facilitate the learning experience.
+
+The last step was the XML generation. As this step is the one
+connecting the project to Copernicus, it required a more detailed
+understanding of how the system described and used computational
+projects.
+
 
 \subsection{Language}
 The candidates for implementation language were: C, C++, C\#, F\#,
@@ -71,6 +103,8 @@ the previous section.
 When the implementation language was established, the tools considered
 was PLY, YAPPS and SPARK\citep{ply:online,yapps:online,spark:online}.
 
+\highlight{SKRIV!!!}
+
 
 \subsection{Datastructures \& Methods}
 The abstract syntax tree is designed with a visitor pattern. The
@@ -81,7 +115,10 @@ each sort of node, one perform operations based on a abstract syntax
 tree simply by visiting its top node. This way it is easy to write a
 typechecker and XML generator.
 
-environment - dict (components/functions,variables)
+The type checker keeps environment information in a list of
+dictionaries, where each element in the list is a scope in the
+language. The dictionaries contain type information of functions and
+variables. New type definitions are stored in a seperate dictionary.
 
 
 \section{Requirements \& Specification}
