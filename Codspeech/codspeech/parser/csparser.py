@@ -568,7 +568,7 @@ class CodspeechParser(PLYParser):
              | INT
              | STRING
              | IDENT
-             | type arrays
+             | type dim
         """
         if len(p) == 2:
             p[0] = csast.Type(p[1])
@@ -577,10 +577,10 @@ class CodspeechParser(PLYParser):
             p[0] = p[1]
 
 
-    def p_arrays(self, p):
+    def p_dim(self, p):
         """
-        arrays : LBRACKET RBRACKET
-               | LBRACKET RBRACKET arrays
+        dim : LBRACKET RBRACKET
+            | LBRACKET RBRACKET dim
         """
         if len(p) == 3:
             p[0] = '[]'
