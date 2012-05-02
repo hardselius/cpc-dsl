@@ -78,15 +78,21 @@ other.
 \subsection{Delimitations}
 The most important part of the project is to have a working
 implementation. There are features which can be added to the DSL for
-describing even more advanced project with better syntax, e.g. simple
+describing even more advanced projects with better syntax, e.g. simple
 arithmetics.
 
-XML GENERATION vs USING THE AST
+The implementation generates XML code since Copernicus already has
+support for reading XML files describing computational projects. This
+will most likely be replaced by building the projects directly from
+the abstract syntax trees, rendering the XML generation
+redundant. This step would require much more understanding of how
+Copernicus work, which is not within the time limit of this project.
 
-This project has not looked at a graphical solution at all, only other
-implementations for inspiration for the DSL. A graphical interface
-would be good addition and such a solution can use most parts of this
-project.
+This project has not considered a graphical solution at all. Graphical
+implementations of related work has only been used get inspiration for
+the DSL. A graphical interface would be good addition, but it is
+another project. Such a solution can use many parts of the developed
+DSL implementation.
 
 The language we chose to write the implementation in is Python. This
 choice was based on formost an easy implementation and maintenance,
@@ -95,7 +101,8 @@ use effective tools and another language, but instead tools
 specifically for python where used.
 
 
-\subsection{Purpose}
+%\subsection{Purpose}
+
 
 \section{Literature}
 
