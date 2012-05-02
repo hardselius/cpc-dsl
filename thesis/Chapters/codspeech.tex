@@ -28,6 +28,11 @@ using regular expressions, and the steps are straighforward.
 
 The names of all the token types are declard as a list of strings
 named \texttt{tokens}.
+
+\lstset{
+  caption = {The token list},
+  label   = ply:tokenlist
+}
 \begin{lstlisting}
 class CodspeechLexer(object):
 
@@ -62,6 +67,11 @@ list. Each such variable contains a regular expression string that
 matches the respective token (Python raw strings are usually used
 since they are the most convenient way to write regular expression
 strings).
+
+\lstset{
+  caption = {Token variables},
+  label   = ply:tokenvar
+}
 \begin{lstlisting}
 class CodspeechLexer(object):
 
@@ -84,6 +94,11 @@ class CodspeechLexer(object):
 When tokens do require special processing, a token rule can be
 specified as a function. For example, this rule matches numbers and
 converts the string into a Python integer.
+
+\lstset{
+  caption = {Token functions},
+  label   = ply:tokenfunc 
+}
 \begin{lstlisting}
     def t_ICONST(self, t):
         r'\d+'
@@ -93,6 +108,11 @@ converts the string into a Python integer.
 
 In some cases, we may want to build tokens from more complex regular
 expressions. For example:
+
+\lstset{
+  caption = {Complex regular expressions},
+  label   = ply:regex
+}
 \begin{lstlisting}
 class CodspeechLexer(object):
 
@@ -111,6 +131,11 @@ class CodspeechLexer(object):
 programmer would have to write the full RE, defeating the purpose of
 re-usable code. However, there is a way around this by using the
 \texttt{@TOKEN} decorator.
+
+\lstset{
+  caption = {Token decoratior},
+  label   = ply:token
+}
 \begin{lstlisting}
 from ply.lex import TOKEN
 
@@ -134,6 +159,11 @@ function \texttt{t_IDENT}. The processed string is checked against a
 keyword map to decide wheter the token type should actually be
 \texttt{IDENT} or something else. The keyword map is defined as a
 dictionary, and the values are appended to the token list.
+
+\lstset{
+  caption = {Keyword map},
+  label   = {ply:keywordmap}
+}
 \begin{lstlisting}
 class CodspeechLexer(object):
 
@@ -182,9 +212,94 @@ list.
 
 
 \subsection{Python Yacc}
-The next implementation step was to write the parser using Python
-Yacc. The list of tokens is imported from the tokenzer module and a
-series of functions describing the grammar productions are defined.
+The \texttt{yacc.py} module is used to parse the language
+syntax. \emph{Syntax} is usually specified in terms of a
+\emph{BNF-grammar} (\highlight{citation needed}). For example, some
+simple grammar rules for parsing types could look like this:
+
+\begin{figure}[h!]
+  \begin{grammar}
+    <type> ::= `float'
+    \alt `int'
+    \alt `string'
+    \alt <type> <dim>
+
+    <dim> ::= `[]'
+    \alt <dim> `[]'
+  \end{grammar}
+  \caption{An example grammar for type identifiers}
+  \label{grammar:typeex}
+\end{figure}
+
+\noindent The identifiers \emph{type} and \emph{dim} refer to grammar
+rules comprised of a collection of \emph{terminals} and
+\emph{non-terminals}. The symbols \texttt{float}, \texttt{int},
+\texttt{string} and \texttt{[]} are known as the \emph{terminals}
+and correspond to raw input tokens. The \emph{non-terminals}, such as
+\emph{dim}, refer to other rules.
+
+The \emph{semantic} behaviour of a language is often specified using
+syntax directed translation. Each symbol in a given grammar rule has a
+set of attributes associated with them along with an action. The
+action describes what to do whenever a particular grammar rule is
+recognized.
+
+Yacc uses a parsing technique called LR-parsing, also known as
+\emph{shift-reduce} parsing. It is a bottom up scheme that tries to
+match a sequence of lexical objects against the right-hand-side of
+various grammar rules. Whenever a matching right-hand-side is found,
+the appropriate action code is triggered and the grammar symbols are
+replaced by the grammar symbol on the left-hand-side.
+
+Implementing a parser in Python Yacc is fairly straight forward. The
+list of tokens from the lexer module is imported and a series of
+functions describing the grammar productions are defined. From the
+gramar in \autoref{grammar:typeex} the corresponding Python code
+becomes:
+
+\lstset{
+  caption = {Parser example},
+  label   = ply:parser
+}
+\begin{lstlisting}
+    def p_type(self, p):
+        """
+        type : FILE
+             | FLOAT
+             | INT
+             | STRING
+             | IDENT
+             | type dim
+        """
+        if len(p) == 2:
+            p[0] = csast.Type(p[1])
+        else:
+            p[1].type += p[2]
+            p[0] = p[1]
+
+
+    def p_dim(self, p):
+        """
+        dim : LBRACKET RBRACKET
+            | LBRACKET RBRACKET dim
+        """
+        if len(p) == 3:
+            p[0] = '[]'
+        else:
+            p[0] = '[]' + p[3]
+\end{lstlisting}
+
+Each function has a doc string that contains the appropriate
+context-free grammar specification. This idea was actually borrowed
+from the SPARK toolkit. \citep{spark:online}. A function takes an
+argument, \emph{p}, that contains a sequence, starting at index 1, of
+values matching the symbols in the corresponding rule. The value
+\texttt{p[0]} is mapped to the left-hand-side rule, while the values
+in \texttt{p[1..]} are mapped to the grammar symbold on the
+right-hand-side. The statements in the function body implements the
+semantic actions of the rule. In this case, we use the parser to to
+build an abstract syntax tree. This is described in more detail in
+\autoref{sec:ast}.
 
 
 \subsection{Alternative specification of Lexer and Parser}
@@ -193,10 +308,10 @@ from instances of their own classes. The easiest way, however, is to
 specify them directly in their own modules. The PLY documentation
 explains this quite well, complete with examples. \citep{ply:online}
 
-\section{Codspeech Backus-Naur Form}
+\section{Codspeech Backus-Naur Form}\label{sec:bnf}
 \input{Chapters/bnf}
 
-\subsection{Abstract Syntax Tree}
+\subsection{Abstract Syntax Tree}\label{sec:ast}
 \subsection{Parser}
 \subsection{Typechecker}
 \subsection{XML generation}
