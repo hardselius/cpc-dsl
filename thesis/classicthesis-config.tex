@@ -117,7 +117,13 @@ high-level sampling tasks in high-performance computing
 %\renewcommand*{\acsfont}[1]{\textssc{#1}} % for MinionPro
 \renewcommand{\bflabel}[1]{{#1}\hfill}    % fix the list of acronyms
 \usepackage{lipsum}
+
 \usepackage{syntax}
+\newcommand{\tn}[1]{`{#1}'}
+% increase separation between rules
+\setlength{\grammarparsep}{11pt plus 1pt minus 1pt}
+% increase separation between LHS/RHS 
+\setlength{\grammarindent}{12em}
 % ******************************************************************
 
 
@@ -160,7 +166,8 @@ high-level sampling tasks in high-performance computing
   showstringspaces=false,
   breaklines=true,
   frameround=ftff,
-  frame=single,
+  frame=lines,
+  %frameshape={tlr}{}{}{},
   belowcaptionskip=.75\baselineskip
   %frame=L
 } 
