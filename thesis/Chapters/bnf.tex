@@ -1,25 +1,3 @@
-\newcommand{\pn}[1]{\langle \textnormal{#1} \rangle}
-\newcommand{\pp}{\models}
-\newcommand{\oo}{\; \mid \;}
-\newcommand{\sk}{\dots }
-\newcommand{\ww}{\;}
-\newcommand{\nn}{\perp}
-\newcommand{\sm}[1]{\textnormal{#1}}
-\newcommand{\sd}[1]{\textnormal{\it #1}}
-
-
-
-\newcommand{\tn}[1]{`{#1}'}
-\newcommand{\vs}[0]{\vspace{-12pt}}
-% increase separation between rules
-\setlength{\grammarparsep}{20pt plus 1pt minus 1pt}
-% increase separation between LHS/RHS 
-\setlength{\grammarindent}{12em}
-
-
-
-
-
 % ******************************************************************
 % GRAMMAR PRODUCTIONS
 % ******************************************************************
@@ -28,24 +6,12 @@
 \begin{grammar}
   <entrypoint> ::= <opt_cr> <program>
   \alt <empty>
-\end{grammar}
 
-\vs
+  <program> ::= <top_def_list> <opt_cr>
 
-\begin{grammar}
-    <program> ::= <top_def_list> <opt_cr>
-\end{grammar}
-
-\vs
-
-\begin{grammar}
   <top_def_list> ::= <top_def>
   \alt <top_def_list> <cr> <top_def>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <top_def> ::= <import_Stmt>
   \alt <newtype_decl>
   \alt <atom_decl>
@@ -60,18 +26,10 @@
 
 \begin{grammar}
   <import_stmt> ::= `import' <package_path>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <package_path> ::= <package_identifier>
   \alt <package_path> `.' <package_identifier>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <package_identifier> ::= <ident>
 \end{grammar}
 
@@ -84,18 +42,10 @@
 \begin{grammar}
   <newtype_decl> ::= `type' <type> <docstring> <cr> `('
   <type_decl_list> `)'
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <type_decl_list> ::= <type_decl>
   \alt <type_decl_list> <comma_sep> <type_decl>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <type_decl> ::= <type> `:' <ident>
 \end{grammar}
 
@@ -107,38 +57,18 @@
 
 \begin{grammar}
   <atom_declaration> ::= `atom' <atomtype> <header> <optionblock>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <atomtype> ::= `python'
   \alt `python-extended'
   \alt `external'
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <optionblock> ::= `option' <opt_cr> `(' <atom_option_list> `)'
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <atom_option_list> ::= <atom_option>
   \alt <atom_option_list> <comma_sep> <atom_option>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <atom_option> ::= <option_ident> `:' <option_ident>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <option_ident> ::= <ident>
   \alt <option_ident> `.' <ident>
 \end{grammar}
@@ -151,11 +81,7 @@
 
 \begin{grammar}
   <network_decl> ::= `network' <header> <network_block>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <network_block> ::= <statement_block>
 \end{grammar}
 
@@ -167,53 +93,25 @@
 
 \begin{grammar}
   <header> ::= <ident> <docstring> <cr> <inputs> <outputs>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <inputs> ::= `in' `(' <input_list> `)' <cr>
   \alt `in' <no_params> <cr>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <outputs> ::= `out' `(' <output_list> `)' <cr>
   \alt `out' <no_params> <cr>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <input_list> ::= <input>
   \alt <input_list> <comma_sep> <input>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <output_list> ::= <output>
   \alt <output_list> <comma_sep> <output>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <no_params> ::= `(' <opt_cr> `)'
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <input> ::= <type> <ident> <docstring>
   \alt `?' <type> <ident> <docstring>
   \alt <type> <ident> `default' <constant> <docstring>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <output> ::= <type> <ident> <docstring>
   \alt <type> <ident> `default' <constant> <docstring>
 \end{grammar}
@@ -227,50 +125,22 @@
 \begin{grammar}
   <stmt_block> ::= <opt_cr> <lbrace> <stmt_list> <rbrace>
   \alt <opt_cr> <stmt_block_empty>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <stmt_block_empty> ::= `{' <opt_cr> `}'
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <stmt_list> ::= <stmt>
   \alt <stmt_list> <cr> <stmt>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <stmt> ::= <controller_stmt>
   \alt <connection_stmt>
   \alt <assignment_stmt>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <controller_stmt> ::= `controller' `(' <ident> `)'
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <connection_stmt> ::= <param_ref> `\textless-' <expr>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <assignment_stmt> ::= <ident> `=' <component_stmt>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <component_stmt> ::= <ident> <lparen> <expr_list> <rparen>
 \end{grammar}
 
@@ -284,50 +154,22 @@
   <expr> ::= <constant>
   \alt <param_ref>
   \alt <ident>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <expr_list> ::= <expr>
   \alt <expr_list> <comma_sep> <expr>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <const> ::= <fconst>
   \alt <iconst>
   \alt <sconst>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <fconst> ::= \emph{floating point constant}
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <iconst> ::= \emph{integer constant}
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <sconst> ::= \emph{string constant}
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <ident> ::= \emph{identifier}
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <param_ref> ::= `in' `.' <ident>
   \alt `out' `.' <ident>
   \alt <ident> `.' `in' `.' <ident>
@@ -348,11 +190,7 @@
   \alt `string'
   \alt `[' <type> `]'
   \alt <ident>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <docstring> ::= \emph{an optional docstring}
 \end{grammar}
 
@@ -364,46 +202,18 @@
 
 \begin{grammar}
   <cr> ::= \emph{a non-empty sequence of new lines}
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <opt_cr> ::= \emph{a sequence of new lines that may be empty}
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <lbrace> ::= `{' <opt_cr>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <rbrace> ::= <opt_cr> `}'
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <lparen> ::= `(' <opt_cr>
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <rparen> ::= <opt_cr> `)'
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <empty> ::= \emph{empty production}
-\end{grammar}
 
-\vs
-
-\begin{grammar}
   <comma_sep> ::= <opt_cr> `,' <opt_cr>
 \end{grammar}
