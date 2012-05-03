@@ -158,19 +158,32 @@ high-level sampling tasks in high-performance computing
   basicstyle=\footnotesize\ttfamily,
   %identifierstyle=\color{NavyBlue},
   commentstyle=\color{webgreen}\ttfamily,
-  stringstyle=\rmfamily,
+  stringstyle=\ttfamily,
   numbers=none,%left,%
   numberstyle=\scriptsize,%\tiny
   stepnumber=5,
   numbersep=8pt,
+  showspaces=false,
   showstringspaces=false,
   breaklines=true,
+  xleftmargin=17pt,
+  framexleftmargin=17pt,
+  framexrightmargin=5pt,
+  framexbottommargin=4pt,
   frameround=ftff,
-  frame=lines,
+  %frame=l,
   %frameshape={tlr}{}{}{},
   belowcaptionskip=.75\baselineskip
   %frame=L
 } 
+
+\usepackage{caption}
+%\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{
+        \hline
+        {\parbox{\textwidth}{#1#2#3}}
+        \hline}
+\captionsetup[lstlisting]{format=listing, singlelinecheck=false, margin=0pt}%, font={bf,footnotesize}}
 % ******************************************************************           
 
 
