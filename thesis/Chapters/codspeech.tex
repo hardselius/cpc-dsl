@@ -7,11 +7,13 @@
 
 
 \section{Implementation}
+This section will describe the various implementation steps taken
+during the construction of Codspeech.
 
 
-\section{PLY (Python Lex-Yacc)}
+\subsection{PLY (Python Lex-Yacc)}\label{sec:ply}
 PLY is an implementation of lex and yacc parsing tools, written purely
-in python, by David Beazley \citep{ply:online}. It was originally
+in python, by David Beazley \citep{code:online}. It was originally
 developed for an intrdoctory class on compilers back in 2001. It
 provides most of the standard lex/yacc features including support for
 empty productions, precedence rules, error recovery, and support for
@@ -31,7 +33,7 @@ named \texttt{tokens}.
 
 \lstset{
   caption = {The token list},
-  label   = ply:tokenlist
+  label   = code:tokenlist
 }
 \begin{lstlisting}
 class CodspeechLexer(object):
@@ -70,7 +72,7 @@ strings).
 
 \lstset{
   caption = {Token variables},
-  label   = ply:tokenvar
+  label   = code:tokenvar
 }
 \begin{lstlisting}
 class CodspeechLexer(object):
@@ -97,7 +99,7 @@ converts the string into a Python integer.
 
 \lstset{
   caption = {Token functions},
-  label   = ply:tokenfunc 
+  label   = code:tokenfunc 
 }
 \begin{lstlisting}
     def t_ICONST(self, t):
@@ -111,7 +113,7 @@ expressions. For example:
 
 \lstset{
   caption = {Complex regular expressions},
-  label   = ply:regex
+  label   = code:regex
 }
 \begin{lstlisting}
 class CodspeechLexer(object):
@@ -134,7 +136,7 @@ re-usable code. However, there is a way around this by using the
 
 \lstset{
   caption = {Token decoratior},
-  label   = ply:token
+  label   = code:token
 }
 \begin{lstlisting}
 from ply.lex import TOKEN
@@ -162,7 +164,7 @@ dictionary, and the values are appended to the token list.
 
 \lstset{
   caption = {Keyword map},
-  label   = {ply:keywordmap}
+  label   = {code:keywordmap}
 }
 \begin{lstlisting}
 class CodspeechLexer(object):
@@ -259,7 +261,7 @@ becomes:
 
 \lstset{
   caption = {Parser example},
-  label   = ply:parser
+  label   = code:parser
 }
 \begin{lstlisting}
     def p_type(self, p):
@@ -306,12 +308,159 @@ build an abstract syntax tree. This is described in more detail in
 As seen in the above examples, both the lexer and parser are defined
 from instances of their own classes. The easiest way, however, is to
 specify them directly in their own modules. The PLY documentation
-explains this quite well, complete with examples. \citep{ply:online}
+explains this quite well, complete with examples. \citep{code:online}
 
-\section{Codspeech Backus-Naur Form}\label{sec:bnf}
+
+\subsection{Codspeech Backus-Naur Form}\label{sec:bnf}
 \input{Chapters/bnf}
 
+
 \subsection{Abstract Syntax Tree}\label{sec:ast}
+The idea behind an abstract syntax tree (AST) is to represent the
+abstract syntactic structure of the source code in tree form. Each
+node in the tree represents some structure occuring in the source. The
+AST provides a good structure for later compiler stages since it omits
+details having to do with the source language, and only contains
+information about the essential structure of the program.
+
+The AST is implemented using node classes for important language
+constructs. All these node classes extends an abstract base
+class. Since Python is dynamically typed, the concept of interfaces
+does not really exist. Interfaces, commonly referred to as
+``protocols'', are implicit. Determining these interfaces is based on
+implementation introspection. The abstract base class looks like this:
+
+\lstset{
+  caption = {An abstract base class for AST nodes},
+  label   = code:abstractnode
+}
+\begin{lstlisting}
+class Node(object):
+    """ Abstract base class for AST nodes.
+    """
+    def children(self):
+        """ A sequence of all children that are Nodes
+        """
+        pass
+
+    def show(
+        self,
+        buf=sys.stdout,
+        offset=0,
+        attrnames=False,
+        nodenames=False,
+        showcoord=False,
+        _my_node_name=None):
+        lead = ' ' * offset
+        if nodenames and _my_node_name is not None:
+            buf.write(
+                lead + self.__class__.__name__+ ' <' + _my_node_name + '>: ')
+        else:
+            buf.write(lead + self.__class__.__name__+ ': ')
+
+        if self.attr_names:
+            if attrnames:
+                nvlist = [(n, getattr(self,n)) for n in self.attr_names]
+                attrstr = ', '.join('%s=%s' % nv for nv in nvlist)
+            else:
+                vlist = [getattr(self, n) for n in self.attr_names]
+                attrstr = ', '.join('%s' % v for v in vlist)
+            buf.write(attrstr)
+
+        if showcoord:
+            buf.write(' (at %s)' % self.coord)
+        buf.write('\n')
+
+        for (child_name, child) in self.children():
+            child.show(
+                buf,
+                offset=offset + 2,
+                attrnames=attrnames,
+                nodenames=nodenames,
+                showcoord=showcoord,
+                _my_node_name=child_name)
+\end{lstlisting}
+
+\noindent This base class also contains a pretty printing function,
+\texttt{show()}, that prints the entire tree below a the node from
+which it was invoked from.
+
+An AST node can be specified in the following way:
+
+\lstset{
+  caption = {Example of an AST node},
+  label = code:samplenode
+}
+\begin{lstlisting}
+class Header(Node):
+    def __init__(self, ident, doc, inputs, outputs, coord=None):
+        self.ident = ident
+        self.doc = doc
+        self.inputs = inputs
+        self.outputs = outputs
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        if self.ident is not None:
+            nodelist.append(("ident", self.ident))
+        if self.doc is not None:
+            nodelist.append(("doc", self.doc))
+        for i, child in enumerate(self.inputs or []):
+            nodelist.append(("inputs[%d]" % i, child))
+        for i, child in enumerate(self.outputs or []):
+            nodelist.append(("outputs[%d]" % i, child))
+        return tuple(nodelist)
+
+    attr_names = ()
+\end{lstlisting}
+
+Python also does not support multiple dispatch at the language
+defition or syntactic level, nor does it support method
+overloading. However, the visitor pattern can be implemented using
+method introspection. Another base class for visiting nodes is
+defined:
+
+\lstset{
+  caption = {The NodeVisitor class},
+  label   = code:nodevisitor
+}
+\begin{lstlisting}
+class NodeVisitor(object):
+    def visit(self, node):
+        """ Visit a node.
+        """
+        method = 'visit_' + node.__class__.__name__
+        visitor = getattr(self, method, self.generic_visit)
+        return visitor(node)
+
+    def generic_visit(self, node):
+        """ Called if no explicit visitor function exists for a
+            node. Implements preorder visiting of the node.
+        """
+        for c_name, c in node.children():
+            self.visit(c)
+\end{lstlisting}
+
+\lstset{
+  caption = {An example use of the NodeVisitor},
+  label   = code:visitorexample
+}
+\begin{lstlisting}
+class ConstantVisitor(NodeVisitor):
+    def __init__(self):
+        self.values = []
+
+    def visit_Constant(self, node):
+        self.values.append(node.value)
+
+...
+
+cv = ConstantVisitor()
+cv.visit(node)
+\end{lstlisting}
+
+
 \subsection{Parser}
 \subsection{Typechecker}
 \subsection{XML generation}
