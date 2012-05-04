@@ -95,7 +95,7 @@
 \cleardoublepage\include{FrontBackmatter/Contents}
 
 
-%******************************************************************
+%*******************************************************************
 % Mainmatter
 % ******************************************************************
 \pagenumbering{arabic}
@@ -103,6 +103,8 @@
 % use \cleardoublepage here to avoid problems with pdfbookmark
 \cleardoublepage
 
+
+% ******************************
 \ctparttext{
   \begin{flushright}{\slshape
       A large-scale distributed computing paradigm that is driven by
@@ -120,18 +122,25 @@
 \include{Chapters/Introduction}
 \cleardoublepage
 
-\include{Chapters/Method}
-\cleardoublepage
 
+% ******************************
 \ctparttext{In this part, we will explain how we built our
   domain-specific language using PLY. This part should not only serve
   as a project report, but also a a tutorial on how to create your own
   language in Python.}
-\part{A Domain-specific Langauge}
+\part{Creating a Domain-specific Langauge}
+\include{Chapters/Research}
+\cleardoublepage
+
 \include{Chapters/Language}
 \cleardoublepage
 
 \include{Chapters/Implementation}
+\cleardoublepage
+
+% ******************************
+\part{Results}
+\include{Chapters/Discussion}
 \cleardoublepage
 
 \include{Chapters/Conclusions}
