@@ -1,0 +1,219 @@
+% ******************************************************************
+% GRAMMAR PRODUCTIONS
+% ******************************************************************
+\paragraph{Grammar productions}
+
+\begin{grammar}
+  <entrypoint> ::= <opt_cr> <program>
+  \alt <empty>
+
+  <program> ::= <top_def_list> <opt_cr>
+
+  <top_def_list> ::= <top_def>
+  \alt <top_def_list> <cr> <top_def>
+
+  <top_def> ::= <import_Stmt>
+  \alt <newtype_decl>
+  \alt <atom_decl>
+  \alt <network_decl>
+\end{grammar}
+
+
+% ******************************************************************
+% IMPORT STATEMENTS
+% ******************************************************************
+\paragraph{Import statement}
+
+\begin{grammar}
+  <import_stmt> ::= `import' <package_path>
+
+  <package_path> ::= <package_identifier>
+  \alt <package_path> `.' <package_identifier>
+
+  <package_identifier> ::= <ident>
+\end{grammar}
+
+
+% ******************************************************************
+% NEWTYPE
+% ******************************************************************
+\paragraph{Newtype}
+
+\begin{grammar}
+  <newtype_decl> ::= `type' <type> <docstring> <cr> `('
+  <type_decl_list> `)'
+
+  <type_decl_list> ::= <type_decl>
+  \alt <type_decl_list> <comma_sep> <type_decl>
+
+  <type_decl> ::= <type> `:' <ident>
+\end{grammar}
+
+
+% ******************************************************************
+% ATOM DECLARATION
+% ******************************************************************
+\paragraph{Atom Declaration}
+
+\begin{grammar}
+  <atom_declaration> ::= `atom' <atomtype> <header> <optionblock>
+
+  <atomtype> ::= `python'
+  \alt `python-extended'
+  \alt `external'
+
+  <optionblock> ::= `option' <opt_cr> `(' <atom_option_list> `)'
+
+  <atom_option_list> ::= <atom_option>
+  \alt <atom_option_list> <comma_sep> <atom_option>
+
+  <atom_option> ::= <option_ident> `:' <option_ident>
+
+  <option_ident> ::= <ident>
+  \alt <option_ident> `.' <ident>
+\end{grammar}
+
+
+% ******************************************************************
+% NETWORK DECLARATION
+% ******************************************************************
+\paragraph{Network Declaration}
+
+\begin{grammar}
+  <network_decl> ::= `network' <header> <network_block>
+
+  <network_block> ::= <statement_block>
+\end{grammar}
+
+
+% ******************************************************************
+% HEADERS
+% ******************************************************************
+\paragraph{Atom and Network Headers}
+
+\begin{grammar}
+  <header> ::= <ident> <docstring> <cr> <inputs> <outputs>
+
+  <inputs> ::= `in' `(' <input_list> `)' <cr>
+  \alt `in' <no_params> <cr>
+
+  <outputs> ::= `out' `(' <output_list> `)' <cr>
+  \alt `out' <no_params> <cr>
+
+  <input_list> ::= <input>
+  \alt <input_list> <comma_sep> <input>
+
+  <output_list> ::= <output>
+  \alt <output_list> <comma_sep> <output>
+
+  <no_params> ::= `(' <opt_cr> `)'
+
+  <input> ::= <type> <ident> <docstring>
+  \alt `?' <type> <ident> <docstring>
+  \alt <type> <ident> `default' <constant> <docstring>
+
+  <output> ::= <type> <ident> <docstring>
+  \alt <type> <ident> `default' <constant> <docstring>
+\end{grammar}
+
+
+% ******************************************************************
+% STATEMENTS
+% ******************************************************************
+\paragraph{Statements}
+
+\begin{grammar}
+  <stmt_block> ::= <opt_cr> <lbrace> <stmt_list> <rbrace>
+  \alt <opt_cr> <stmt_block_empty>
+
+  <stmt_block_empty> ::= `{' <opt_cr> `}'
+
+  <stmt_list> ::= <stmt>
+  \alt <stmt_list> <cr> <stmt>
+
+  <stmt> ::= <controller_stmt>
+  \alt <connection_stmt>
+  \alt <assignment_stmt>
+
+  <controller_stmt> ::= `controller' `(' <ident> `)'
+
+  <connection_stmt> ::= <param_ref> `\textless-' <expr>
+
+  <assignment_stmt> ::= <ident> `=' <component_stmt>
+
+  <component_stmt> ::= <ident> <lparen> <expr_list> <rparen>
+\end{grammar}
+
+
+% ******************************************************************
+% EXPRESSIONS
+% ******************************************************************
+\paragraph{Expressions}
+
+\begin{grammar}
+  <expr> ::= <constant>
+  \alt <param_ref>
+  \alt <ident>
+
+  <expr_list> ::= <expr>
+  \alt <expr_list> <comma_sep> <expr>
+
+  <const> ::= <fconst>
+  \alt <iconst>
+  \alt <sconst>
+
+  <fconst> ::= \emph{floating point constant}
+
+  <iconst> ::= \emph{integer constant}
+
+  <sconst> ::= \emph{string constant}
+
+  <ident> ::= \emph{identifier}
+
+  <param_ref> ::= `in' `.' <ident>
+  \alt `out' `.' <ident>
+  \alt <ident> `.' `in' `.' <ident>
+  \alt <ident> `.' `out' `.' <ident>
+  \alt `(' <component_stmt> `)' `.' `out' `.' <ident>
+\end{grammar}
+
+
+% ******************************************************************
+% TYPES AND DOCSTRNGS
+% ******************************************************************
+\paragraph{Types and Docstrings}
+
+\begin{grammar}
+  <type> ::= `file'
+  \alt `float'
+  \alt `int'
+  \alt `string'
+  \alt `[' <type> `]'
+  \alt <ident>
+
+  <docstring> ::= \emph{an optional docstring}
+\end{grammar}
+
+
+% ******************************************************************
+% SPECIAL PRODUCTIONS
+% ******************************************************************
+\paragraph{Special productions}
+
+\begin{grammar}
+  <cr> ::= \emph{a non-empty sequence of new lines}
+
+  <opt_cr> ::= \emph{a sequence of new lines that may be empty}
+
+  <lbrace> ::= `{' <opt_cr>
+
+  <rbrace> ::= <opt_cr> `}'
+
+  <lparen> ::= `(' <opt_cr>
+
+  <rparen> ::= <opt_cr> `)'
+
+  <empty> ::= \emph{empty production}
+
+  <comma_sep> ::= <opt_cr> `,' <opt_cr>
+\end{grammar}
