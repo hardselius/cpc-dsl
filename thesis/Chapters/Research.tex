@@ -1,7 +1,8 @@
 \chapter{Research}\label{chap:research}
-This chapter will give a brief exaplanation on how the project was
-executed, what stages .
-
+This chapter presents some of the research that was done on
+\emph{Copernicus}, different programming paradigms suitable for the
+problem domain, and existing programming languages appurtenant to
+those paradigms.
 
 %\section{Project overview}
 %The project contained three main stages: research, design and
@@ -11,26 +12,43 @@ executed, what stages .
 %implementation and design stages continued through the entire project.
 
 
+\section{Requirements \& Specification}
+
+
 \section{Programming Paradigms}
-We researched programming paradigms and programming languages similar
-to what we wanted to build.
+Different problem domains call for different programming
+paradigms. The execution model of \emph{Copernicus} can be though of
+as a flow network, which makes some paradigms more interesting, and
+the domain-specific language should be made to reflect that fact.
+
 
 \subsection{Dataflow Programming}
-Dataflow programming is a paradigm that models programs as a directed
-graph of the data flowing between operations. It focuses on how
-components of the program \emph{connects} instead of, as in imperative
-programming, \emph{how they happen}. \highlight{Expand on this.}
+Dataflow programming is a paradigm which has an execution model where
+a program is represented as directed graph. The data flows between
+operations along the arcs. Directed arcs represent dependencies
+between instructions. Arcs that flow toward a node are called
+\emph{inputs}, while arcs flowing away from a node are called
+\emph{outputs} \citep{johnston:2004}. The model focuses on how
+components of the program \emph{connects} in contrast to the classical
+von Neuman model, which focuses on \emph{how they happen}.
+
 
 \subsection{Flow-based Programming}
-In flow-based programming, applications are defined as networks of
-``black box'' processes. Data is exchanged across predefined
-connections via message passing. \highlight{Expand on this.}
+In flow-based programming (FBP), applications are defined as networks
+of ``black box'' processes. Data is exchanged across predefined
+connections via message passing. The black box processes can be
+reconnected in different ways to form new applications while their
+internals remain unchanged, thus making FBP a
+\emph{component-oriented} approach.
+
 
 \subsection{Reactive Programming}
-Oriented around data flows and the propagation of change. THe
+Oriented around data flows and the propagation of change. The
 underlying execution model will automatically propagate changes
 through the data flow. \highlight{Expand on this.}
 
 
-\section{Requirements \& Specification}
+\section{Programming Languages}
+
+
 
