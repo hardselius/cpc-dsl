@@ -30,7 +30,7 @@ languages considered were \emph{C, C++, C\#, F\#, Haskell} and
 both implemenation, compilation and execution of code were tied to
 UNIX environments. The reason behind the consideration of the other
 languages was that they are all supported by the \emph{BNF Converter}
-(BNFC). \citep{bnfc:online} BNFC is a compiler construction for
+(BNFC) \citep{bnfc:online}. BNFC is a compiler construction for
 generating a compiler front-end from a Labeled BNF grammar. Given this
 grammar, the tool produces
 \begin{inparaenum}[(1)]
@@ -39,8 +39,8 @@ grammar, the tool produces
 \item a lexer generator file;
 \item a parser generator file;
 \item a pretty-printer module;
-\item a \LaTeX file containing a specification of the language.
-\end{inparaenum} \citep{bnfc:online}
+\item a \LaTeX file containing a specification of the language
+\end{inparaenum} \citep{bnfc:online}.
 While a compiler generator certainly would have made the
 implementation alot easier, the Copernicus system is written in
 python, and python does not exist as a target for the BNF Converter.
@@ -79,6 +79,7 @@ during the construction of Codspeech.
 
 \subsection{Abstract Syntax Tree}\label{sec:ast}
 \input{Chapters/SectionsImplementation/ast}
+
 
 \subsection{Codspeech BNF}\label{sec:bnf}
 \input{Chapters/SectionsImplementation/bnf}

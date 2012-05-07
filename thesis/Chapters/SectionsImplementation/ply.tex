@@ -1,13 +1,14 @@
-PLY is an implementation of lex and yacc parsing tools, written purely
-in python, by David Beazley \citep{ply:online}. It was originally
-developed for an intrdoctory class on compilers back in 2001. It
-provides most of the standard lex/yacc features including support for
-empty productions, precedence rules, error recovery, and support for
-ambigous grammars. It uses LR-parsing, which is a reasonabe parsing
-scheme for larger grammars, but slightly restrics the type of grammars
-that can be written (\highlight{citation needed}). PLY is
-straightforward to use, and one its many advantages is the \emph{very}
-extensive error checking, which certainly makes life easier.
+PLY is an implementation of \texttt{lex} and \texttt{yacc} parsing
+tools, written purely in python, by \citet{ply:online}. It was
+originally developed for an introductory class on compilers back in
+2001. It provides most of the standard lex/yacc features including
+support for empty productions, precedence rules, error recovery, and
+support for ambigous grammars. It uses LR-parsing, which is a
+reasonabe parsing scheme for larger grammars, but slightly restricts
+the type of grammars that can be written \citep{aho:2007}. PLY is
+straight-forward to use, and one its many advantages is
+the \emph{very} extensive error checking, which certainly makes life
+easier.
 
 \paragraph{Python Lex}
 The first step to implement the language is to write a tokenizer. This
@@ -279,7 +280,7 @@ becomes:
 
 Each function has a doc string that contains the appropriate
 context-free grammar specification. This idea was actually borrowed
-from the SPARK toolkit. \citep{spark:online}. A function takes an
+from the SPARK toolkit \citep{spark:online}. A function takes an
 argument, \emph{p}, that contains a sequence, starting at index 1, of
 values matching the symbols in the corresponding rule. The value
 \texttt{p[0]} is mapped to the left-hand-side rule, while the values
@@ -294,4 +295,4 @@ build an abstract syntax tree. This is described in more detail in
 As seen in the above examples, both the lexer and parser are defined
 from instances of their own classes. The easiest way, however, is to
 specify them directly in their own modules. The PLY documentation
-explains this quite well, complete with examples. \citep{ply:online}
+explains this quite well, complete with examples \citep{ply:online}.
