@@ -11,28 +11,12 @@ resources they rely on.
 
 \highlight{something}
 
+
 \section{Background}
-
-\highlight{computations with potential for strong scaling, sampling
-  molecular simulations}
-
-\highlight{does not use available power}
-
-%Cloud Computing and Grid Computing 360-Degree Compared:
-
-%''Nevertheless,yes: the problems are mostly the same in Clouds and
-%Grids. There is a common need to be able to manage large facilities;
-%to define methods by which consumers discover, request, and use
-%resources provided by the central facilities; and to implement the
-%often highly parallel computations that execute on those resources.''
-
-%''Provenance is still an unexplored area in Cloud environments, in
-%which we need to deal with even more challenging issues such as
-%tracking data production across different service providers (with
-%different platform visibility and access policies) and across
-%different software and hardware abstraction layers within on
-%provider.''
-
+To run computations effectively on modern supercomputers and computer
+clusters the applications need strong scaling. A limitation like this
+is a problem for the applications as the available resources are not
+used to reach highest possible performance.
 
 %Copernicus paper
 
@@ -42,11 +26,98 @@ resources they rely on.
 %bandwith as well as the total amount of resources for high absolute
 %performance.
 
+
+Molecular dynamics simulations are computations which have limitations
+as described, but there is a possibility due to the fact that many of
+these computations are of statistical nature. Relying on sampling of
+many individual simulations makes it possible to distribute the
+workload on supercumputers and computer clusters. This is a
+prallelization of such simulations which gives a great perfomance
+boost when high numbers of cores are available.
+
 %Molecular dynamics simulations pose significant computaional
 %challanges. The systems are big enough to be parallelized, with
 %100-500 particles assigned to each core in high-performance molecular
 %dynamics (MD) packages such as Gromacs [10, 17] when run on a system
 %with sufficiently low interconnect latency.
+
+
+Clouds are solutions to run computations on high-performing computer
+systems. \cite{foster:2008} defines Clouds as:
+
+\begin{quote} \slshape
+  A large-scale distributed computing paradigm that is driven by
+  economies of scale, in which a pool of abstracted, virtualized,
+  dynamically-scalable, managed computing power, storage, platforms,
+  and services are deliviered on demand to externaal customers over
+  the Internet.
+\end{quote}
+
+The resources are opaque to the user who use a pre-defined API to run
+and use the system. This means the system can contain different kind
+of computation power and the user is not affected. Running molecular
+dynamics simulations on a Cloud would need high parallelization, such
+as described above, to benefit of the possible perfomance boost.
+
+%In a Cload, different levels of services can be offered to an end
+%user, the user is only exposed to a pre-defined API, and the lower
+%level resources are opaque to the user...
+
+
+
+%Cloud Computing and Grid Computing 360-Degree Compared:
+
+%In this paper, we show that Clouds and Grids share a lot commonality
+%in their vision, architecture and technology, but they also differ in
+%various aspects such as security, programming model, business model,
+%compute model, data model, applications, and abstractions.
+
+%Nevertheless,yes: the problems are mostly the same in Clouds and
+%Grids. There is a common need to be able to manage large facilities;
+%to define methods by which consumers discover, request, and use
+%resources provided by the central facilities; and to implement the
+%often highly parallel computations that execute on those resources.
+
+%Another challenge that virtualization brings to Clouds is the
+%potention difficulty in fine-control over the monitoring of
+%resources.
+
+%PROVENANCE
+
+%Provenance refers to the derivation history of a data product,
+%including all the data sources, intermediate data products, and the
+%procedures that were applied to produce the data product.
+
+%On the other hand, Clouds are becoming the future playground for
+%e-science research, and provenance management is extremely important
+%in order to track the processes and support the reproducibility of
+%scientific results.
+
+%Provenance is still an unexplored area in Cloud environments, in
+%which we need to deal with even more challenging issues such as
+%tracking data production across different service providers (with
+%different platform visibility and access policies) and across
+%different software and hardware abstraction layers within one
+%provider.
+
+%PROGRAMMING MODEL
+
+%More specifically, a workflow system alloews the composition of
+%individual (single step) components into a complex dependency graph,
+%and it governs the flow of a data and/or control through these
+%components.
+
+
+
+%The data Grid...
+
+%In an increasing number of scientific disciplines, large data
+%collections are emergin as important community resources.
+
+
+There is a solution for parallelizing molecular simulations and it is
+called Copernicus
+
 
 \subsection{Copernicus}
 Copernicus is a software system that is made to distribute and
@@ -66,7 +137,7 @@ ensemble simulation and to make use of advanced sampling algorithms,
 while keeping the performance advantages of massively parallel
 simulations. Such computations are called projects in the system.
 
-\begin{quote}
+\begin{quote} \slshape
   A project is executed as a single job, but breaks it up into coupled
   individual parallel simulations over all available computational
   resoureces, with the single simulation as the individual work
@@ -79,7 +150,7 @@ simulations. Such computations are called projects in the system.
 To handle projects with many simulations as a single entity Copernicus
 needs to able to
 \renewcommand{\labelitemi}{-}
-\begin{itemize}
+\begin{itemize} \slshape
 \item match and distribute the individual simulations to the available
   computational resources,
 \item run simulations on a variety of remote platforms simultaneously:
@@ -117,6 +188,7 @@ etc\citep{pronk:2011}.
 
 %There are primitive types like files, strings, ints, etc. There are
 %also compound types lists, dictionaries and function types
+\highlight{types, monitoring, provenance?}
 
 The problem with Copernicus was the lack of a good way to describe
 projects. There were no intuitive way of giving input to the system,
