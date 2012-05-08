@@ -28,11 +28,11 @@ python. However, python was not the first language considered. Other
 languages considered were \emph{C, C++, C\#, F\#, Haskell} and
 \emph{Java}. However, C\# and F\# was never really an option, since
 both implemenation, compilation and execution of code were tied to
-UNIX environments. The reason behind the consideration of the other
+Unix environments. The reason behind the consideration of the other
 languages was that they are all supported by the \emph{BNF Converter}
 (BNFC) \citep{bnfc:online}. BNFC is a compiler construction for
-generating a compiler front-end from a Labeled BNF grammar. Given this
-grammar, the tool produces
+generating a compiler front-end from a \emph{Labeled BNF
+  grammar}. Given this grammar, the tool produces
 \begin{inparaenum}[(1)]
 \item an abstract syntax implementation;
 \item a case skeleton for the abstract syntax in the same language;
@@ -45,16 +45,16 @@ While a compiler generator certainly would have made the
 implementation alot easier, the Copernicus system is written in
 python, and python does not exist as a target for the BNF Converter.
 
-Copernicus is designed to run on UNIX machines with as few
+Copernicus is designed to run on Unix machines with as few
 dependencies as possible, which makes Java an unsuitable candidate --
 there are possible difficulties of installing a Java runtime
 environment on supercomputers.
 
 Doing the implementation in the C language could have been a possible
-solution, since it integrates weel with python. Most UNIX system does
+solution, since it integrates weel with python. Most Unix system does
 indeed ship with \emph{gcc} or the \emph{GNU Compiler
-  Collection}. However, some older UNIX distros will not have gcc
-preinstalle, and others like recent versions of \emph{Solaris} and
+  Collection}. However, some older Unix distros will not have gcc
+preinstalled, and others like recent versions of \emph{Solaris} and
 \emph{OpenSolaris} will have gcc under a different location.
 
 Haskell was ruled out due to the simple fact that it is not as
@@ -62,9 +62,9 @@ mainstream as the other languages. While Haskell is a very powerful
 language for writing compilers, maintenance of the code base might
 prove difficult for unexperienced users.
 
-Virtually every UNIX system ships with a python interpreter, and it is
+Virtually every Unix system ships with a python interpreter, and it is
 natural to write python extensions to a system already written in
-python. Python is easy to learn and the code is easy to extend and
+Python. Python is easy to learn and the code is easy to extend and
 maintain. In spite of python not being a classical meta-programming
 language, it became the implementation language of choice.
 
