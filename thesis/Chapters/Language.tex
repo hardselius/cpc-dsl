@@ -27,18 +27,121 @@ to reflect realistic scenarios and to get a better collective view of
 the different solutions. At each meeting the developers was presented
 with a draft of the latest version of the DSL.
 
-
 \section{General style and features}
 
+\highlight{lower case}
+
+\highlight{can assign primitives to inputs}
+
 \section{Modules}
+Modules have no real function in the current implementation of the
+language. A module is basically a code file. Importing a file is
+importing a module. This is how to import the file
+``path/to/file.cod'' from subdirectories of the current files path:
+
+\begin{verbatim}
+import path.to.file
+\end{verbatim}
+
+All code from the imported module is simply added where the import
+statement is located in the code. This way the code from the imported
+file will be used as it would have been written in the current
+file. This system is not designed or developed to have modules and
+packages as wrappers for code, but rather to sort code in different
+files. 
+
+Currently it is only possible to import files from
+subdirectories. There are no way to import from other paths or any
+form of a standard library. The discussion of a more advanced and
+useful import system revealed that the developers had some different
+suggestions but had not decided how such a system should work with
+client server setup in Copernicus.
+
+\subsection{Future Work}
+
+A real functional import system is needed for the language to be
+realistically added to Copernicus. The developers will need to define
+how Copernicus should handle imports, since they have not decided what
+would be the most practicle and useful way to do this.
+
+Importing standard libraries needs to be defined before the
+client/server issues in Copernicus can be addressed. This may be an
+easy problem but it is still vital for continuing the
+implementation. Once this is done the developers needs to decide where
+the code should be parsed and typechecked. The client can do all this
+work and send it to the server but as the rest of the client is very
+light and does not do much work, other than communicate with the
+server, a prefered solution is to have the server do all the work. The
+client can still add imports and build one code file for the server or
+send all the used code files. As there are a difference between
+importing from the standard library and importing user written project
+specific files, it needs to be decided how the client and server will
+work together to build the project. If the server should do most of
+the work it needs to have all the libraries.
+
+Assuming the server would get all user written files, building
+projects, and doing all the work, a question is what the client should
+be able to do. Users may for example be able to typecheck their
+projects before sending them to a server, as it would make development
+easier. If so, the client needs to have access to all the labraries
+the server does.
+
+There were a suggestion for a repository containing all libraries,
+where code can be added and fetched when not available locally. Users
+could easily add their own implementations. Such a repository needs to
+handle executables aswell, since servers needs be able to supply them
+to the workers.
 
 \section{Typing}
+In the language all connections between executables are typed. Their
+types are set when inputs and outputs are defined. Atoms and even
+networks have types according to their external inputs and outputs.
+
+The typechecker does not typecheck executables. Instead the system
+relies on the correct defenition when wrapping them in the language.
+
 \subsection{Primitive Types}
+The first primitive is integers, which are represented by
+\verb#int#. Integers cannot be assigned floating points (implicitly
+turn floating point to integer) but has to be assigned
+integers. Floating points are represented as \verb#float#, and as
+integers floating points cannot be assigned anything other than
+floating points. This means that \verb#1.0# is not the same as
+\verb#1# in the language and will cause a type error if assigned to a
+connection with the wrong type.
+
+Strings are represented by \verb#string#. Strings are written
+\verb#"string"# when assigned to connections. The last primitive type
+is files, which are described as \verb#file#. Files are paths written
+like strings, but are not checked that it is a path to a file.
+
 \subsection{Compound Types}
-\subsection{New Records}
+arrays, records
+
+how to call different elements
+
+\subsection{New Types}
+records, semantic
+
+\subsection{Atom \& Network Type}
+in/out function records
+
+\subsection{Meta Types}
+func, list, type
+
+function names, new types,
+
 \subsection{Type System}
+what is checked...
+
+\subsection{Future Work}
+\highlight{?}
 
 \section{Variables}
+variable name formats
+
+references: identifier variable, element by name, in out, index record
+and array
 
 \section{Networks}
 
