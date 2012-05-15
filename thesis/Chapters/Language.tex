@@ -1,7 +1,7 @@
 \chapter{Language}\label{chap:language}
 This chapter describes the domain-specific language
 Codspeech\footnote{COpernicus Domain-SPEcific langagE, CHalmers}, as
-well as the rationle behind the design.
+well as the rationale behind the design.
 
 For a complete description of the grammar in Backus-Naur Form (BNF),
 see \autoref{sec:bnf}. The implementation details will be described
@@ -32,6 +32,8 @@ with a draft of the latest version of the DSL.
 \highlight{lower case}
 
 \highlight{can assign primitives to inputs}
+
+\highlight{define before use, developers choice}
 
 \section{Modules}
 Modules have no real function in the current implementation of the
@@ -116,15 +118,67 @@ is files, which are described as \verb#file#. Files are paths written
 like strings, but are not checked that it is a path to a file.
 
 \subsection{Compound Types}
-arrays, records
+There are two compound types in the language. The first one are
+arrays, which are ordered lists of a certain type. An integer array is
+written like \verb#int[]#, where each pair of brackets represent one
+dimension. It is possible to have any number of dimensions of
+arrays. Accessing the fourth element of a variable \verb#x# which is
+typed as the example integer array, is written \verb#x[4]#. The
+resulting type of accessing elements is the same type with one less
+dimension. In the example that would be an integer (\verb#int#).
 
-how to call different elements
+The second compound type is records. They are orderd sets of elements
+which are assigned names. This make it possible to access elements in
+a record by both its index and name. Accessing the fourth variable
+\verb#e# of a record \verb#x# using its name would be written as
+\verb#x.e#, and to access \verb#x# by its index would be written as
+\verb#x(4)#. The elements can have any kind of type and does not have
+to have the same type as the other elements in the record. A new type
+has to be defined to represent a record.
 
 \subsection{New Types}
-records, semantic
+Defining new types are the way records are described in the
+language. A new type needs a name and which types of elements it
+contains. Each element needs a type and a unique name in the
+record. New types can only be defined outside networks and atoms.
+
+The syntax for defining a new type begins with the keyword
+\verb#type#. Consider a record called \verb#setting# containing a file
+calld \verb#f# and a float array called \verb#a#. The following code
+represents this record \verb#setting#.
+
+\begin{verbatim}
+type setting
+    ( file    : f
+    , float[] : a )
+\end{verbatim}
+
+The file has in this case index zero and the float array has index
+one. They can be access with both name and index as described above.
 
 \subsection{Atom \& Network Type}
-in/out function records
+As atoms and networks are able to have any number of inputs and
+outputs their types are records in the lanugage. Such records contain
+three elements: inputs, outputs, meta parameters. The inputs and
+outputs are records aswell, in which every input and output parameter
+are elements.
+
+The meta parameters are explained in the next section.
+
+parameters
+meta parameter
+
+building function type header. full function syntax in
+\autoref{sec:net} and \autoref{sec:atom}
+
+\begin{verbatim}
+in  ( setting[] settings
+    , float     input  )
+out ( float     output )
+\end{verbatim}
+
+referencing a function
+referencing an input or output
 
 \subsection{Meta Types}
 func, list, type
@@ -143,12 +197,34 @@ variable name formats
 references: identifier variable, element by name, in out, index record
 and array
 
-\section{Networks}
+\section{Atoms}\label{sec:atom}
+header
 
-\section{Atoms}
+arguments
+
+options
+
+\section{Networks}\label{sec:net}
+header and arguments
+
+body
 
 \section{Statements}
+asignment
 
-\section{Expressions}
+connection
+
+asigning constant
+
+controller statement which is explained in the next section
 
 \section{Controllers}
+When defining an atom/network as a controller, it is given permission
+to instatiate atoms, networks, and add connections within the current
+network.
+
+\begin{verbatim}
+controller(var)
+\end{verbatim}
+
+The \verb#var# needs to be instantiated.
