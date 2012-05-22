@@ -284,16 +284,45 @@ atom python add
 \end{verbatim}
 
 \section{Networks}\label{sec:net}
-header and arguments
 
-body
+A network is a description of what to instantiate and how the
+components and external input/outputs are connected inside the
+network. Networks can be components the same way as atoms, which makes
+them subnetworks when instantiated in other networks.
+
+The header of a network differs from atoms headers on two points. The
+key word \verb#atom# is replaced with \verb#network# and a network
+does not have an executable type. Writing a network \verb#somenet#
+with the same parameters and type signature as \verb#someatom# looks
+like this:
+
+\begin{verbatim}
+network somenet <func f, list l, type t>
+  in  ( setting[] settings
+      , int       length  )
+  out ( file output )
+\end{verbatim}
+
+The second part of a network is its network body which is a list of
+statements seperated by new lines. These statements are the
+description of the network, and they are described in detail in the
+next section.
 
 \section{Statements} \label{sec:stmt}
+
+
 assignment
+variable = component expression
+components
+type parameters
+parameters
+constants
+references
+nestled components
 
 connection
-
-assigning constant
+reference = reference
+reference = constant
 
 controller statement which is explained in the next section
 
@@ -302,11 +331,26 @@ When defining an atom/network as a controller, it is given permission
 to instatiate atoms, networks, and add connections within the current
 network.
 
+\begin{verbatim}
+controller(var)
+\end{verbatim}
 
 \section{Documentation \& Comments}
 
 \begin{verbatim}
-controller(var)
+atom python add   '''Add two floating point numbers: q=a+b'''
+  in  ( float a
+      , float b )
+  out ( float o   '''a+b'''
+      )
+  options ( fuction : builtin.float.add
+          , import  : builtin.float )
+
+# This is a comment line
+
+/#
+This is a comment block
+/#
 \end{verbatim}
 
 The \verb#var# needs to be instantiated.
