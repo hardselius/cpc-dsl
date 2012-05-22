@@ -164,9 +164,10 @@ and outputs are records aswell, in which every input and output
 parameter are elements. The meta parameter is a record which should
 contain types and is more explained in the section \autoref{sec:meta}.
 
-A function with an array of type \verb#setting# called \verb#settings#
-and an integer called \verb#length# as inputs and a file called
-\verb#output# as outputs, is described by the following syntax.
+An atom or network with an array of type \verb#setting# called
+\verb#settings# and an integer called \verb#length# as inputs and a
+file called \verb#output# as outputs, is described by the following
+syntax.
 
 \begin{verbatim}
 in ( setting[] settings
@@ -235,11 +236,52 @@ Variables contains letters, numbers, and underscores, but they have to
 start with a lower case letter.
 
 \section{Atoms}\label{sec:atom}
-header
+An atom is a wrapper for executable code, python scripts and
+functions. In the language atoms are components just like networks and
+the information of what to execute and how is hidden inside the
+lanugage for a more intuitive way of building project
+networks. Executables should be wrapped and added to an appropriate
+library so users do not have to conern themselves with external
+(outside the language) project design.
 
-arguments
+An atom has a header and an option part. The header contains the name
+of the atom, the type parameter defenition, the type signature of the
+outputs and inputs, and what type of executable the atom uses. There
+are three different types of executables in the current version:
+\verb#python#, \verb#python-extended#, and
+\verb#external#. \verb#python# means that the atom calls built-in
+functions of python, \verb#python-extended# means the atom calls
+python scripts, and \verb#external# calls binary executables.
 
-options
+The following code is the header for an atom \verb#someatom# which
+calls a binary executable and has the type defenition used in previous
+sections (note that in this case the type parameters are not used but
+are there to give a full description of a header).
+
+\begin{verbatim}
+atom external someatom <func f, list l, type t>
+  in  ( setting[] settings
+      , int       length  )
+  out ( file output )
+\end{verbatim}
+
+The option part is a list of options and values. The options are the
+information on what and how to execute for Copernicus. The values are
+relative to Copernicus and are not a part of the language, which is
+why users should not have to write atoms themselves but import and use
+pre-defined atoms.
+
+The following code is the defenition of an atom \verb#add# which uses
+a built-in python function to add two floating points together.
+
+\begin{verbatim}
+atom python add
+  in  ( float a
+      , float b )
+  out ( float o )
+  options ( fuction : builtin.float.add
+          , import  : builtin.float )
+\end{verbatim}
 
 \section{Networks}\label{sec:net}
 header and arguments
@@ -259,6 +301,9 @@ controller statement which is explained in the next section
 When defining an atom/network as a controller, it is given permission
 to instatiate atoms, networks, and add connections within the current
 network.
+
+
+\section{Documentation \& Comments}
 
 \begin{verbatim}
 controller(var)
