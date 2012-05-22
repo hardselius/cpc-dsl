@@ -144,58 +144,95 @@ record. New types can only be defined outside networks and atoms.
 
 The syntax for defining a new type begins with the keyword
 \verb#type#. Consider a record called \verb#setting# containing a file
-calld \verb#f# and a float array called \verb#a#. The following code
+called \verb#f# and a string called \verb#name#. The following code
 represents this record \verb#setting#.
 
 \begin{verbatim}
 type setting
-    ( file    : f
-    , float[] : a )
+    ( file  : f
+    , float : name )
 \end{verbatim}
 
-The file has in this case index zero and the float array has index
-one. They can be access with both name and index as described above.
+The file has in this case index zero and the file has index one. They
+can be access with both name and index as described above.
 
 \subsection{Atom \& Network Type}
 As atoms and networks are able to have any number of inputs and
-outputs their types are records in the lanugage. Such records contain
-three elements: inputs, outputs, meta parameters. The inputs and
-outputs are records aswell, in which every input and output parameter
-are elements.
+outputs their types are a special case of a record. Such records
+contain three elements: inputs, outputs, meta parameters. The inputs
+and outputs are records aswell, in which every input and output
+parameter are elements. The meta parameter is a record which should
+contain types and is more explained in the section \autoref{sec:meta}.
 
-The meta parameters are explained in the next section.
-
-parameters
-meta parameter
-
-building function type header. full function syntax in
-\autoref{sec:net} and \autoref{sec:atom}
+A function with an array of type \verb#setting# called \verb#settings#
+and an integer called \verb#length# as inputs and a file called
+\verb#output# as outputs, is described by the following syntax.
 
 \begin{verbatim}
-in  ( setting[] settings
-    , float     input  )
-out ( float     output )
+in ( setting[] settings
+   , int       length  )
+out ( file output )
 \end{verbatim}
 
-referencing a function
-referencing an input or output
+The full header syntax for networks and atoms is described in sections
+\autoref{sec:net} and \autoref{sec:atom}.
 
-\subsection{Meta Types}
-func, list, type
+Since both the type of \verb#in# and the type of functions are
+records, there are numerous ways of refering to an input
+parameter. Refering to the a parameter \verb#length# when a function
+of the same type as the above has been instantiated as \verb#func# may
+look like \verb#func.in.length# or \verb#func(0)(1)# which both are
+the same thing.
 
-function names, new types,
+\subsection{Meta Types}\label{sec:meta}
+Atoms and networks can take types as inputs, called meta types, to be
+able to define generic components in networks. The parameters are
+defined with a variable name and a type group. There are currently
+three different type groups: \verb#func#, \verb#list#, and
+\verb#type#. The group is a constraint on the type parameter which
+accepts only certain types. The group \verb#type# means the parameter
+only accepts primitive types, \verb#list# accepts compound type
+(records and arrays), and \verb#func# accepts record types which at
+least have an element \verb#in# and an element \verb#out#. This way
+one can define new types which can be used to describe atom and
+network types.
+
+The type parameters are defined and as the following example:
+
+\begin{verbatim}
+<func f, list l, type t>
+\end{verbatim}
+
+\begin{verbatim}
+in ( f.in i
+   , l*   inputs
+out ( t[] outputs )
+\end{verbatim}
+
+\verb#i# will be of a record type since \verb#in# is a record. The
+symbol \verb#*# removes one dimension from the array \verb#l#. The
+output \verb#outputs# will be a one dimensional array where the type
+is given by the parameter \verb#t#.
 
 \subsection{Type System}
-what is checked...
+%what is checked...
+
+%parameters to atoms and networks are checked
+
+%metatypes are checked
 
 \subsection{Future Work}
 \highlight{?}
 
-\section{Variables}
-variable name formats
 
-references: identifier variable, element by name, in out, index record
-and array
+\section{Variables}
+Variables refer to an instantiated atom or a network. They are
+instantiated inside networks, where they can be connected to other
+variables or external inputs and outputs. How to instantiate a
+variable is described in section \autoref{sec:stmt}.
+
+Variables contains letters, numbers, and underscores, but they have to
+start with a lower case letter.
 
 \section{Atoms}\label{sec:atom}
 header
@@ -209,12 +246,12 @@ header and arguments
 
 body
 
-\section{Statements}
-asignment
+\section{Statements} \label{sec:atom}
+assignment
 
 connection
 
-asigning constant
+assigning constant
 
 controller statement which is explained in the next section
 
