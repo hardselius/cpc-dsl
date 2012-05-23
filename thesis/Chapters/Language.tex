@@ -378,12 +378,17 @@ network.
 var = somecontroller (in)
 controller(var)
 \end{verbatim}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+The \verb#var# needs to be instantiated.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Documentation \& Comments}
+It is possible to add documentation strings to atoms,networks and
+their inputs and outputs. The documentation string starts and ends
+with \verb#'''#, and the documentation will be sent to The Copernicus
+system.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{verbatim}
 atom python add   '''Add two floating point numbers: q=a+b'''
   in  ( float a
@@ -409,6 +414,3 @@ This is a comment block
 This is still in the comment block
 /#
 \end{verbatim}
-
-The \verb#var# needs to be instantiated.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
