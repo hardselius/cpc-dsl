@@ -392,11 +392,22 @@ atom python add   '''Add two floating point numbers: q=a+b'''
       )
   options ( fuction : builtin.float.add
           , import  : builtin.float )
+\end{verbatim}
 
+The language has both line and block comments. A line comment start
+with the symbol \verb#\## and anything after it will be skipped by the
+parser. Block comments starts with \verb#/\## and ends with
+\verb#\#/#. Anything within the block comment will be skipped by the
+parser.
+
+\begin{verbatim}
 # This is a comment line
 
 /#
 This is a comment block
+
+
+This is still in the comment block
 /#
 \end{verbatim}
 
