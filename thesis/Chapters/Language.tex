@@ -35,6 +35,9 @@ with a draft of the latest version of the DSL.
 
 \highlight{define before use, developers choice}
 
+\highlight{input does not need to get values, since components only
+  evaluate once it has all non-optional inputs}
+
 \section{Modules}
 Modules have no real function in the current implementation of the
 language. A module is basically a code file. Importing a file is
@@ -117,7 +120,7 @@ Strings are represented by \verb#string#. Strings are written
 is files, which are described as \verb#file#. Files are paths written
 like strings, but are not checked that it is a path to a file.
 
-\subsection{Compound Types}
+\subsection{Compound Types}\label{sec:compound}
 There are two compound types in the language. The first one are
 arrays, which are ordered lists of a certain type. An integer array is
 written like \verb#int[]#, where each pair of brackets represent one
@@ -156,7 +159,7 @@ type setting
 The file has in this case index zero and the file has index one. They
 can be access with both name and index as described above.
 
-\subsection{Atom \& Network Type}
+\subsection{Atom \& Network Type}\label{sec:atomnet}
 As atoms and networks are able to have any number of inputs and
 outputs their types are a special case of a record. Such records
 contain three elements: inputs, outputs, meta parameters. The inputs
@@ -309,34 +312,78 @@ description of the network, and they are described in detail in the
 next section.
 
 \section{Statements} \label{sec:stmt}
+There are three types of statements: assignment, connections, and a
+controller statement. With these statements a network can be described
+inside a network body. It is not possible to build networks outside a
+network defenition.
 
+Assignment statements are instantiations of either networks or atoms
+which are assigned to variables. An assignement needs an expression
+with information of what atom/network and with which arguments, meta
+types and inputs, is instantiated. All the type arguments needs to be
+given when instantiated, but as it is not mandatory to connect
+something to an input the input arguments can be left empty. Arguments
+are connected to their respective input in the order they are defined
+in the atom/network.
 
-assignment
-variable = component expression
-components
-type parameters
-parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Type parameters are type references as meta types
+\autoref{sec:meta}. They are listed between the symbols \verb#<# and
+\verb#>#.
+
+parameters references as in \autoref{sec:compound} and
+\autoref{sec:atomnet}. They are listed between the symbols \verb#(#
+and \verb#)#.
+
 constants
-references
+
 nestled components
+
+syntax
+
+\begin{verbatim}
+var = add (1.1 in.fp)
+\end{verbatim}
+
+\begin{verbatim}
+var = somenet <add,add.in,float> ()
+\end{verbatim}
+
 
 connection
 reference = reference
 reference = constant
 
+\begin{verbatim}
+out.o <- var.out.o
+\end{verbatim}
+
+\begin{verbatim}
+out.o <- 4.3
+\end{verbatim}
+
+
 controller statement which is explained in the next section
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Controllers}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 When defining an atom/network as a controller, it is given permission
 to instatiate atoms, networks, and add connections within the current
 network.
 
 \begin{verbatim}
+var = somecontroller (in)
 controller(var)
 \end{verbatim}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \section{Documentation \& Comments}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{verbatim}
 atom python add   '''Add two floating point numbers: q=a+b'''
   in  ( float a
@@ -354,3 +401,4 @@ This is a comment block
 \end{verbatim}
 
 The \verb#var# needs to be instantiated.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
