@@ -85,14 +85,33 @@ during the construction of Codspeech.
 \input{Chapters/SectionsImplementation/bnf}
 
 
-\subsection{Typechecker}\label{sec:typechecker}
+\subsection{Type Checker}\label{sec:typechecker}
 
 
 \subsection{XML generation}\label{sec:xml}
+There is an implemented XML generator for an earlier version of the
+implementation. Due to bigger changes other aspects were prioritized
+and XML generation was left for the developers of Copernicus to
+update. Since the language needs defenitions before they can be used
+the XML generation is an iteration through thses defenitions. The only
+non-straight forward part to implement is the instantiations of
+atoms/networks as inputs in an assignment statement. The erlier
+version of the XML generator replaced such input expressions with an
+assignment statement and then connected inputs and outputs to
+represent the same thing.
 
+The XML generator is a visitor as the type checker. Visiting the
+different nodes in an abstract syntax tree prints the corresponding
+XML code and visit its children to generate the entire defenition with
+indentations.
 
 \subsection{Emacs mode}\label{sec:emacs}
-
+The emacs mode only contains syntax highlighting. The mode was created
+to get a more realistic view of the example code that were used during
+designing the DSL and testing the implementation. The syntax
+highlighting adds some understanding of what the code actually
+represents which made it easier to add and change specific parts of
+the DSL.
 
 \section{Future work}
 
@@ -141,7 +160,7 @@ during the construction of Codspeech.
 %values or other syntactic objects. By defining the visit methods for
 %each sort of node, one perform operations based on a abstract syntax
 %tree simply by visiting its top node. This way it is easy to write a
-%typechecker and XML generator.
+%type checker and XML generator.
 %
 %The type checker keeps environment information in a list of
 %dictionaries, where each element in the list is a scope in the
