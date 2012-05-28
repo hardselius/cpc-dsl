@@ -1,12 +1,10 @@
 \chapter{Language}\label{chap:language}
-This chapter describes the domain-specific language
-Codspeech\footnote{COpernicus Domain-SPEcific langagE, CHalmers}, as
-well as the rationale behind the design.
+This chapter describes the domain-specific language, as well as some
+rationale behind the design and future work.
 
 For a complete description of the grammar in Backus-Naur Form (BNF),
 see \autoref{sec:bnf}. The implementation details will be described
 further in \autoref{chap:implementation}.
-
 
 \section{Design}
 Designing the DSL was a process which continued through the entire
@@ -28,15 +26,24 @@ the different solutions. At each meeting the developers was presented
 with a draft of the latest version of the DSL.
 
 \section{General style and features}
+The DSL is a descriptive language which has four types of top-level
+syntactic defenitions: atoms, networks, imports and new types. Atoms
+and networks are components which are connected to build project
+networks in Copernicus. The four top-level defentions are described
+more in detail in the following sections. All the top-level
+defenitions needs to be defined before used in the current version of
+the DSL.
 
-\highlight{lower case}
+Atoms and networks both have a set of external inputs and outputs. An
+input/output does not need to have a connection since atoms/networks
+only evaluates once it has all non-optional inputs has received a new
+value. It is possible to add new atoms/networks and connections in the
+Copernicus system, but as there are currently no interactive
+implementation of the dsl such actions cannot be done with this
+version of the solution. An input/output can be assigned constant
+values if they are of primitive types. These features are explained in
+more detail in this chapter.
 
-\highlight{can assign primitives to inputs}
-
-\highlight{define before use, developers choice}
-
-\highlight{input does not need to get values, since components only
-  evaluate once it has all non-optional inputs}
 
 \section{Modules}
 Modules have no real function in the current implementation of the
@@ -63,7 +70,6 @@ suggestions but had not decided how such a system should work with
 client server setup in Copernicus.
 
 \subsection{Future Work}
-
 A real functional import system is needed for the language to be
 realistically added to Copernicus. The developers will need to define
 how Copernicus should handle imports, since they have not decided what
@@ -115,9 +121,9 @@ floating points. This means that \verb#1.0# is not the same as
 \verb#1# in the language and will cause a type error if assigned to a
 connection with the wrong type.
 
-Strings are represented by \verb#string#. Strings are written
-\verb#"string"# when assigned to connections. The last primitive type
-is files, which are described as \verb#file#. Files are paths written
+Strings are represented by \verb#string#. A constant strings is
+written between the two \verb#"# symbols. The last primitive type is
+files, which are described as \verb#file#. Files are paths written
 like strings, but are not checked that it is a path to a file.
 
 \subsection{Compound Types}\label{sec:compound}
@@ -204,7 +210,7 @@ network types.
 The type parameters are defined and as the following example:
 
 \begin{verbatim}
-<func f, list l, type t>
+< func f , list l , type t >
 \end{verbatim}
 
 \begin{verbatim}
@@ -218,15 +224,15 @@ symbol \verb#*# removes one dimension from the array \verb#l#. The
 output \verb#outputs# will be a one dimensional array where the type
 is given by the parameter \verb#t#.
 
-\subsection{Type System}
+%\subsection{Type System}
 %what is checked...
 
 %parameters to atoms and networks are checked
 
 %metatypes are checked
 
-\subsection{Future Work}
-\highlight{?}
+%\subsection{Future Work}
+%\highlight{?}
 
 
 \section{Variables}
@@ -262,7 +268,7 @@ sections (note that in this case the type parameters are not used but
 are there to give a full description of a header).
 
 \begin{verbatim}
-atom external someatom <func f, list l, type t>
+atom external someatom < func f , list l , type t >
   in  ( setting[] settings
       , int       length  )
   out ( file output )
@@ -291,7 +297,9 @@ atom python add
 A network is a description of what to instantiate and how the
 components and external input/outputs are connected inside the
 network. Networks can be components the same way as atoms, which makes
-them subnetworks when instantiated in other networks.
+them subnetworks when instantiated in other networks. Each network has
+its own scope of variables so the external inputs/outputs is needed to
+make connections to an external component.
 
 The header of a network differs from atoms headers on two points. The
 key word \verb#atom# is replaced with \verb#network# and a network
@@ -300,7 +308,7 @@ with the same parameters and type signature as \verb#someatom# looks
 like this:
 
 \begin{verbatim}
-network somenet <func f, list l, type t>
+network somenet < func f , list l , type t >
   in  ( setting[] settings
       , int       length  )
   out ( file output )
@@ -317,71 +325,98 @@ controller statement. With these statements a network can be described
 inside a network body. It is not possible to build networks outside a
 network defenition.
 
+\subsection{Assignment}
 Assignment statements are instantiations of either networks or atoms
 which are assigned to variables. An assignement needs an expression
 with information of what atom/network and with which arguments, meta
-types and inputs, is instantiated. All the type arguments needs to be
-given when instantiated, but as it is not mandatory to connect
-something to an input the input arguments can be left empty. Arguments
-are connected to their respective input in the order they are defined
-in the atom/network.
+types and inputs, is going to be instantiated. All the type arguments
+needs to be given when instantiated, but as it is not mandatory to
+connect something to an input the input arguments can be left
+empty. The arguments are connected to their respective input in the
+order they are defined in the atom/network.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Type parameters are type references as meta types
-\autoref{sec:meta}. They are listed between the symbols \verb#<# and
-\verb#>#.
-
-parameters references as in \autoref{sec:compound} and
-\autoref{sec:atomnet}. They are listed between the symbols \verb#(#
-and \verb#)#.
-
-constants
-
-nestled components
-
-syntax
+The type arguments are listed between the symbols \verb#<# and
+\verb#>#. They have to be defined on instantiation and are type
+references as types are referenced in section \autoref{sec:meta} about
+meta types. The following example is an instantiation of the network
+\verb#somenet# without any input arguments, hence the empty list
+\verb#()#. The first type argument is the type of the atom \verb#add#
+which is a record, the second type argument is the record of inputs
+for \verb#add#, and the last type argument is the primitive type
+\verb#float#.
 
 \begin{verbatim}
-var = add (1.1 in.fp)
+var = somenet < add , add.in , float> ()
 \end{verbatim}
+
+The input arguments are listed between the symbols \verb#(# and
+\verb#)#. An input argument can be a reference to a variable, record
+or an array. The references are the same thing as accessing elements
+of compound types as in section \autoref{sec:compound}. It is also
+possible to assign constant values to inputs by.
+
+The following code line instantiates an atom \verb#add# and assigns it
+to a variable \verb#var#. The first input of \verb#add# is assigned
+the constant value \verb#1.1# and the second input is connected to the
+current networks input called \verb#fp#.
 
 \begin{verbatim}
-var = somenet <add,add.in,float> ()
+var = add ( 1.1 , in.fp )
 \end{verbatim}
 
+As mentioned, it is not necessary to supply all the input with values
+or connections so it is possible to remove \verb#, in.fp# and the
+instantiation would still work (where the first input would still be
+assigned the constant value).
 
-connection
-reference = reference
-reference = constant
+It is possible to instantiate an atom/network as an input argument
+expression, where a specific output is connected to the respective
+input. In the following example an atom \verb#mul# is instantiated and
+its output \verb#o# is connected to the second input of the atom
+\verb#add#. The atom \verb#mul# is instantiated with its arguments
+inside parenthases and \verb#.out.o# refers to the output which should
+be connected to the second input of \verb#add#.
+
+\begin{verbatim}
+var = add ( 1.1 , (mul ( 2.0 , in.fp )).out.o)
+\end{verbatim}
+
+\subsection{Connection}
+Connection statements connects two inputs/outputs together. The
+inputs/outputs are references like the arguments in an assignment
+statement. The following code line connects the the output variable
+\verb#o# of the instantiated variable \verb#var# to the external
+output \verb#o# of the network.
 
 \begin{verbatim}
 out.o <- var.out.o
 \end{verbatim}
 
+It is also possible to assign constant values to connections which the
+following code line is an example of.
+
 \begin{verbatim}
 out.o <- 4.3
 \end{verbatim}
 
+\subsection{Controllers}
+When an atom or a network is set to be a controller, it is given
+permission to instatiate atoms, networks, and add connections within
+the current network. An example of when this could be useful is
+mapping a function (atom) over an array. The controller would build an
+instantiation of the function for each element in the input array and
+connect it the the appropriate element in an output array. For users
+to create their own controllers, they would need to know the internals
+of Copernicus and wrap an executable in an atom.
 
-controller statement which is explained in the next section
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Controllers}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-When defining an atom/network as a controller, it is given permission
-to instatiate atoms, networks, and add connections within the current
-network.
+The following coode instantiates \verb#somecontroller# and supplies an
+array of type \verb#setting#, and then defines it as the controller of
+the network. A controller needs to be an instantiated atom or network.
 
 \begin{verbatim}
-var = somecontroller (in)
+var = somecontroller (in.settings)
 controller(var)
 \end{verbatim}
-
-The \verb#var# needs to be instantiated.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Documentation \& Comments}
 It is possible to add documentation strings to atoms,networks and
@@ -409,8 +444,9 @@ within the comment block will be skipped by the parser.
 
 /#
 This is a comment block
-
-
+.
+.
+.
 This is still in the comment block
 /#
 \end{verbatim}
