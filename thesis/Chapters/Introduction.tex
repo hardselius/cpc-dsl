@@ -32,8 +32,36 @@ as described, but there is a possibility due to the fact that many of
 these computations are of statistical nature. Relying on sampling of
 many individual simulations makes it possible to distribute the
 workload on supercumputers and computer clusters. This is a
-prallelization of such simulations which gives a great perfomance
+parallelization of such simulations which gives a great perfomance
 boost when high numbers of cores are available.
+
+The simple way of parallelizing can be generally described by a very
+simple workflow. The workflow contains a simulation and an analysis
+stage with a feedback. 
+
+\begin{center}
+\includegraphics{Chapters/IntroductionIncludes/workflow.png}
+\end{center}
+
+The entire computation is initialized by generating a large number of
+small simulations. Each simulation will send the result data to the
+analysis stage. The analysis stage will analyze the data and create
+some result of the computation so far. In this workflow the analysis
+stage has a feedback to the simulation stage. This means the analysis
+stage will generate new directed simulation depending on the current
+result, i.e. what parts still needs more data. A computation like this
+is highly parallel and modular which gives a possibility of using more
+resources to spead up the entire computation.
+
+An example of a described workflow would be a morkov stat
+modeling. Where the different states are states in molecular
+simulations. A large number of simulation states would start from
+different states and would gather data for the analysis stage. The
+result would be the different probabilities in the markov state
+model. The feedback would be directed to the states that still need
+more data.%(few simulations ended in that state)
+
+\highlight{example figures ?}
 
 %Molecular dynamics simulations pose significant computaional
 %challanges. The systems are big enough to be parallelized, with
@@ -41,9 +69,8 @@ boost when high numbers of cores are available.
 %dynamics (MD) packages such as Gromacs [10, 17] when run on a system
 %with sufficiently low interconnect latency.
 
-
 Clouds are solutions to run computations on high-performing computer
-systems. \cite{foster:2008} defines Clouds as:
+systems. \citet{foster:2008} defines Clouds as:
 
 \begin{quote} \slshape
   A large-scale distributed computing paradigm that is driven by
@@ -220,6 +247,23 @@ add connections and black boxes. Controllers are basically event
 handlers that trigger in certain situations, e.q. they are called when
 a project starts, a subproject finishes, a command finishes,
 etc\citep{pronk:2011}.
+
+A real life example project could be the following:
+
+\begin{center}
+\includegraphics[scale=0.4]{Chapters/IntroductionIncludes/example.png}
+\end{center}
+
+In this project Grompp takes inputs and generates topology files. The
+list \emph{conf[]} is the configurations for each simulation. Mdrun
+then takes the topology files as inputs and runs the simulations. Even
+though this example does not have a feedback to generate more
+simulations, the Copernicus system is still very useful. When having
+access to limit computation hours on different systems, users could
+just split the list \emph{conf[]} and split up the jobs and still get
+the same data. If this was not possible the user would need save the
+state of the computation and send potentially very large amount of
+data between the systems.
 
 %There are primitive types like files, strings, ints, etc. There are
 %also compound types lists, dictionaries and function types

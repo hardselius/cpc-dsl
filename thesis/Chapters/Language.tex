@@ -194,6 +194,14 @@ of the same type as the above has been instantiated as \verb#func# may
 look like \verb#func.in.length# or \verb#func(0)(1)# which both are
 the same thing.
 
+\subsection{The Type Network}
+Besides the syntactic objects \verb#network#, which have types
+described in the previous section, there is a type \verb#network#. The
+type \verb#network# is mainly used with controllers
+(\autoref{sec:control}). The type \verb#network# refers to a record
+containing a set of instantiated atoms/networks and a set of
+connections. 
+
 \subsection{Meta Types}\label{sec:meta}
 Atoms and networks can take types as inputs, called meta types, to be
 able to define generic components in networks. The parameters are
@@ -231,9 +239,24 @@ is given by the parameter \verb#t#.
 
 %metatypes are checked
 
-%\subsection{Future Work}
-%\highlight{?}
+\subsection{Future Work}
+There is a need for a transpose function for types. The transpose
+function would transform a record of any number of arrays to an array
+of records. It would also work the other way around. Consider the
+following two types:
 
+\begin{verbatim}
+type a ( int[]   : a0
+       , float[] : a1 )
+
+type b ( int   : b0
+       , float : b1 )
+\end{verbatim}
+
+The code \verb#transpose(a)# would be the type \verb#b[]#, and the
+code \verb#transpose(b[])# would be the type \verb#a#. The transpose
+would work much like a zip for types which can take any kind of record
+or array of record.
 
 \section{Variables}
 Variables refer to an instantiated atom or a network. They are
@@ -399,7 +422,7 @@ following code line is an example of.
 out.o <- 4.3
 \end{verbatim}
 
-\subsection{Controllers}
+\subsection{Controllers} \label{sec:control}
 When an atom or a network is set to be a controller, it is given
 permission to instatiate atoms, networks, and add connections within
 the current network. An example of when this could be useful is
@@ -410,13 +433,18 @@ to create their own controllers, they would need to know the internals
 of Copernicus and wrap an executable in an atom.
 
 The following coode instantiates \verb#somecontroller# and supplies an
-array of type \verb#setting#, and then defines it as the controller of
-the network. A controller needs to be an instantiated atom or network.
+array of type \verb#setting#, and then sets the input
+\verb#var.in.net# as the input network to the controller and the
+output \verb#var.out.net# as the output network of the controller. 
 
 \begin{verbatim}
 var = somecontroller (in.settings)
-controller(var)
+controller(var.in.net,var.out.net)
 \end{verbatim}
+
+The output network is basically the new network setup, which means the
+instantiated \verb#somecontroller# \verb#var# can add atoms/networks
+and connections.
 
 \section{Documentation \& Comments}
 It is possible to add documentation strings to atoms,networks and
