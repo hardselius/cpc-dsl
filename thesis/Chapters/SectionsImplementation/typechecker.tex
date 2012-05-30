@@ -1,0 +1,60 @@
+Rheos has a quite interesting type system, which makes type-checking a
+non-trivial task. The type-checker class will take the resulting AST
+from the parser and use the visitor pattern to traverse the tree,
+taking appropriate actions at every node while building an
+environment.
+
+\paragraph{Type-checker}
+When rechecking Rheos, most of the steps are straight-forward, but
+there are some really tricky cases where it becomes very
+complicated. Primitive types and literals already contain their type
+information from the parser stage. Type-checking of new types is a
+question of checking their elements and adding the definition to the
+environment, in order to make them recognizable to the rest of the
+program.
+
+Resolving meta types can only be done when a component requiring
+meta-type arguments is instantiated. \emph{Parametrized} components
+typically can not be gradually instantiated, and this is true for Rheos
+as well. Although, it only extends to the types, and not the actual
+connections. A copy of the referred component is placed in the local
+context and given a new name. The meta arguments are type-checked to
+make sure they are of the same meta type as the required arguments. If
+they are of the wrong type, or the number of arguments given does not
+match the number of arguments required, the type-checker raises an
+exception. If all these checks are passed, the type-checker continues
+with retrieving the type of the argument, and makes a variable
+substitution on the types of the instantiated component. When this is
+done, type-checking of the substituted type expression is resumed as if
+it were in the middle of checking an ordinary type expression.
+
+
+\paragraph{Environment}
+The current environment is implemented to mimic the structure of the
+actual Rheos code. Components, new types and instantiated components
+are all stored in a record of \emph{\{key : value\}}-pairs. The keys
+are the names of the entry, while the value is a representation of
+their types. Types are generalized to a couple of different objects;
+\texttt{Component, Newtype, Generictype} and \texttt{Type}. These
+objects are instantiated and added to the environment by the
+type-checker in a way that makes it possible to reference their
+elements using ordinary object operations, kind of like how it is done
+in the Rheos language. For example, to fetch the type \texttt{t} of
+input-parameter \texttt{a} from component \texttt{comp}, stored in the
+environment, one would write something like:
+
+\lstset{
+  caption = {Look-up of types in the environment},
+  label   = code:envlookup
+}
+\begin{lstlisting}
+# fetch the type of comp.in.a
+t0 = env['comp'].inp.a
+
+# fetch the type of an element from a new type
+# type setting (
+#   int[] a ,
+#   float b
+#   )
+t1 = env['setting'].a
+\end{lstlisting}
