@@ -55,6 +55,7 @@ parser.out
 #########
 *~
 \#*#
+.#*
 .ropeproject
 .old
 
@@ -65,4 +66,5 @@ Rheos.pdf
 # folders #
 ###########
 .backup
+
 
