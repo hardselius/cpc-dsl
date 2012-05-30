@@ -281,11 +281,15 @@ network somenet < func f , list l , type t >
   in  ( setting[] settings
       , int       length  )
   out ( file output )
+  {
+    var = someatom (in.settings)
+    out.output <- var.out.o
+  }
 \end{verbatim}
 
 The second part of a network is its network body which is a list of
 statements seperated by new lines. These statements are the
-description of the network, and they are described in detail in the
+description of the network, and they are explained in detail in the
 next section.
 
 \section{Network Description Statements} \label{sec:stmt}
