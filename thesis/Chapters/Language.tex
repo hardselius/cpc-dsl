@@ -171,7 +171,7 @@ outputs their types are a special case of a record. Such records
 contain three elements: inputs, outputs, meta parameters. The inputs
 and outputs are records aswell, in which every input and output
 parameter are elements. The meta parameter is a record which should
-contain types and is more explained in the section \autoref{sec:meta}.
+contain types and is more explained in \autoref{sec:meta}.
 
 An atom or network with an array of type \verb#setting# called
 \verb#settings# and an integer called \verb#length# as inputs and a
@@ -184,7 +184,7 @@ in ( setting[] settings
 out ( file output )
 \end{verbatim}
 
-The full header syntax for networks and atoms is described in sections
+The full header syntax for networks and atoms is described in
 \autoref{sec:net} and \autoref{sec:atom}.
 
 Since both the type of \verb#in# and the type of functions are
@@ -262,7 +262,7 @@ or array of record.
 Variables refer to an instantiated atom or a network. They are
 instantiated inside networks, where they can be connected to other
 variables or external inputs and outputs. How to instantiate a
-variable is described in section \autoref{sec:stmt}.
+variable is described in \autoref{sec:stmt}.
 
 Variables contains letters, numbers, and underscores, but they have to
 start with a lower case letter.
@@ -360,7 +360,7 @@ order they are defined in the atom/network.
 
 The type arguments are listed between the symbols \verb#<# and
 \verb#>#. They have to be defined on instantiation and are type
-references as types are referenced in section \autoref{sec:meta} about
+references as types are referenced in \autoref{sec:meta} about
 meta types. The following example is an instantiation of the network
 \verb#somenet# without any input arguments, hence the empty list
 \verb#()#. The first type argument is the type of the atom \verb#add#
@@ -375,8 +375,8 @@ var = somenet < add , add.in , float> ()
 The input arguments are listed between the symbols \verb#(# and
 \verb#)#. An input argument can be a reference to a variable, record
 or an array. The references are the same thing as accessing elements
-of compound types as in section \autoref{sec:compound}. It is also
-possible to assign constant values to inputs by.
+of compound types as in \autoref{sec:compound}. It is also possible to
+assign constant values to inputs by.
 
 The following code line instantiates an atom \verb#add# and assigns it
 to a variable \verb#var#. The first input of \verb#add# is assigned
