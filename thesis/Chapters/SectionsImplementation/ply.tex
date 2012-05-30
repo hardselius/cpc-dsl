@@ -3,8 +3,8 @@ tools, written purely in python, by \citet{ply:online}. It was
 originally developed for an introductory class on compilers back in
 2001. It provides most of the standard lex/yacc features including
 support for empty productions, precedence rules, error recovery, and
-support for ambigous grammars. It uses LR-parsing, which is a
-reasonabe parsing scheme for larger grammars, but slightly restricts
+support for ambiguous grammars. It uses LR-parsing, which is a
+reasonable parsing scheme for larger grammars, but slightly restricts
 the type of grammars that can be written \citep{aho:2007}. PLY is
 straight-forward to use, and one its many advantages is
 the \emph{very} extensive error checking, which certainly makes life
@@ -13,9 +13,9 @@ easier.
 \paragraph{Python Lex}
 The first step to implement the language is to write a tokenizer. This
 is done with the Lex module of PLY. Language tokens are recognized
-using regular expressions, and the steps are straighforward.
+using regular expressions, and the steps are straightforward.
 
-The names of all the token types are declard as a list of strings
+The names of all the token types are declared as a list of strings
 named \texttt{tokens}.
 
 \lstset{
@@ -23,7 +23,7 @@ named \texttt{tokens}.
   label   = code:tokenlist
 }
 \begin{lstlisting}
-class CodspeechLexer(object):
+class RheosLexer(object):
 
 ...
 
@@ -38,7 +38,7 @@ class CodspeechLexer(object):
         # Connection: <-
         'CONNECTION',
 
-        # Delimeters: ( ) { } [ ] , .
+        # Delimiters: ( ) { } [ ] , .
         'LPAREN', 'RPAREN',
         'LBRACE', 'RBRACE',
         'LBRACKET', 'RBRACKET',
@@ -62,7 +62,7 @@ strings).
   label   = code:tokenvar
 }
 \begin{lstlisting}
-class CodspeechLexer(object):
+class RheosLexer(object):
 
 ...
 
@@ -103,7 +103,7 @@ expressions. For example:
   label   = code:regex
 }
 \begin{lstlisting}
-class CodspeechLexer(object):
+class RheosLexer(object):
 
 ...
 
@@ -112,11 +112,11 @@ class CodspeechLexer(object):
     ident        = r'(' + lowercase + r'(' + identchar + r')*)'
 
     def t_IDENT(self, t):
-        # we want the docstring to be the identifier above
+        # we want the doc-string to be the identifier above
         ...
 \end{lstlisting}
 
-\noindent This is not possible to specify using a normal docstring. The
+\noindent This is not possible to specify using a normal doc-string. The
 programmer would have to write the full RE, defeating the purpose of
 re-usable code. However, there is a way around this by using the
 \texttt{@TOKEN} decorator.
@@ -143,9 +143,9 @@ class CodspeechLexer(object):
         return t
 \end{lstlisting}
 
-The observant reader might notice something special goind on in the
+The observant reader might notice something special going on in the
 function \texttt{t_IDENT}. The processed string is checked against a
-keyword map to decide wheter the token type should actually be
+keyword map to decide whether the token type should actually be
 \texttt{IDENT} or something else. The keyword map is defined as a
 dictionary, and the values are appended to the token list.
 
@@ -154,7 +154,7 @@ dictionary, and the values are appended to the token list.
   label   = {code:keywordmap}
 }
 \begin{lstlisting}
-class CodspeechLexer(object):
+class RheosLexer(object):
 
 ...
 
@@ -227,7 +227,7 @@ rules comprised of a collection of \emph{terminals} and
 and correspond to raw input tokens. The \emph{non-terminals}, such as
 \emph{dim}, refer to other rules.
 
-The \emph{semantic} behaviour of a language is often specified using
+The \emph{semantic} behavior of a language is often specified using
 syntax directed translation. Each symbol in a given grammar rule has a
 set of attributes associated with them along with an action. The
 action describes what to do whenever a particular grammar rule is
@@ -243,7 +243,7 @@ replaced by the grammar symbol on the left-hand-side.
 Implementing a parser in Python Yacc is fairly straight forward. The
 list of tokens from the lexer module is imported and a series of
 functions describing the grammar productions are defined. From the
-gramar in \autoref{grammar:typeex} the corresponding Python code
+grammar in \autoref{grammar:typeex} the corresponding Python code
 becomes:
 
 \lstset{
@@ -284,7 +284,7 @@ from the SPARK toolkit \citep{spark:online}. A function takes an
 argument, \emph{p}, that contains a sequence, starting at index 1, of
 values matching the symbols in the corresponding rule. The value
 \texttt{p[0]} is mapped to the left-hand-side rule, while the values
-in \texttt{p[1..]} are mapped to the grammar symbold on the
+in \texttt{p[1..]} are mapped to the grammar symbols on the
 right-hand-side. The statements in the function body implements the
 semantic actions of the rule. In this case, we use the parser to to
 build an abstract syntax tree. This is described in more detail in

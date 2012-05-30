@@ -27,7 +27,7 @@ The implementation language used for building Rheos was
 python. However, python was not the first language considered. Other
 languages considered were \emph{C, C++, C\#, F\#, Haskell} and
 \emph{Java}. However, C\# and F\# was never really an option, since
-both implemenation, compilation and execution of code were tied to
+both implementation, compilation and execution of code were tied to
 Unix environments. The reason behind the consideration of the other
 languages was that they are all supported by the \emph{BNF Converter}
 (BNFC) \citep{bnfc:online}. BNFC is a compiler construction for
@@ -42,7 +42,7 @@ generating a compiler front-end from a \emph{Labeled BNF
 \item a \LaTeX file containing a specification of the language
 \end{inparaenum} \citep{bnfc:online}.
 While a compiler generator certainly would have made the
-implementation alot easier, the Copernicus system is written in
+implementation a lot easier, the Copernicus system is written in
 python, and python does not exist as a target for the BNF Converter.
 
 Copernicus is designed to run on Unix machines with as few
@@ -51,16 +51,16 @@ there are possible difficulties of installing a Java runtime
 environment on supercomputers.
 
 Doing the implementation in the C language could have been a possible
-solution, since it integrates weel with python. Most Unix system does
+solution, since it integrates well with python. Most Unix system does
 indeed ship with \emph{gcc} or the \emph{GNU Compiler
-  Collection}. However, some older Unix distros will not have gcc
-pre-installed, and others like recent versions of \emph{Solaris} and
-\emph{OpenSolaris} will have gcc under a different location.
+  Collection}. However, some older Unix distributions will not have
+gcc pre-installed, and others like recent versions of \emph{Solaris}
+and \emph{OpenSolaris} will have gcc under a different location.
 
 Haskell was ruled out due to the simple fact that it is not as
 mainstream as the other languages. While Haskell is a very powerful
 language for writing compilers, maintenance of the code base might
-prove difficult for unexperienced users.
+prove difficult for inexperienced users.
 
 Virtually every Unix system ships with a python interpreter, and it is
 natural to write python extensions to a system already written in
@@ -81,7 +81,7 @@ during the construction of Rheos.
 \input{Chapters/SectionsImplementation/ast}
 
 
-\subsection{Typechecker}\label{sec:typechecker}
+\subsection{Type-checker}\label{sec:typechecker}
 \input{Chapters/SectionsImplementation/typechecker}
 
 
@@ -89,21 +89,21 @@ during the construction of Rheos.
 There is an implemented XML generator for an earlier version of the
 implementation. Due to bigger changes other aspects were prioritized
 and XML generation was left for the developers of Copernicus to
-update. Since the language needs defenitions before they can be used
-the XML generation is an iteration through thses defenitions. The only
+update. Since the language needs definitions before they can be used
+the XML generation is an iteration through these definitions. The only
 non-straight forward part to implement is the instantiations of
-atoms/networks as inputs in an assignment statement. The erlier
+atoms/networks as inputs in an assignment statement. The earlier
 version of the XML generator replaced such input expressions with an
 assignment statement and then connected inputs and outputs to
 represent the same thing.
 
 The XML generator is a visitor as the type checker. Visiting the
 different nodes in an abstract syntax tree prints the corresponding
-XML code and visit its children to generate the entire defenition with
+XML code and visit its children to generate the entire definition with
 indentations.
 
 \subsection{Emacs mode}\label{sec:emacs}
-The emacs mode only contains syntax highlighting. The mode was created
+The Emacs mode only contains syntax highlighting. The mode was created
 to get a more realistic view of the example code that were used during
 designing the DSL and testing the implementation. The syntax
 highlighting adds some understanding of what the code actually
@@ -111,56 +111,13 @@ represents which made it easier to add and change specific parts of
 the DSL.
 
 \section{Future work}
+What remains to be done and future work implementation-wise has a lot
+to do with the type-checker. Since it was decided to add polymorphic
+stage in the project, the type-checker had to be completely
+parametrized typing to allow for generic components at a very late
+re-written. This change proved to be very time-consuming.
 
-
-%\subsection{Language}
-%The candidates for implementation language were: C, C++, C\#, F\#,
-%Haskell, Java, OCamel. These candidates were discussed since the
-%\emph{BNF converter} (BNFC) tool supports them. \citep{bnfc:online}
-%Haskell was excluded first of all, mainly because of the restricted
-%set of users. The developers of Copernicus needs to easily be able to
-%modify the implementation when necessary. The next candidate was Java,
-%but it was excluded because of the possible difficulties when
-%installing java runtime environment on supercomputers. C was a good
-%candidate since Copernicus is written in Python and C is easy to
-%extend in Python, and most systems has a C compiler as default.
-%
-%The the implementation chosen was Python. As the rest of the system is
-%written in Python, it is only natural to write extensions in the same
-%language. UNIX systems have Python interpreter as default, which makes
-%the extension easy to install aswell. The decision was also based on
-%easy integration and maintenance against easy implementation. As BNFC
-%is a powerfull tool, generating lexer, parser and abstract syntax tree
-%from a simple BNF description, it is the easy implementation
-%choice. Though this is important, easy integration and maintenance was
-%prioritized.
-%
-%
-%\subsection{Tools}
-%BNFC was the first tool considered to be used. The main reason for
-%this is that BNFC is a part of both \emph{Programming Languages} and
-%\emph{Compiler Construction} which are courses tought at
-%Chalmers. Experience and knowledge would have made it easy and
-%effective to use. The reason why another tool was chosen is stated in
-%the previous section.
-%
-%When the implementation language was established, the tools considered
-%was PLY, YAPPS and SPARK\citep{ply:online,yapps:online,spark:online}.
-%
-%\highlight{SKRIV!!!}
-%
-%
-%\subsection{Datastructures \& Methods}
-%The abstract syntax tree is designed with a visitor pattern. The
-%elements in the visitor pattern is build like a tree where each node
-%has children. A node is a syntactic object where its children are
-%values or other syntactic objects. By defining the visit methods for
-%each sort of node, one perform operations based on a abstract syntax
-%tree simply by visiting its top node. This way it is easy to write a
-%type checker and XML generator.
-%
-%The type checker keeps environment information in a list of
-%dictionaries, where each element in the list is a scope in the
-%language. The dictionaries contain type information of functions and
-%variables. New type definitions are stored in a seperate dictionary.
-
+The environment was re-written at the same time to make it more
+powerful and intuitive to work with. Before the current
+implementation, the environment consisted of a lot of different
+records and lists, and did not perform well on look-ups.
