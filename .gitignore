@@ -55,13 +55,16 @@ parser.out
 #########
 *~
 \#*#
+.#*
 .ropeproject
 .old
 
 # documents #
 #############
-Codspeech.pdf
+Rheos.pdf
 
 # folders #
 ###########
 .backup
+
+
