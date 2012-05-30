@@ -10,7 +10,7 @@ further in \autoref{chap:implementation}.
 Designing the DSL was a process which continued through the entire
 project. As there are no comparable packages and no text-based
 solution to similar problems, the DSL had no real starting base. The
-initial inspiration came from the reasearch on programming praradigms
+initial inspiration came from the research on programming paradigm's
 and graphical implementations related to network based programming.
 
 Inspiration from well known programming languages was included for the
@@ -39,7 +39,7 @@ input/output does not need to have a connection since atoms/networks
 only evaluates once it has all non-optional inputs has received a new
 value. It is possible to add new atoms/networks and connections in the
 Copernicus system, but as there are currently no interactive
-implementation of the dsl such actions cannot be done with this
+implementation of the DSL such actions cannot be done with this
 version of the solution. An input/output can be assigned constant
 values if they are of primitive types. These features are explained in
 more detail in this chapter.
@@ -74,7 +74,7 @@ In the language all connections between executables are typed. Their
 types are set when inputs and outputs are defined. Atoms and even
 networks have types according to their external inputs and outputs.
 
-The typechecker does not typecheck executables. Instead the system
+The type-checker does not type check executables. Instead the system
 relies on the correct definition when wrapping them in the language.
 
 \subsection{Primitive Types}
@@ -102,7 +102,7 @@ typed as the example integer array, is written \verb#x[4]#. The
 resulting type of accessing elements is the same type with one less
 dimension. In the example that would be an integer (\verb#int#).
 
-The second compound type is records. They are orderd sets of elements
+The second compound type is records. They are ordered sets of elements
 which are assigned names. This make it possible to access elements in
 a record by both its index and name. Accessing the fourth variable
 \verb#e# of a record \verb#x# using its name would be written as
@@ -136,7 +136,7 @@ Atoms and networks are components used to build networks with. They
 work like black boxes in data-flow networks. As components are able to
 have any number of inputs and outputs their types are a special case
 of a record. Such records contain three elements: inputs, outputs,
-meta parameters. The inputs and outputs are records aswell, in which
+meta parameters. The inputs and outputs are records as well, in which
 every input and output parameter are elements. The meta parameter is a
 record which should contain types and is more explained in
 \autoref{sec:meta}.
@@ -156,8 +156,8 @@ The full header syntax for networks and atoms is described in
 \autoref{sec:net} and \autoref{sec:atom}.
 
 Since both the type of \verb#in# and the type of functions are
-records, there are numerous ways of refering to an input
-parameter. Refering to the a parameter \verb#length# when a function
+records, there are numerous ways of referring to an input
+parameter. Referring to the a parameter \verb#length# when a function
 of the same type as the above has been instantiated as \verb#func# may
 look like \verb#func.in.length# or \verb#func(0)(1)# which both are
 the same thing.
@@ -218,9 +218,9 @@ have to start with a lower case letter.
 An atom is a wrapper for executable code, python scripts and
 functions. In the language atoms are components just like networks and
 the information of what to execute and how is hidden inside the
-lanugage for a more intuitive way of building project
+language for a more intuitive way of building project
 networks. Executables should be wrapped and added to an appropriate
-library so users do not have to conern themselves with external
+library so users do not have to concern themselves with external
 (outside the language) project design.
 
 An atom has a header and an option part. The header contains the name
@@ -288,7 +288,7 @@ network somenet < func f , list l , type t >
 \end{verbatim}
 
 The second part of a network is its network body which is a list of
-statements seperated by new lines. These statements are the
+statements separated by new lines. These statements are the
 description of the network, and they are explained in detail in the
 next section.
 
@@ -300,7 +300,7 @@ network definition.
 
 \subsection{Assignment}
 Assignment statements are instantiations of components which are
-assigned to instance names. An assignement needs an expression with
+assigned to instance names. An assignment needs an expression with
 information of what component and with which meta types and inputs is
 going to be instantiated. All the type arguments needs to be given
 when instantiated, but as it is not mandatory to connect something to
@@ -347,7 +347,7 @@ expression, where a specific output is connected to the respective
 input. In the following example an atom \verb#mul# is instantiated and
 its output \verb#o# is connected to the second input of the atom
 \verb#add#. The atom \verb#mul# is instantiated with its arguments
-inside parenthases and \verb#.out.o# refers to the output which should
+inside parentheses and \verb#.out.o# refers to the output which should
 be connected to the second input of \verb#add#.
 
 \begin{verbatim}
@@ -374,7 +374,7 @@ out.o <- 4.3
 
 \subsection{Controllers} \label{sec:control}
 When a component is set to be a controller, it is given permission to
-instatiate components and add connections within the current
+instantiate components and add connections within the current
 network. An example of when this could be useful is mapping a function
 (atom) over an array. The controller would build an instantiation of
 the function for each element in the input array and connect it the
@@ -382,7 +382,7 @@ the appropriate element in an output array. For users to create their
 own controllers, they would need to know the internals of Copernicus
 and wrap an executable in an atom.
 
-The following coode instantiates \verb#somecontroller# and supplies an
+The following code instantiates \verb#somecontroller# and supplies an
 array of type \verb#setting#, and then sets the input
 \verb#var.in.net# as the input network to the controller and the
 output \verb#var.out.net# as the output network of the controller. 
@@ -393,7 +393,7 @@ controller(var.in.net,var.out.net)
 \end{verbatim}
 
 The output network is basically the new network setup, which means the
-instantiated \verb#somecontroller# \verb#var# can add componenets and
+instantiated \verb#somecontroller# \verb#var# can add components and
 connections.
 
 \section{Documentation \& Comments}
@@ -440,7 +440,7 @@ This is still in the comment block
 
 The current import system in Copernicus is to leave the import
 mechanism to the server side. This may be discussed if it is optimal,
-and the developers of Copernicus had some idées of how it could may be
+and the developers of Copernicus had some ideas of how it could may be
 changed or improved. Even though changing these mechanics does not
 change the semantics for importing, it may affect the user of the DSL.
 
@@ -448,10 +448,10 @@ Importing standard libraries needs to be defined before the
 client/server issues in Copernicus can be addressed. This may be an
 easy problem but it is still vital for continuing the
 implementation. Once this is done the developers needs to decide where
-the code should be parsed and typechecked. The client can do all this
+the code should be parsed and type checked. The client can do all this
 work and send it to the server but as the rest of the client is very
 light and does not do much work, other than communicate with the
-server, a prefered solution is to have the server do all the work. The
+server, a preferred solution is to have the server do all the work. The
 client can still add imports and build one code file for the server or
 send all the used code files. As there are a difference between
 importing from the standard library and importing user written project
@@ -461,15 +461,15 @@ the work it needs to have all the libraries.
 
 Assuming the server would get all user written files, building
 projects, and doing all the work, a question is what the client should
-be able to do. Users may for example be able to typecheck their
+be able to do. Users may for example be able to type check their
 projects before sending them to a server, as it would make development
-easier. If so, the client needs to have access to all the labraries
+easier. If so, the client needs to have access to all the libraries
 the server does.
 
 There were a suggestion for a repository containing all libraries,
 where code can be added and fetched when not available locally. Users
 could easily add their own implementations. Such a repository needs to
-handle executables aswell, since servers needs be able to supply them
+handle executables as well, since servers needs be able to supply them
 to the workers.
 
 \subsection{Transpose}

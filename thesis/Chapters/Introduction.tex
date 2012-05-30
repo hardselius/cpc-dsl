@@ -32,7 +32,7 @@ as described, but there is a possibility due to the fact that many of
 these computations are of statistical nature. Relying on sampling of
 many individual simulations makes it possible to distribute the
 workload on supercomputers and computer clusters. This is a
-parallelization of such simulations which gives a great perfomance
+parallelization of such simulations which gives a great performance
 boost when high numbers of cores are available.
 
 The simple way of parallelizing can be generally described by a very
@@ -51,13 +51,13 @@ stage has a feedback to the simulation stage. This means the analysis
 stage will generate new directed simulation depending on the current
 result, i.e. what parts still needs more data. A computation like this
 is highly parallel and modular which gives a possibility of using more
-resources to spead up the entire computation.
+resources to speed up the entire computation.
 
-An example of a described workflow would be a morkov stat
+An example of a described workflow would be a Markov stat
 modeling. Where the different states are states in molecular
 simulations. A large number of simulation states would start from
 different states and would gather data for the analysis stage. The
-result would be the different probabilities in the markov state
+result would be the different probabilities in the Markov state
 model. The feedback would be directed to the states that still need
 more data.%(few simulations ended in that state)
 
@@ -76,7 +76,7 @@ systems. \citet{foster:2008} defines clouds as:
   A large-scale distributed computing paradigm that is driven by
   economies of scale, in which a pool of abstracted, virtualized,
   dynamically-scalable, managed computing power, storage, platforms,
-  and services are deliviered on demand to externaal customers over
+  and services are delivered on demand to external customers over
   the Internet.
 \end{quote}
 
@@ -84,7 +84,7 @@ The resources are opaque to the user who use a pre-defined API to run
 and use the system. This means the system can contain different kind
 of computation power and the user is not affected. Running molecular
 dynamics simulations on a cloud computing resource would need high
-parallelization, such as described above, to achieve a perfomance
+parallelization, such as described above, to achieve a performance
 boost.
 
 %cloud computing and Grid computing 360-Degree Compared:
@@ -140,7 +140,7 @@ computation hours when having access to provenance information. In
 some cases it is of great use to be able to change something and start
 from an intermediate state of a computation instead of starting from
 scratch. Provenance is a relatively unexplored area within cloud
-computing and can be challanging to provide for general applications.
+computing and can be challenging to provide for general applications.
 
 %``Provenance refers to the derivation history of a data product,
 %including all the data sources, intermediate data products, and the
@@ -191,7 +191,7 @@ advantage of the fast interconnects that may be available on these
 compute environments, individual simulations are parallelized as far
 as possible. This approach enables Copernicus to use
 orders-of-magnitude more cores than a traditional simulation run on a
-sumpercomputer, and it allows for larger-scale simulations than would
+supercomputer, and it allows for larger-scale simulations than would
 be possible with purely distributed systems, while it reduces
 time-to-solution significantly.
 
@@ -203,7 +203,7 @@ simulations. Such computations are called projects in the system.
 \begin{quote} \slshape
   A project is executed as a single job, but breaks it up into coupled
   individual parallel simulations over all available computational
-  resoureces, with the single simulation as the individual work
+  resources, with the single simulation as the individual work
   unit. While the software has been optimized for using multiple
   high-performance compute clusters, it works equally well with cloud
   computing instances or even individual
@@ -217,7 +217,7 @@ needs to able to
 \item match and distribute the individual simulations to the available
   computational resources,
 \item run simulations on a variety of remote platforms simultaneously:
-  HPC clusters, workstations, cload copmuting instances, et cetera,
+  HPC clusters, workstations, cloud computing instances, et cetera,
 \item parallelize tasks to the maximum extent possible on each
   resource, and use adaptive coupling beyond this,
 \item allow flexibility in the types of projects tat can be run,
@@ -226,15 +226,15 @@ needs to able to
 \end{itemize}
 
 Copernicus network structure contains three components: clients,
-servers and wrokers. The clients are user interfaces to interact with
+servers and workers. The clients are user interfaces to interact with
 the system. Users will send and start their computational project to a
-server using the client. The server handels projects and controls the
+server using the client. The server handles projects and controls the
 work distribution. Jobs will be sent to available workers, depending
 on which worker is best suited for the job. A worker will calculate
 the jobs assigned to it and send the result back to the server. It
 will also announce to servers when it is available. Multiple worker
 processes can be run on the same system, e.g. supercomputers would run
-a great number of wokers to use all the available cores.
+a great number of workers to use all the available cores.
 
 Copernicus projects are described by building computational
 \emph{data-flow networks}. Data-flow networks are networks which
@@ -246,7 +246,7 @@ the networks between scopes. A function has a subnetwork and a
 controller which both can't be accessed outside the function. The
 subnetwork is a normal network where the controller can add
 connections and black boxes. A controller is in itself a black box in
-Copernicus. It has access to the networks defenition and has
+Copernicus. It has access to the networks definition and has
 permission to add new black boxes and connections.
 
 %old defenition of controllers
@@ -309,7 +309,7 @@ not a static amount of libraries, as new ones can be added. The DSL
 should be able to cope with any new plug-ins.
 
 The implementation should have an output of a form so that it can
-easilly be integrated in the Copernicus system. The implementation
+easily be integrated in the Copernicus system. The implementation
 also needs to be easy to install on any system, supercomputer or
 other.
 
@@ -333,7 +333,7 @@ another project. Such a solution can use many parts of the developed
 DSL implementation.
 
 The language we chose to write the implementation in is Python. This
-choice was based on formost an easy implementation and maintenance,
+choice was based on foremost an easy implementation and maintenance,
 since Copernicus is written in Python. It would have been possible to
 use effective tools and another language, but instead tools
 specifically for python were used.
