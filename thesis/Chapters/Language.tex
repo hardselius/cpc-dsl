@@ -8,10 +8,10 @@ further in \autoref{chap:implementation}.
 
 \section{Design}
 Designing the DSL was a process which continued through the entire
-project. As there are no text based solution to similar problems, the
-DSL had no real starting base. The initial inspiration came from the
-reasearch on programming praradigms and graphical implementations
-related to network based programming.
+project. As there are no comparable packages and no text-based
+solution to similar problems, the DSL had no real starting base. The
+initial inspiration came from the reasearch on programming praradigms
+and graphical implementations related to network based programming.
 
 Inspiration from well known programming languages was included for the
 DSL to be simple and intuitive to the common user. Both functional and
@@ -27,11 +27,11 @@ with a draft of the latest version of the DSL.
 
 \section{General style and features}
 The DSL is a descriptive language which has four types of top-level
-syntactic defenitions: atoms, networks, imports and new types. Atoms
+syntactic definitions: atoms, networks, imports and new types. Atoms
 and networks are components which are connected to build project
-networks in Copernicus. The four top-level defentions are described
+networks in Copernicus. The four top-level definitions are described
 more in detail in the following sections. All the top-level
-defenitions needs to be defined before used in the current version of
+definitions needs to be defined before used in the current version of
 the DSL.
 
 Atoms and networks both have a set of external inputs and outputs. An
@@ -69,47 +69,13 @@ useful import system revealed that the developers had some different
 suggestions but had not decided how such a system should work with
 client server setup in Copernicus.
 
-\subsection{Future Work}
-A real functional import system is needed for the language to be
-realistically added to Copernicus. The developers will need to define
-how Copernicus should handle imports, since they have not decided what
-would be the most practicle and useful way to do this.
-
-Importing standard libraries needs to be defined before the
-client/server issues in Copernicus can be addressed. This may be an
-easy problem but it is still vital for continuing the
-implementation. Once this is done the developers needs to decide where
-the code should be parsed and typechecked. The client can do all this
-work and send it to the server but as the rest of the client is very
-light and does not do much work, other than communicate with the
-server, a prefered solution is to have the server do all the work. The
-client can still add imports and build one code file for the server or
-send all the used code files. As there are a difference between
-importing from the standard library and importing user written project
-specific files, it needs to be decided how the client and server will
-work together to build the project. If the server should do most of
-the work it needs to have all the libraries.
-
-Assuming the server would get all user written files, building
-projects, and doing all the work, a question is what the client should
-be able to do. Users may for example be able to typecheck their
-projects before sending them to a server, as it would make development
-easier. If so, the client needs to have access to all the labraries
-the server does.
-
-There were a suggestion for a repository containing all libraries,
-where code can be added and fetched when not available locally. Users
-could easily add their own implementations. Such a repository needs to
-handle executables aswell, since servers needs be able to supply them
-to the workers.
-
 \section{Typing}
 In the language all connections between executables are typed. Their
 types are set when inputs and outputs are defined. Atoms and even
 networks have types according to their external inputs and outputs.
 
 The typechecker does not typecheck executables. Instead the system
-relies on the correct defenition when wrapping them in the language.
+relies on the correct definition when wrapping them in the language.
 
 \subsection{Primitive Types}
 The first primitive is integers, which are represented by
@@ -122,7 +88,7 @@ floating points. This means that \verb#1.0# is not the same as
 connection with the wrong type.
 
 Strings are represented by \verb#string#. A constant strings is
-written between the two \verb#"# symbols. The last primitive type is
+written between the two quotation symbols. The last primitive type is
 files, which are described as \verb#file#. Files are paths written
 like strings, but are not checked that it is a path to a file.
 
@@ -166,14 +132,16 @@ The file has in this case index zero and the file has index one. They
 can be access with both name and index as described above.
 
 \subsection{Atom \& Network Type}\label{sec:atomnet}
-As atoms and networks are able to have any number of inputs and
-outputs their types are a special case of a record. Such records
-contain three elements: inputs, outputs, meta parameters. The inputs
-and outputs are records aswell, in which every input and output
-parameter are elements. The meta parameter is a record which should
-contain types and is more explained in \autoref{sec:meta}.
+Atoms and networks are components used to build networks with. They
+work like black boxes in data-flow networks. As components are able to
+have any number of inputs and outputs their types are a special case
+of a record. Such records contain three elements: inputs, outputs,
+meta parameters. The inputs and outputs are records aswell, in which
+every input and output parameter are elements. The meta parameter is a
+record which should contain types and is more explained in
+\autoref{sec:meta}.
 
-An atom or network with an array of type \verb#setting# called
+A component with an array of type \verb#setting# called
 \verb#settings# and an integer called \verb#length# as inputs and a
 file called \verb#output# as outputs, is described by the following
 syntax.
@@ -194,26 +162,24 @@ of the same type as the above has been instantiated as \verb#func# may
 look like \verb#func.in.length# or \verb#func(0)(1)# which both are
 the same thing.
 
-\subsection{The Type Network}
+\subsection{The 'network' Type}
 Besides the syntactic objects \verb#network#, which have types
 described in the previous section, there is a type \verb#network#. The
 type \verb#network# is mainly used with controllers
 (\autoref{sec:control}). The type \verb#network# refers to a record
-containing a set of instantiated atoms/networks and a set of
-connections. 
+containing a set of instantiated components and a set of connections.
 
 \subsection{Meta Types}\label{sec:meta}
-Atoms and networks can take types as inputs, called meta types, to be
-able to define generic components in networks. The parameters are
-defined with a variable name and a type group. There are currently
-three different type groups: \verb#func#, \verb#list#, and
-\verb#type#. The group is a constraint on the type parameter which
-accepts only certain types. The group \verb#type# means the parameter
-only accepts primitive types, \verb#list# accepts compound type
-(records and arrays), and \verb#func# accepts record types which at
-least have an element \verb#in# and an element \verb#out#. This way
-one can define new types which can be used to describe atom and
-network types.
+Components can take types as inputs, called meta types, to be able to
+define generic components in networks. The parameters are defined with
+a variable name and a type group. There are currently three different
+type groups: \verb#func#, \verb#list#, and \verb#type#. The group is a
+constraint on the type parameter which accepts only certain types. The
+group \verb#type# means the parameter only accepts primitive types,
+\verb#list# accepts compound type (records and arrays), and
+\verb#func# accepts record types which at least have an element
+\verb#in# and an element \verb#out#. This way one can define new types
+which can be used to describe types of components.
 
 The type parameters are defined and as the following example:
 
@@ -239,33 +205,14 @@ is given by the parameter \verb#t#.
 
 %metatypes are checked
 
-\subsection{Future Work}
-There is a need for a transpose function for types. The transpose
-function would transform a record of any number of arrays to an array
-of records. It would also work the other way around. Consider the
-following two types:
-
-\begin{verbatim}
-type a ( int[]   : a0
-       , float[] : a1 )
-
-type b ( int   : b0
-       , float : b1 )
-\end{verbatim}
-
-The code \verb#transpose(a)# would be the type \verb#b[]#, and the
-code \verb#transpose(b[])# would be the type \verb#a#. The transpose
-would work much like a zip for types which can take any kind of record
-or array of record.
-
-\section{Variables}
-Variables refer to an instantiated atom or a network. They are
+\section{Instance Names}
+Instance names refer to an instantiated Components. They are
 instantiated inside networks, where they can be connected to other
-variables or external inputs and outputs. How to instantiate a
-variable is described in \autoref{sec:stmt}.
+instance names or external inputs and outputs. How to instantiate an
+instance name is described in \autoref{sec:stmt}.
 
-Variables contains letters, numbers, and underscores, but they have to
-start with a lower case letter.
+Instance names contains letters, numbers, and underscores, but they
+have to start with a lower case letter.
 
 \section{Atoms}\label{sec:atom}
 An atom is a wrapper for executable code, python scripts and
@@ -277,7 +224,7 @@ library so users do not have to conern themselves with external
 (outside the language) project design.
 
 An atom has a header and an option part. The header contains the name
-of the atom, the type parameter defenition, the type signature of the
+of the atom, the type parameter definition, the type signature of the
 outputs and inputs, and what type of executable the atom uses. There
 are three different types of executables in the current version:
 \verb#python#, \verb#python-extended#, and
@@ -286,7 +233,7 @@ functions of python, \verb#python-extended# means the atom calls
 python scripts, and \verb#external# calls binary executables.
 
 The following code is the header for an atom \verb#someatom# which
-calls a binary executable and has the type defenition used in previous
+calls a binary executable and has the type definition used in previous
 sections (note that in this case the type parameters are not used but
 are there to give a full description of a header).
 
@@ -303,7 +250,7 @@ relative to Copernicus and are not a part of the language, which is
 why users should not have to write atoms themselves but import and use
 pre-defined atoms.
 
-The following code is the defenition of an atom \verb#add# which uses
+The following code is the definition of an atom \verb#add# which uses
 a built-in python function to add two floating points together.
 
 \begin{verbatim}
@@ -316,13 +263,12 @@ atom python add
 \end{verbatim}
 
 \section{Networks}\label{sec:net}
-
 A network is a description of what to instantiate and how the
 components and external input/outputs are connected inside the
 network. Networks can be components the same way as atoms, which makes
 them subnetworks when instantiated in other networks. Each network has
-its own scope of variables so the external inputs/outputs is needed to
-make connections to an external component.
+its own scope of type variables and instance names so the external
+inputs/outputs is needed to make connections to an external component.
 
 The header of a network differs from atoms headers on two points. The
 key word \verb#atom# is replaced with \verb#network# and a network
@@ -342,21 +288,21 @@ statements seperated by new lines. These statements are the
 description of the network, and they are described in detail in the
 next section.
 
-\section{Statements} \label{sec:stmt}
+\section{Network Description Statements} \label{sec:stmt}
 There are three types of statements: assignment, connections, and a
 controller statement. With these statements a network can be described
 inside a network body. It is not possible to build networks outside a
-network defenition.
+network definition.
 
 \subsection{Assignment}
-Assignment statements are instantiations of either networks or atoms
-which are assigned to variables. An assignement needs an expression
-with information of what atom/network and with which arguments, meta
-types and inputs, is going to be instantiated. All the type arguments
-needs to be given when instantiated, but as it is not mandatory to
-connect something to an input the input arguments can be left
-empty. The arguments are connected to their respective input in the
-order they are defined in the atom/network.
+Assignment statements are instantiations of components which are
+assigned to instance names. An assignement needs an expression with
+information of what component and with which meta types and inputs is
+going to be instantiated. All the type arguments needs to be given
+when instantiated, but as it is not mandatory to connect something to
+an input the input arguments can be left empty. The arguments are
+connected to their respective input in the order they are defined in
+the component.
 
 The type arguments are listed between the symbols \verb#<# and
 \verb#>#. They have to be defined on instantiation and are type
@@ -373,15 +319,15 @@ var = somenet < add , add.in , float> ()
 \end{verbatim}
 
 The input arguments are listed between the symbols \verb#(# and
-\verb#)#. An input argument can be a reference to a variable, record
+\verb#)#. An input argument can be a reference to a primitive, record
 or an array. The references are the same thing as accessing elements
 of compound types as in \autoref{sec:compound}. It is also possible to
 assign constant values to inputs by.
 
 The following code line instantiates an atom \verb#add# and assigns it
-to a variable \verb#var#. The first input of \verb#add# is assigned
-the constant value \verb#1.1# and the second input is connected to the
-current networks input called \verb#fp#.
+to an instance name \verb#var#. The first input of \verb#add# is
+assigned the constant value \verb#1.1# and the second input is
+connected to the current networks input called \verb#fp#.
 
 \begin{verbatim}
 var = add ( 1.1 , in.fp )
@@ -392,7 +338,7 @@ or connections so it is possible to remove \verb#, in.fp# and the
 instantiation would still work (where the first input would still be
 assigned the constant value).
 
-It is possible to instantiate an atom/network as an input argument
+It is possible to instantiate a component as an input argument
 expression, where a specific output is connected to the respective
 input. In the following example an atom \verb#mul# is instantiated and
 its output \verb#o# is connected to the second input of the atom
@@ -408,7 +354,7 @@ var = add ( 1.1 , (mul ( 2.0 , in.fp )).out.o)
 Connection statements connects two inputs/outputs together. The
 inputs/outputs are references like the arguments in an assignment
 statement. The following code line connects the the output variable
-\verb#o# of the instantiated variable \verb#var# to the external
+\verb#o# of the instantiated instance name \verb#var# to the external
 output \verb#o# of the network.
 
 \begin{verbatim}
@@ -423,14 +369,14 @@ out.o <- 4.3
 \end{verbatim}
 
 \subsection{Controllers} \label{sec:control}
-When an atom or a network is set to be a controller, it is given
-permission to instatiate atoms, networks, and add connections within
-the current network. An example of when this could be useful is
-mapping a function (atom) over an array. The controller would build an
-instantiation of the function for each element in the input array and
-connect it the the appropriate element in an output array. For users
-to create their own controllers, they would need to know the internals
-of Copernicus and wrap an executable in an atom.
+When a component is set to be a controller, it is given permission to
+instatiate components and add connections within the current
+network. An example of when this could be useful is mapping a function
+(atom) over an array. The controller would build an instantiation of
+the function for each element in the input array and connect it the
+the appropriate element in an output array. For users to create their
+own controllers, they would need to know the internals of Copernicus
+and wrap an executable in an atom.
 
 The following coode instantiates \verb#somecontroller# and supplies an
 array of type \verb#setting#, and then sets the input
@@ -443,13 +389,13 @@ controller(var.in.net,var.out.net)
 \end{verbatim}
 
 The output network is basically the new network setup, which means the
-instantiated \verb#somecontroller# \verb#var# can add atoms/networks
-and connections.
+instantiated \verb#somecontroller# \verb#var# can add componenets and
+connections.
 
 \section{Documentation \& Comments}
-It is possible to add documentation strings to atoms,networks and
-their inputs and outputs. The documentation string starts and ends
-with \verb#'''#, and the documentation will be sent to The Copernicus
+It is possible to add documentation strings to components and their
+inputs and outputs. The documentation string starts and ends with
+\verb#'''#, and the documentation will be sent to The Copernicus
 system.
 
 \begin{verbatim}
@@ -478,3 +424,65 @@ This is a comment block
 This is still in the comment block
 /#
 \end{verbatim}
+
+
+\section{Future Work}
+
+\subsection{Modules}
+%A real functional import system is needed for the language to be
+%realistically added to Copernicus. The developers will need to define
+%how Copernicus should handle imports, since they have not decided
+%what would be the most practicle and useful way to do this.
+
+The current import system in Copernicus is to leave the import
+mechanism to the server side. This may be discussed if it is optimal,
+and the developers of Copernicus had some idées of how it could may be
+changed or improved. Even though changing these mechanics does not
+change the semantics for importing, it may affect the user of the DSL.
+
+Importing standard libraries needs to be defined before the
+client/server issues in Copernicus can be addressed. This may be an
+easy problem but it is still vital for continuing the
+implementation. Once this is done the developers needs to decide where
+the code should be parsed and typechecked. The client can do all this
+work and send it to the server but as the rest of the client is very
+light and does not do much work, other than communicate with the
+server, a prefered solution is to have the server do all the work. The
+client can still add imports and build one code file for the server or
+send all the used code files. As there are a difference between
+importing from the standard library and importing user written project
+specific files, it needs to be decided how the client and server will
+work together to build the project. If the server should do most of
+the work it needs to have all the libraries.
+
+Assuming the server would get all user written files, building
+projects, and doing all the work, a question is what the client should
+be able to do. Users may for example be able to typecheck their
+projects before sending them to a server, as it would make development
+easier. If so, the client needs to have access to all the labraries
+the server does.
+
+There were a suggestion for a repository containing all libraries,
+where code can be added and fetched when not available locally. Users
+could easily add their own implementations. Such a repository needs to
+handle executables aswell, since servers needs be able to supply them
+to the workers.
+
+\subsection{Transpose}
+There is a need for a transpose function for types. The transpose
+function would transform a record of any number of arrays to an array
+of records. It would also work the other way around. Consider the
+following two types:
+
+\begin{verbatim}
+type a ( int[]   : a0
+       , float[] : a1 )
+
+type b ( int   : b0
+       , float : b1 )
+\end{verbatim}
+
+The code \verb#transpose(a)# would be the type \verb#b[]#, and the
+code \verb#transpose(b[])# would be the type \verb#a#. The transpose
+would work much like a zip for types which can take any kind of record
+or array of record.
