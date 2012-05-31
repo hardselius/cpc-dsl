@@ -19,21 +19,31 @@ paradigms. Maybe some more stuff to...
 Different problem domains call for different programming
 paradigms. The execution model of \emph{Copernicus} can be thought of
 as a flow network, which makes some paradigms more interesting, and
-the domain-specific language should be made to reflect that fact.
+the domain-specific language should be made to reflect that fact. The
+dataflow programming model contrasts the classical control flow model
+implemented in languages such a C.
+
+Applications written in \eg~C have inherent limitations when run in
+parallel environments, because of the top-down sequential programming
+approach. The dataflow model consists of nodes connected to eachother
+to express the logical execution flow, and it can easily be used to
+express parallelism.
 
 
 \subsection{Dataflow Programming}
-Dataflow programming is a paradigm which has an execution model where
-a program is represented as directed graph. The data flows between
-operations along the arcs. Directed arcs represent dependencies
-between instructions. Arcs that flow toward a node are called
-\emph{inputs}, while arcs flowing away from a node are called
-\emph{outputs} \citep{johnston:2004}. The model focuses on how
-components of the program \emph{connects} in contrast to the classical
-von Neuman model, which focuses on \emph{how they happen}.
+The origin of dataflow languages is related the ever increasing need
+for massive parallelism in todays applications. Dataflow programming
+is a paradigm which has an execution model where a program is
+represented as directed graph. The data flows between operations along
+the arcs. Directed arcs represent dependencies between
+instructions. Arcs that flow toward a node are called \emph{inputs},
+while arcs flowing away from a node are called \emph{outputs}
+\citep{johnston:2004}. The model focuses on how components of the
+program \emph{connects} in contrast to the classical von Neuman model,
+which focuses on \emph{how they happen}.
 
 
-\subsection{Flow-based Programming}
+\subsection{Flow-Based Programming}
 In flow-based programming (FBP), applications are defined as networks
 of ``black box'' processes. Data is exchanged across predefined
 connections via message passing. The black box processes can be
@@ -53,6 +63,8 @@ automatically propagate changes through the data flow.
 
 
 \section{Programming Languages}
-
-
-
+There are some existing implementations of FBP out there. However,
+these implementations mainly consist of lanuage extensions or
+libraries for general-purpose languages. Some of these language
+extensions includes \emph{THREADS, JavaFBP, C\#FBP} and
+\emph{DrawFBP}.\citep{morrison:2010}
