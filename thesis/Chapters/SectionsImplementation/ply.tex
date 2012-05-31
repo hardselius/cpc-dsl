@@ -233,14 +233,16 @@ set of attributes associated with them along with an action. The
 action describes what to do whenever a particular grammar rule is
 recognized.
 
-Yacc uses a parsing technique called LR-parsing, also known as
-\emph{shift-reduce} parsing. It is a bottom up scheme that tries to
-match a sequence of lexical objects against the right-hand-side of
-various grammar rules. Whenever a matching right-hand-side is found,
-the appropriate action code is triggered and the grammar symbols are
-replaced by the grammar symbol on the left-hand-side.
+Yacc uses a parsing technique called lookahead-LR (LALR) parsing,
+which is based on the LR(0) sets of items, but has fewer states than
+typical parsers based on the LR(1) items \citep{aho:2007}. It is a
+bottom up scheme that tries to match a sequence of lexical objects
+against the right-hand-side of various grammar rules. Whenever a
+matching right-hand-side is found, the appropriate action code is
+triggered and the grammar symbols are replaced by the grammar symbol
+on the left-hand-side.
 
-Implementing a parser in Python Yacc is fairly straight forward. The
+Implementing a parser in Python Yacc is fairly straight-forward. The
 list of tokens from the lexer module is imported and a series of
 functions describing the grammar productions are defined. From the
 grammar in \autoref{grammar:typeex} the corresponding Python code
