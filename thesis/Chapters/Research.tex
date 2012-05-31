@@ -4,13 +4,6 @@ Copernicus, different programming paradigms suitable for the problem
 domain, and existing programming languages appurtenant to those
 paradigms. Maybe some more stuff to...
 
-%\section{Project overview}
-%The project contained three main stages: research, design and
-%implementation. The first plan was to sequentially work through them
-%one by one. In practice a more parallel approach was taken, where
-%designing the DSL started before the research ended and then the
-%implementation and design stages continued through the entire project.
-
 
 \section{Requirements \& Specification}
 
@@ -20,26 +13,26 @@ Different problem domains call for different programming
 paradigms. The execution model of \emph{Copernicus} can be thought of
 as a flow network, which makes some paradigms more interesting, and
 the domain-specific language should be made to reflect that fact. The
-dataflow programming model contrasts the classical control flow model
+data-flow programming model contrasts the classical control flow model
 implemented in languages such a C.
 
 Applications written in \eg~C have inherent limitations when run in
 parallel environments, because of the top-down sequential programming
-approach. The dataflow model consists of nodes connected to eachother
-to express the logical execution flow, and it can easily be used to
-express parallelism.
+approach. The data-flow model consists of nodes connected to
+each-other to express the logical execution flow, and it can easily be
+used to express parallelism.
 
 
-\subsection{Dataflow Programming}
-The origin of dataflow languages is related the ever increasing need
-for massive parallelism in todays applications. Dataflow programming
+\subsection{Data-flow Programming}
+The origin of data-flow languages is related the ever increasing need
+for massive parallelism in today's applications. Data-flow programming
 is a paradigm which has an execution model where a program is
 represented as directed graph. The data flows between operations along
 the arcs. Directed arcs represent dependencies between
 instructions. Arcs that flow toward a node are called \emph{inputs},
 while arcs flowing away from a node are called \emph{outputs}
 \citep{johnston:2004}. The model focuses on how components of the
-program \emph{connects} in contrast to the classical von Neuman model,
+program \emph{connects} in contrast to the classical Von Neuman model,
 which focuses on \emph{how they happen}.
 
 
@@ -55,16 +48,16 @@ internals remain unchanged, thus making FBP a
 
 \subsection{Reactive Programming}
 Reactive programming is oriented around data flows and the propagation
-of change. The key ideas are notions of \emph{behaviours} and
-\emph{events}, where behaviours are reactive values that varies over
+of change. The key ideas are notions of \emph{behaviors} and
+\emph{events}, where behaviors are reactive values that varies over
 time, while events are time-ordered sequences of discrete-time event
-occurences \citep{wan:2000}. The underlying execution model will
+occurrences \citep{wan:2000}. The underlying execution model will
 automatically propagate changes through the data flow.
 
 
 \section{Programming Languages}
 There are some existing implementations of FBP out there. However,
-these implementations mainly consist of lanuage extensions or
+these implementations mainly consist of language extensions or
 libraries for general-purpose languages. Some of these language
 extensions includes \emph{THREADS, JavaFBP, C\#FBP} and
 \emph{DrawFBP}.\citep{morrison:2010}
