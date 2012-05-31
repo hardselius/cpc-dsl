@@ -226,13 +226,27 @@ needs to able to
 \end{itemize}
 
 Copernicus network structure contains three components: clients,
-servers and workers. The clients are user interfaces to interact with
-the system. Users will send and start their computational project to a
-server using the client. The server handles projects and controls the
-work distribution. Jobs will be sent to available workers, depending
-on which worker is best suited for the job. A worker will calculate
-the jobs assigned to it and send the result back to the server. It
-will also announce to servers when it is available. Multiple worker
+servers and workers.
+
+\begin{quote}
+To support peer-to-peer usage almost arbitrary topologies, any
+Copernicus servern can borth send and receive commands, either form
+user clients, worker clients, or other servers,There is no top-level
+server in the architecture.\citep{pronk:2011}
+\end{quote}
+
+%Copernicus provides an open - but authenticated - peer-to-peer
+%architecture for ensemble simulations in high performinance
+%computing. Currently, Copernicus comes with plugins to run
+%Markiv-State-Model-driven sampling and....
+
+The clients are user interfaces to interact with the system. Users
+will send and start their computational project to a server using the
+client. The server handles projects and controls the work
+distribution. Jobs will be sent to available workers, depending on
+which worker is best suited for the job. A worker will calculate the
+jobs assigned to it and send the result back to the server. It will
+also announce to servers when it is available. Multiple worker
 processes can be run on the same system, e.g. supercomputers would run
 a great number of workers to use all the available cores.
 
@@ -275,6 +289,7 @@ between the systems.
 
 %There are primitive types like files, strings, ints, etc. There are
 %also compound types lists, dictionaries and function types
+
 \highlight{types, monitoring, provenance?}
 
 The problem with Copernicus was the lack of a good way to describe
@@ -341,7 +356,23 @@ specifically for python were used.
 
 \section{Related work}
 
-\highlight{hadoop -> map reduce}
+\subsection{MadReduce}
+Mapreduce is a programming model for distributed processing and
+generating
+
+\subsection{Hadoop}
+Hadoop\cite{hadoop:online} is a software framework written in Java to
+support distributed applications. Hadoop was derived from MapReduce
+and Googles File System. It is designed to scale from a single server
+to a cluster of computers to make use of clusters computational
+power. This is a big difference from Copernicus peer-to-peer styled
+networking. It handles failures at the application level.
+
+To link Hadoop with applications a C++ API and library is
+provided. Using an API like this defeats the purpose of having an easy
+and intuitive way of describing computational projects, but for large
+scale commercial implementation used by profesional programmers as
+Hadoop seems to be aimed towards it is probably a good solution.
 
 
 \section{Remaining chapters}
