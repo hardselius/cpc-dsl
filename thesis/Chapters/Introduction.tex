@@ -358,7 +358,13 @@ specifically for python were used.
 
 \subsection{MadReduce}
 Mapreduce\cite{dean:2008} is a programming model for distributed
-processing and generating large datasets. The 
+processing and generating large datasets. The idea is to have a
+``map'' step and a ``reduce'' step. The map step means that a master
+node divides its problem and distributes it to worker nodes. The
+worker nodes can act as a master node to other worker nodes and
+distribute problems to them. This makes a tree-like process of dealing
+with the problems. The reduce step means that a master node collects
+the answers from its workers and combines them into one answer.
 
 \subsection{Hadoop}
 Hadoop\cite{hadoop:online} is a software framework written in Java to
