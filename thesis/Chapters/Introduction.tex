@@ -9,7 +9,8 @@ power required to carry out non-trivial simulations and analysis of
 data are often distributed geographically, as are the computing
 resources they rely on.
 
-\highlight{something}
+\highlight{something about the many-core systems we are moving
+  towards}
 
 
 \section{Background}
@@ -18,30 +19,31 @@ clusters the applications need strong scaling. When this is a
 limitation for applications the available resources are not used to
 reach highest possible performance.
 
-%Copernicus paper
+Many interesting real-world applications (all that are not
+embarrassingly parallel) require some inter-process communication for
+scaling and are therefore limited both by the availability of this
+bandwidth as well as the total amount of resources for high absolute
+performance \citep{pronk:2011}.
 
-%Many interesting real-world applications (all that are not
-%embarrassingly parallel) require some interprocess communication for
-%scaling and are therefore limited both by the availability of this
-%bandwith as well as the total amount of resources for high absolute
-%performance.
+Molecular dynamics simulations are computations which have inherent
+parallelization limits due to the finite number of particles
+simulated, but there is a possibility to achieve strong scaling, since
+many of these computations are of statistical nature. Relying on
+sampling of many individual simulations makes it possible to
+distribute the workload on supercomputers and compute clusters. This
+is a parallelization of such simulations which gives a significant
+performance boost when a high number of cores are at disposal.
 
-
-Molecular dynamics simulations are computations which have limitations
-as described, but there is a possibility due to the fact that many of
-these computations are of statistical nature. Relying on sampling of
-many individual simulations makes it possible to distribute the
-workload on supercomputers and computer clusters. This is a
-parallelization of such simulations which gives a great performance
-boost when high numbers of cores are available.
-
-The simple way of parallelizing can be generally described by a very
+The high-level way of parallelizing can generally be described by a very
 simple workflow. The workflow contains a simulation and an analysis
 stage with a feedback. 
 
-\begin{center}
-\includegraphics{Chapters/IntroductionIncludes/workflow.png}
-\end{center}
+\begin{figure}[H]
+  \centering
+  \includegraphics{Chapters/IntroductionIncludes/workflow.png}
+  \caption{Parallelization workflow}
+  \label{fig:workflow}
+\end{figure}
 
 The entire computation is initialized by generating a large number of
 small simulations. Each simulation will send the result data to the
@@ -70,7 +72,7 @@ more data.%(few simulations ended in that state)
 %with sufficiently low interconnect latency.
 
 clouds are solutions to run computations on high-performing computer
-systems. \citet{foster:2008} defines clouds as:
+systems. \citet{foster:2008} defines cloud computing as:
 
 \begin{quote} \slshape
   A large-scale distributed computing paradigm that is driven by
@@ -207,7 +209,7 @@ simulations. Such computations are called projects in the system.
   unit. While the software has been optimized for using multiple
   high-performance compute clusters, it works equally well with cloud
   computing instances or even individual
-  workstations.\citep{pronk:2011}
+  workstations \citep{pronk:2011}.
 \end{quote}
 
 To handle projects with many simulations as a single entity Copernicus
@@ -217,12 +219,12 @@ needs to able to
 \item match and distribute the individual simulations to the available
   computational resources,
 \item run simulations on a variety of remote platforms simultaneously:
-  HPC clusters, workstations, cloud computing instances, et cetera,
+  HPC clusters, workstations, cloud computing instances, etcetera,
 \item parallelize tasks to the maximum extent possible on each
   resource, and use adaptive coupling beyond this,
 \item allow flexibility in the types of projects tat can be run,
-\item perform real-time analysis of the running project.
-\item enable monitoring of running projects.\citep{pronk:2011}
+\item perform real-time analysis of the running project,
+\item enable monitoring of running projects \citep{pronk:2011}.
 \end{itemize}
 
 Copernicus network structure contains three components: clients,
@@ -230,9 +232,9 @@ servers and workers.
 
 \begin{quote}
 To support peer-to-peer usage almost arbitrary topologies, any
-Copernicus servern can borth send and receive commands, either form
+Copernicus server can both send and receive commands, either form
 user clients, worker clients, or other servers,There is no top-level
-server in the architecture.\citep{pronk:2011}
+server in the architecture \citep{pronk:2011}.
 \end{quote}
 
 %Copernicus provides an open - but authenticated - peer-to-peer
@@ -256,45 +258,38 @@ describe how streams of data is sent between different executions.  A
 network is a set of connections between black boxes, where a black box
 can either be a function or another network. Both functions and
 networks have external inputs and outputs which are used to connect
-the networks between scopes. A function has a subnetwork and a
+the networks between scopes. A function has a sub-network and a
 controller which both can't be accessed outside the function. The
-subnetwork is a normal network where the controller can add
+sub-network is a normal network where the controller can add
 connections and black boxes. A controller is in itself a black box in
 Copernicus. It has access to the networks definition and has
-permission to add new black boxes and connections.
+permission to add new black boxes and connections. A real life example
+of a project is shown in \myref{figure}{fig:cpcprojectmodel}.
 
-%old defenition of controllers
-%
-%Controllers are basically event handlers that trigger in certain
-%situations, e.q. they are called when a project starts, a subproject
-%finishes, a command finishes, etc\citep{pronk:2011}.
-
-A real life example project could be the following:
-
-\begin{center}
-\includegraphics[scale=0.4]{Chapters/IntroductionIncludes/example.png}
-\end{center}
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.4]{Chapters/IntroductionIncludes/example.png}
+  \caption{Copernicus project model}
+  \label{fig:cpcprojectmodel}
+\end{figure}
 
 In this project Grompp takes inputs and generates topology files. The
-list \emph{conf[]} is the configurations for each simulation. Mdrun
-then takes the topology files as inputs and runs the simulations. Even
-though this example does not have a feedback to generate more
-simulations, the Copernicus system is still very useful. When having
-access to limit computation hours on different systems, users could
-just split the list \emph{conf[]} and split up the jobs, while just
-repeating the same workflow with different inputs, and still get the
-same data. If this was not possible the user would need save the state
-of the computation and send potentially very large amount of data
-between the systems.
-
-%There are primitive types like files, strings, ints, etc. There are
-%also compound types lists, dictionaries and function types
+list \verb#conf[]# is the configurations for each
+simulation. \verb#Mdrun# then takes the topology files as inputs and
+runs the simulations. Even though this example does not have a
+feedback to generate more simulations, the Copernicus system is still
+very useful. When having access to limit computation hours on
+different systems, users could just split the list \verb#conf[]# and
+split up the jobs, while just repeating the same workflow with
+different inputs, and still get the same data. If this was not
+possible the user would need save the state of the computation and
+send potentially very large amount of data between the systems.
 
 \highlight{types, monitoring, provenance?}
 
-The problem with Copernicus was the lack of a good way to describe
-projects. There were no intuitive way of giving input to the system,
-and that is why this project was formed.
+The problem with Copernicus has been the lack of a good way to
+describe projects. There were no intuitive way of giving input to the
+system, and that is why this project was formed.
 
 
 \section{Problem statement}
@@ -356,8 +351,8 @@ specifically for python were used.
 
 \section{Related work}
 
-\subsection{MadReduce}
-Mapreduce\cite{dean:2008} is a programming model for distributed
+\subsection{MapReduce}
+MapReduce~\cite{dean:2008} is a programming model for distributed
 processing and generating large datasets. The idea is to have a
 ``map'' step and a ``reduce'' step. The map step means that a master
 node divides its problem and distributes it to worker nodes. The
@@ -367,9 +362,9 @@ with the problems. The reduce step means that a master node collects
 the answers from its workers and combines them into one answer.
 
 \subsection{Hadoop}
-Hadoop\cite{hadoop:online} is a software framework written in Java to
+Hadoop~\cite{hadoop:online} is a software framework written in Java to
 support distributed applications. Hadoop was derived from MapReduce
-and Googles File System. It is designed to scale from a single server
+and Google's File System. It is designed to scale from a single server
 to a cluster of computers to make use of clusters computational
 power. This is a big difference from Copernicus peer-to-peer styled
 networking. It handles failures at the application level.
@@ -377,7 +372,7 @@ networking. It handles failures at the application level.
 To link Hadoop with applications a C++ API and library is
 provided. Using an API like this defeats the purpose of having an easy
 and intuitive way of describing computational projects, but for large
-scale commercial implementation used by profesional programmers as
+scale commercial implementation used by professional programmers as
 Hadoop seems to be aimed towards it is probably a good solution.
 
 

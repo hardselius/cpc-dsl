@@ -6,6 +6,7 @@ For a complete description of the grammar in Backus-Naur Form (BNF),
 see \autoref{ch:bnf}. The implementation details will be described
 further in \autoref{chap:implementation}.
 
+
 \section{Design}
 Designing the DSL was a process which continued through the entire
 project. As there are no comparable packages and no text-based
@@ -24,6 +25,7 @@ choices to make. The developers perspective was important for the DSL
 to reflect realistic scenarios and to get a better collective view of
 the different solutions. At each meeting the developers was presented
 with a draft of the latest version of the DSL.
+
 
 \section{General style and features}
 The DSL is a descriptive language which has four types of top-level
@@ -49,7 +51,7 @@ more detail in this chapter.
 Modules have no real function in the current implementation of the
 language. A module is basically a code file. Importing a file is
 importing a module. This is how to import the file
-``path/to/file.cod'' from subdirectories of the current files path:
+``path/to/file.cod'' from sub-directories of the current files path:
 
 \begin{verbatim}
 import path.to.file
@@ -63,11 +65,12 @@ packages as wrappers for code, but rather to sort code in different
 files. 
 
 Currently it is only possible to import files from
-subdirectories. There are no way to import from other paths or any
+sub-directories. There are no way to import from other paths or any
 form of a standard library. The discussion of a more advanced and
 useful import system revealed that the developers had some different
 suggestions but had not decided how such a system should work with
 client server setup in Copernicus.
+
 
 \section{Typing}
 In the language all connections between executables are typed. Their
@@ -76,6 +79,7 @@ networks have types according to their external inputs and outputs.
 
 The type-checker does not type check executables. Instead the system
 relies on the correct definition when wrapping them in the language.
+
 
 \subsection{Primitive Types}
 The first primitive is integers, which are represented by
@@ -91,6 +95,7 @@ Strings are represented by \verb#string#. A constant strings is
 written between the two quotation symbols. The last primitive type is
 files, which are described as \verb#file#. Files are paths written
 like strings, but are not checked that it is a path to a file.
+
 
 \subsection{Compound Types}\label{sec:compound}
 There are two compound types in the language. The first one are
@@ -111,6 +116,7 @@ a record by both its index and name. Accessing the fourth variable
 to have the same type as the other elements in the record. A new type
 has to be defined to represent a record.
 
+
 \subsection{New Types}
 Defining new types are the way records are described in the
 language. A new type needs a name and which types of elements it
@@ -130,6 +136,7 @@ type setting
 
 The file has in this case index zero and the file has index one. They
 can be access with both name and index as described above.
+
 
 \subsection{Atom \& Network Type}\label{sec:atomnet}
 Atoms and networks are components used to build networks with. They
@@ -162,12 +169,14 @@ of the same type as the above has been instantiated as \verb#func# may
 look like \verb#func.in.length# or \verb#func(0)(1)# which both are
 the same thing.
 
+
 \subsection{The 'network' Type}
 Besides the syntactic objects \verb#network#, which have types
 described in the previous section, there is a type \verb#network#. The
 type \verb#network# is mainly used with controllers
 (\autoref{sec:control}). The type \verb#network# refers to a record
 containing a set of instantiated components and a set of connections.
+
 
 \subsection{Meta Types}\label{sec:meta}
 Components can take types as inputs, called meta types, to be able to
@@ -205,14 +214,16 @@ is given by the parameter \verb#t#.
 
 %metatypes are checked
 
+
 \section{Instance Names}
-Instance names refer to an instantiated Components. They are
-instantiated inside networks, where they can be connected to other
-instance names or external inputs and outputs. How to instantiate an
-instance name is described in \autoref{sec:stmt}.
+Instance names refer to instantiated Components. They are instantiated
+inside networks, where they can be connected to other instance names
+or external inputs and outputs. How to instantiate an instance name is
+described in \autoref{sec:stmt}.
 
 Instance names contains letters, numbers, and underscores, but they
 have to start with a lower case letter.
+
 
 \section{Atoms}\label{sec:atom}
 An atom is a wrapper for executable code, python scripts and
@@ -266,7 +277,7 @@ atom python add
 A network is a description of what to instantiate and how the
 components and external input/outputs are connected inside the
 network. Networks can be components the same way as atoms, which makes
-them subnetworks when instantiated in other networks. Each network has
+them sub-networks when instantiated in other networks. Each network has
 its own scope of type variables and instance names so the external
 inputs/outputs is needed to make connections to an external component.
 
@@ -292,11 +303,13 @@ statements separated by new lines. These statements are the
 description of the network, and they are explained in detail in the
 next section.
 
+
 \section{Network Description Statements} \label{sec:stmt}
 There are three types of statements: assignment, connections, and a
 controller statement. With these statements a network can be described
 inside a network body. It is not possible to build networks outside a
 network definition.
+
 
 \subsection{Assignment}
 Assignment statements are instantiations of components which are
@@ -355,11 +368,16 @@ var = add ( 1.1 , (mul ( 2.0 , in.fp )).out.o)
 \end{verbatim}
 
 \subsection{Connection}
-Connection statements connects two inputs/outputs together. The
-inputs/outputs are references like the arguments in an assignment
-statement. The following code line connects the the output variable
-\verb#o# of the instantiated instance name \verb#var# to the external
-output \verb#o# of the network.
+Connection statements describe how inputs and outputs are
+connected. The left-hand side is the \emph{destination} and the
+right-hand side is the \emph{source}. It is not possible to refer to
+an output of the external network component or an input of an
+instantiated component in the right-hand side. Similarly, it is not
+possible to make a connection where the destination is an input of the
+external component. The inputs and outputs are references like the
+arguments in an assignment statement. The following code line connects
+the the output variable \verb#o# of the instantiated instance name
+\verb#var# to the external output \verb#o# of the network.
 
 \begin{verbatim}
 out.o <- var.out.o
@@ -371,6 +389,7 @@ following code line is an example of.
 \begin{verbatim}
 out.o <- 4.3
 \end{verbatim}
+
 
 \subsection{Controllers} \label{sec:control}
 When a component is set to be a controller, it is given permission to
@@ -395,6 +414,7 @@ controller(var.in.net,var.out.net)
 The output network is basically the new network setup, which means the
 instantiated \verb#somecontroller# \verb#var# can add components and
 connections.
+
 
 \section{Documentation \& Comments}
 It is possible to add documentation strings to components and their
@@ -471,6 +491,7 @@ where code can be added and fetched when not available locally. Users
 could easily add their own implementations. Such a repository needs to
 handle executables as well, since servers needs be able to supply them
 to the workers.
+
 
 \subsection{Transpose}\label{sec:transpose}
 There is a need for a transpose function for types. The transpose

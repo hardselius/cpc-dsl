@@ -245,8 +245,8 @@ on the left-hand-side.
 Implementing a parser in Python Yacc is fairly straight-forward. The
 list of tokens from the lexer module is imported and a series of
 functions describing the grammar productions are defined. From the
-grammar in \autoref{grammar:typeex} the corresponding Python code
-becomes:
+grammar in \myref{figure}{grammar:typeex} the corresponding Python
+code becomes:
 
 \lstset{
   caption = {Parser example},
@@ -290,7 +290,7 @@ in \texttt{p[1..]} are mapped to the grammar symbols on the
 right-hand-side. The statements in the function body implements the
 semantic actions of the rule. In this case, we use the parser to to
 build an abstract syntax tree. This is described in more detail in
-\autoref{sec:ast}.
+\myref{section}{sec:ast}.
 
 
 \paragraph{Alternative specification of Lexer and Parser}

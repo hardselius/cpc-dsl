@@ -14,7 +14,7 @@ paradigms. The execution model of \emph{Copernicus} can be thought of
 as a flow network, which makes some paradigms more interesting, and
 the domain-specific language should be made to reflect that fact. The
 data-flow programming model contrasts the classical control flow model
-implemented in languages such a C.
+implemented in languages such as C.
 
 Applications written in \eg~C have inherent limitations when run in
 parallel environments, because of the top-down sequential programming
@@ -25,15 +25,15 @@ used to express parallelism.
 
 \subsection{Data-flow Programming}
 The origin of data-flow languages is related the ever increasing need
-for massive parallelism in today's applications. Data-flow programming
-is a paradigm which has an execution model where a program is
-represented as directed graph. The data flows between operations along
-the arcs. Directed arcs represent dependencies between
-instructions. Arcs that flow toward a node are called \emph{inputs},
-while arcs flowing away from a node are called \emph{outputs}
-\citep{johnston:2004}. The model focuses on how components of the
-program \emph{connects} in contrast to the classical Von Neuman model,
-which focuses on \emph{how they happen}.
+for parallelism in today's applications. Data-flow programming is a
+paradigm which has an execution model where a program is represented
+as directed graph. The data flows between operations along the
+arcs. Directed arcs represent dependencies between instructions. Arcs
+that flow toward a node are called \emph{inputs}, while arcs flowing
+away from a node are called \emph{outputs} \citep{johnston:2004}. The
+model focuses on how components of the program \emph{connects} in
+contrast to the classical Von Neuman model, which focuses on \emph{how
+  they happen}.
 
 
 \subsection{Flow-Based Programming}
@@ -60,4 +60,7 @@ There are some existing implementations of FBP out there. However,
 these implementations mainly consist of language extensions or
 libraries for general-purpose languages. Some of these language
 extensions includes \emph{THREADS, JavaFBP, C\#FBP} and
-\emph{DrawFBP}.\citep{morrison:2010}
+\emph{DrawFBP} \citep{morrison:2010}.
+
+\highlight{A little too short. How do they integrate with a
+  general-purpose language?}
