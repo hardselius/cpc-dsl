@@ -77,6 +77,7 @@ language, it became the implementation language of choice.
 This section will describe the various implementation steps taken
 during the construction of Rheos.
 
+
 \subsection{Abstract Syntax Tree}\label{sec:ast}
 \input{Chapters/SectionsImplementation/ast}
 
@@ -86,32 +87,29 @@ during the construction of Rheos.
 
 
 \subsection{XML generation}\label{sec:xml}
-There is an implemented XML generator for an earlier version of the
-implementation. Due to bigger changes other aspects were prioritized
-and XML generation was left for the developers of Copernicus to
-update. Since the language needs definitions before they can be used
-the XML generation is an iteration through these definitions. The only
-non-straight forward part to implement is the instantiations of
-atoms/networks as inputs in an assignment statement. The earlier
-version of the XML generator replaced such input expressions with an
-assignment statement and then connected inputs and outputs to
-represent the same thing.
+There is an implemented XML generator for an earlier version of
+Rheos. Due to signifacant changes of the language description, other
+aspects were prioritized and XML generation was left for the
+developers of Copernicus to update. The new language description that
+emerged was in fact so different from the original, that Copernicus
+needed updates to incorporate those changes.
 
-The XML generator is a visitor as the type checker. Visiting the
-different nodes in an abstract syntax tree prints the corresponding
-XML code and visit its children to generate the entire definition with
-indentations.
+The XML generator is implemented using the same visitor pattern as the
+type-checker. Visiting the different nodes in the abstract syntax tree
+produces corresponding XML code, and traversing the while tree will
+yield an entire definition, complete with indentations.
+
 
 \subsection{Emacs mode}\label{sec:emacs}
-The Emacs mode only contains syntax highlighting. The mode was created
-to get a more realistic view of the example code that were used during
-designing the DSL and testing the implementation. The syntax
-highlighting adds some understanding of what the code actually
-represents which made it easier to add and change specific parts of
+The Emacs mode provides nothing more than syntax highlighting. The
+mode was created mainly to provide a more appealing look to the
+example code developed during design and testing of the Rheos. The
+syntax highlighting adds some understanding of what the code actually
+represents, which made it easier to add and change specific parts of
 the DSL.
 
-\section{Future work}
 
+\section{Future work}
 \subsection{Lexer and Parser}
 As described in~\myref{section}{sec:transpose}, there is a need for a
 \texttt{transpose} primitive. This would have to be specified as a
