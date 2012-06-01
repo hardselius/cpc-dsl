@@ -201,17 +201,15 @@ list.
 
 
 \paragraph{Python Yacc}
-The \texttt{yacc.py} module is used to parse the language
-syntax. \emph{Syntax} is usually specified in terms of a
-\emph{BNF-grammar} (\highlight{citation needed}). For example, some
-simple grammar rules for parsing types could look like this:
+
+The \texttt{yacc.py} module is used to parse the language syntax. The
+grammar of a programming language is often specified
+in \emph{Backus-Naur Form} (BNF). For example, some simple grammar
+rules for parsing types could look like this:
 
 \begin{figure}[h!]
-  \begin{grammar}
-    <type> ::= `float'
-    \alt `int'
-    \alt `string'
-    \alt <type> <dim>
+  \begin{grammar} <type> ::= `float' \alt `int' \alt `string' \alt
+    <type> <dim>
 
     <dim> ::= `[]'
     \alt <dim> `[]'
