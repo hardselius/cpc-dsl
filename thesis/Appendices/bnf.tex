@@ -44,8 +44,8 @@ This part describes the complete grammar of Rheos in BNF.
 \paragraph{Newtype}
 
 \begin{grammar}
-  <newtype_decl> ::= `type' <type> <docstring> <cr> `('
-  <type_decl_list> `)'
+  <newtype_decl> ::= `type' <ident> <docstring> <cr> <lparen>
+  <type_decl_list> <rparen>
 
   <type_decl_list> ::= <type_decl>
   \alt <type_decl_list> <comma_sep> <type_decl>
@@ -66,7 +66,7 @@ This part describes the complete grammar of Rheos in BNF.
   \alt `python-extended'
   \alt `external'
 
-  <optionblock> ::= `option' <opt_cr> `(' <atom_option_list> `)'
+  <optionblock> ::= `option' <opt_cr> <lparen> <atom_option_list> <rparen>
 
   <atom_option_list> ::= <atom_option>
   \alt <atom_option_list> <comma_sep> <atom_option>
@@ -96,12 +96,22 @@ This part describes the complete grammar of Rheos in BNF.
 \paragraph{Atom and Network Headers}
 
 \begin{grammar}
-  <header> ::= <ident> <docstring> <cr> <inputs> <outputs>
+  <header> ::= <ident> <metaparams> <docstring> <cr> <inputs> <outputs>
 
-  <inputs> ::= `in' `(' <input_list> `)' <cr>
+  <metaparams> ::= `\textless' <metaparam_list> `\textgreater'
+  \alt <empty>
+
+  <metapara_list> ::= <metaparam>
+  \alt <metaparam_list> <comma_sep> <metaparam>
+
+  <metaparam> ::= `type' <ident>
+  \alt `func' <ident>
+  \alt `list' <ident>
+
+  <inputs> ::= `in' <lparen> <input_list> <rparen> <cr>
   \alt `in' <no_params> <cr>
 
-  <outputs> ::= `out' `(' <output_list> `)' <cr>
+  <outputs> ::= `out' <lparen> <output_list> <rparen> <cr>
   \alt `out' <no_params> <cr>
 
   <input_list> ::= <input>
@@ -145,7 +155,16 @@ This part describes the complete grammar of Rheos in BNF.
 
   <assignment_stmt> ::= <ident> `=' <component_stmt>
 
-  <component_stmt> ::= <ident> <lparen> <expr_list> <rparen>
+  <component_stmt> ::= <ident> <component_args>
+  \alt <ident> <metaargs> <component_args>
+
+  <metaargs> ::= `\textless' <type_list> `\textgreater'
+
+  <type_list> ::= <type>
+  \alt <type_list> <comma_sep> <type>
+
+  <component_args> ::= <lparen> <expr_list> <rparen>
+  \alt <lparen> <rparen>
 \end{grammar}
 
 
@@ -156,13 +175,12 @@ This part describes the complete grammar of Rheos in BNF.
 
 \begin{grammar}
   <expr> ::= <constant>
-  \alt <param_ref>
-  \alt <ident>
+  \alt <expr_ref>
 
   <expr_list> ::= <expr>
   \alt <expr_list> <comma_sep> <expr>
 
-  <const> ::= <fconst>
+  <constant> ::= <fconst>
   \alt <iconst>
   \alt <sconst>
 
@@ -174,11 +192,24 @@ This part describes the complete grammar of Rheos in BNF.
 
   <ident> ::= \emph{identifier}
 
-  <param_ref> ::= `in' `.' <ident>
-  \alt `out' `.' <ident>
-  \alt <ident> `.' `in' `.' <ident>
-  \alt <ident> `.' `out' `.' <ident>
-  \alt `(' <component_stmt> `)' `.' `out' `.' <ident>
+
+  <expr_ref> ::= <expr_ref_list>
+
+  <expr_ref_list> ::= <expr_ref_1>
+  \alt <expr_ref_list> <recordindex>
+  \alt <expr_ref_list> <arrayindex>
+  \alt <expr_ref_list> `.' <expr_ref_1>
+
+  <recordindex> ::= `(' \emph{integer constant} `)'
+
+  <arrayindex> ::= `[' \emph{integer constant} `]'
+
+  <expr_ref_1> ::= <expr_ref_2>
+  \alt <lparen> <component_stmt> <rparen>
+
+  <expr_ref_2> ::= `in'
+  \alt `out'
+  \alt <ident>
 \end{grammar}
 
 
@@ -192,8 +223,13 @@ This part describes the complete grammar of Rheos in BNF.
   \alt `float'
   \alt `int'
   \alt `string'
-  \alt `[' <type> `]'
-  \alt <ident>
+  \alt <metatype>
+  \alt <type> `[' `]'
+
+  <metatype> ::= <expr_ref_2>
+  \alt <metatype> <recordindex>
+  \alt <metatype> `*'
+  \alt <metatype> `.' <expr_ref_2>
 
   <docstring> ::= \emph{an optional docstring}
 \end{grammar}
