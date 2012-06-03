@@ -37,7 +37,7 @@ performance \citep{pronk:2011}.
 
 Molecular dynamics simulations are computations which have inherent
 parallelization limits due to the finite number of particles
-simulated, but there is a possibility to achieve strong scaling, since
+simulated, but there is a possibility to achieve strong scaling since
 many of these computations are of statistical nature. Relying on
 sampling of many individual simulations makes it possible to
 distribute the workload on supercomputers and compute clusters. This
@@ -65,15 +65,15 @@ result, i.e. what parts still needs more data. A computation like this
 is highly parallel and modular which gives a possibility of using more
 resources to speed up the entire computation.
 
-An example of a described workflow would be a Markov stat
-modeling. Where the different states are states in molecular
-simulations. A large number of simulation states would start from
-different states and would gather data for the analysis stage. The
-result would be the different probabilities in the Markov state
-model. The feedback would be directed to the states that still need
-more data.%(few simulations ended in that state)
+An example of a described workflow would be a Markov state
+modeling. The different states are states in molecular simulations. A
+large number of simulation states would start from different states
+and would gather data for the analysis stage. The result would be the
+different probabilities in the Markov state model. The feedback would
+be directed to the states that still need more data.%(few simulations
+ended in that state)
 
-\highlight{example figures ?}
+%\highlight{example figures ?}
 
 %Molecular dynamics simulations pose significant computaional
 %challanges. The systems are big enough to be parallelized, with
@@ -81,7 +81,7 @@ more data.%(few simulations ended in that state)
 %dynamics (MD) packages such as Gromacs [10, 17] when run on a system
 %with sufficiently low interconnect latency.
 
-clouds are solutions to run computations on high-performing computer
+Clouds are solutions to run computations on high-performing computer
 systems. \citet{foster:2008} defines cloud computing as:
 
 \begin{quote} \slshape
@@ -295,7 +295,7 @@ different inputs, and still get the same data. If this was not
 possible the user would need save the state of the computation and
 send potentially very large amount of data between the systems.
 
-\highlight{types, monitoring, provenance?}
+%\highlight{types, monitoring, provenance?}
 
 The problem with Copernicus has been the lack of a good way to
 describe projects. There were no intuitive way of giving input to the
