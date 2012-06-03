@@ -1,0 +1,20 @@
+\frametitle {Language description}
+\framesubtitle{Imports and new Types}
+\pause
+
+\begin{block}{Import statements}
+\begin{verbatim}
+  import path.to.file
+\end{verbatim}
+\end{block}
+\pause
+
+\begin{block}{New types}
+\begin{verbatim}
+type setting (
+  int           : i,
+  float         : f,
+  somenewtype[] : snt_array
+)
+\end{verbatim}
+\end{block}
