@@ -500,8 +500,12 @@ to the workers.
 \subsection{Transpose}\label{sec:transpose}
 There is a need for a transpose function for types. The transpose
 function would transform a record of any number of arrays to an array
-of records. It would also work the other way around. Consider the
-following two types:
+of records. It would also work the other way around. An example of
+when transpose could be used would be when defining a map
+component. One would want to send in a lists for each argument of the
+component in question, and tranpose the argument lists to a list of
+records. This way each one of the records represents the inputs for a
+single instance of the component. Consider the following two types:
 
 \begin{verbatim}
 type a ( int[]   : a0
