@@ -30,9 +30,9 @@ with a draft of the latest version of the DSL.
 \section{General style and features}
 The DSL is a descriptive language which has four types of top-level
 syntactic definitions: atoms, networks, imports and new types. Atoms
-and networks are components which are connected to build project
-networks in Copernicus. The four top-level definitions are described
-more in detail in the following sections. All the top-level
+and networks are \emph{components} which are connected to build
+project networks in Copernicus. The four top-level definitions are
+described more in detail in the following sections. All the top-level
 definitions needs to be defined before used in the current version of
 the DSL.
 
@@ -48,8 +48,8 @@ more detail in this chapter.
 
 
 \section{Modules}
-Modules have no real function in the current implementation of the
-language. A module is basically a code file. Importing a file is
+Modules have no intrinsic function in the current implementation of
+the language. A module is essentially a code file. Importing a file is
 importing a module. This is how to import the file
 ``path/to/file.cod'' from sub-directories of the current files path:
 
@@ -73,31 +73,34 @@ client server setup in Copernicus.
 
 
 \section{Typing}
-In the language all connections between executables are typed. Their
+In the language, all connections between executables are typed. Their
 types are set when inputs and outputs are defined. Atoms and even
 networks have types according to their external inputs and outputs.
 
-The type-checker does not type check executables. Instead the system
+Types are matched, without regard to type hierarchy, but to what set
+of primitive types can be inferred from them, and what dimension.
+
+The type-checker does not type-check executables. Instead the system
 relies on the correct definition when wrapping them in the language.
 
 
-\subsection{Primitive Types}
-The first primitive is integers, which are represented by
-\verb#int#. Integers cannot be assigned floating points (implicitly
-turn floating point to integer) but has to be assigned
-integers. Floating points are represented as \verb#float#, and as
-integers floating points cannot be assigned anything other than
-floating points. This means that \verb#1.0# is not the same as
-\verb#1# in the language and will cause a type error if assigned to a
-connection with the wrong type.
+\subsection{Primitive types}
+The first primitive, integer, are represented by \verb#int#. Integers
+cannot be assigned floating point values, \ie no type-casting, but has
+to be assigned integers. Floating point types are represented by
+\verb#float#, and as integers floating points cannot be assigned
+anything other than floating point values. This means that \verb#1.0#
+is not the same as \verb#1# in the language and will cause a type
+error if assigned to a connection with the wrong type.
 
 Strings are represented by \verb#string#. A constant strings is
 written between the two quotation symbols. The last primitive type is
 files, which are described as \verb#file#. Files are paths written
-like strings, but are not checked that it is a path to a file.
+like strings, but are not checked by the language. Instead, they are
+maintained by Copernicus.
 
 
-\subsection{Compound Types}\label{sec:compound}
+\subsection{Compound types}\label{sec:compound}
 There are two compound types in the language. The first one are
 arrays, which are ordered lists of a certain type. An integer array is
 written like \verb#int[]#, where each pair of brackets represent one
@@ -117,7 +120,7 @@ to have the same type as the other elements in the record. A new type
 has to be defined to represent a record.
 
 
-\subsection{New Types}
+\subsection{New record types}
 Defining new types are the way records are described in the
 language. A new type needs a name and which types of elements it
 contains. Each element needs a type and a unique name in the
@@ -138,7 +141,7 @@ The file has in this case index zero and the file has index one. They
 can be access with both name and index as described above.
 
 
-\subsection{Atom \& Network Type}\label{sec:atomnet}
+\subsection{Atom \& Network type}\label{sec:atomnet}
 Atoms and networks are components used to build networks with. They
 work like black boxes in data-flow networks. As components are able to
 have any number of inputs and outputs their types are a special case
@@ -160,10 +163,10 @@ out ( file output )
 \end{verbatim}
 
 The full header syntax for networks and atoms is described in
-\autoref{sec:net} and \autoref{sec:atom}.
+\autoref{sec:atom} and \autoref{sec:net}.
 
-Since both the type of \verb#in# and the type of functions are
-records, there are numerous ways of referring to an input
+Since both the type of \verb#in#, \verb#out# and the type of functions
+are records, there are numerous ways of referring to an input
 parameter. Referring to the a parameter \verb#length# when a function
 of the same type as the above has been instantiated as \verb#func# may
 look like \verb#func.in.length# or \verb#func(0)(1)# which both are
@@ -236,12 +239,13 @@ library so users do not have to concern themselves with external
 
 An atom has a header and an option part. The header contains the name
 of the atom, the type parameter definition, the type signature of the
-outputs and inputs, and what type of executable the atom uses. There
-are three different types of executables in the current version:
-\verb#python#, \verb#python-extended#, and
-\verb#external#. \verb#python# means that the atom calls built-in
-functions of python, \verb#python-extended# means the atom calls
-python scripts, and \verb#external# calls binary executables.
+outputs and inputs, and what type of executable the atom uses.
+Execution is implementation-specific. Currenty, there are three
+different types of executables in the current version: \verb#python#,
+\verb#python-extended#, and \verb#external#. \verb#python# means that
+the atom calls built-in functions of python, \verb#python-extended#
+means the atom calls python scripts, and \verb#external# calls binary
+executables.
 
 The following code is the header for an atom \verb#someatom# which
 calls a binary executable and has the type definition used in previous
@@ -368,10 +372,10 @@ var = add ( 1.1 , (mul ( 2.0 , in.fp )).out.o)
 \end{verbatim}
 
 \subsection{Connection}
-Connection statements describe how inputs and outputs are
-connected. The left-hand side is the \emph{destination} and the
-right-hand side is the \emph{source}. It is not possible to refer to
-an output of the external network component or an input of an
+Connection statements are another way to describe how inputs and
+outputs are connected. The left-hand side is the \emph{destination}
+and the right-hand side is the \emph{source}. It is not possible to
+refer to an output of the external network component or an input of an
 instantiated component in the right-hand side. Similarly, it is not
 possible to make a connection where the destination is an input of the
 external component. The inputs and outputs are references like the
@@ -383,8 +387,8 @@ the the output variable \verb#o# of the instantiated instance name
 out.o <- var.out.o
 \end{verbatim}
 
-It is also possible to assign constant values to connections which the
-following code line is an example of.
+\noindent It is also possible to assign constant values to
+connections.
 
 \begin{verbatim}
 out.o <- 4.3
@@ -464,20 +468,20 @@ and the developers of Copernicus had some ideas of how it could may be
 changed or improved. Even though changing these mechanics does not
 change the semantics for importing, it may affect the user of the DSL.
 
-Importing standard libraries needs to be defined before the
+Importing of standard libraries needs to be well-defined before the
 client/server issues in Copernicus can be addressed. This may be an
 easy problem but it is still vital for continuing the
 implementation. Once this is done the developers needs to decide where
 the code should be parsed and type checked. The client can do all this
 work and send it to the server but as the rest of the client is very
 light and does not do much work, other than communicate with the
-server, a preferred solution is to have the server do all the work. The
-client can still add imports and build one code file for the server or
-send all the used code files. As there are a difference between
-importing from the standard library and importing user written project
-specific files, it needs to be decided how the client and server will
-work together to build the project. If the server should do most of
-the work it needs to have all the libraries.
+server, a preferred solution is to have the server do all the
+work. The client can still add imports and build one code file for the
+server or send all the used code files. As there are a difference
+between importing from the standard library and importing user written
+project specific files, it needs to be decided how the client and
+server will work together to build the project. If the server should
+do most of the work it needs to have all the libraries.
 
 Assuming the server would get all user written files, building
 projects, and doing all the work, a question is what the client should

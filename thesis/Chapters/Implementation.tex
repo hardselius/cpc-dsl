@@ -21,6 +21,10 @@
 %projects.
 
 \section{Tools}
+This section will describe the tools that were used to implement the
+Rheos language. It will serve not only as documentation for the
+language, but also as a reference for someone who might want to create
+their own language using the the same tools.
 
 \subsection{Python}
 The implementation language used for building Rheos was
@@ -46,9 +50,9 @@ implementation a lot easier, the Copernicus system is written in
 python, and python does not exist as a target for the BNF Converter.
 
 Copernicus is designed to run on Unix machines with as few
-dependencies as possible, which makes Java an unsuitable candidate --
-there are possible difficulties of installing a Java runtime
-environment on supercomputers.
+dependencies as possible, which makes Java an unsuitable candidate,
+since it cannot be assumed that every candidate node has a Java
+runtime environment.
 
 Doing the implementation in the C language could have been a possible
 solution, since it integrates well with python. Most Unix system does
