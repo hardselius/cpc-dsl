@@ -70,15 +70,18 @@ result, i.e. what parts still needs more data. A computation like this
 is highly parallel and modular which gives a possibility of using more
 resources to speed up the entire computation.
 
-An example of such a workflow would be a Markov state modeling. Where
-the different states are states in molecular simulations. A large
-number of simulation states would start from different states and
-gather data for the analysis stage. The Markov state model gives a
-course-grained description of a simulated system, resulting in a
-transition matrix between states, and their static statistical
-weights. This can be used in an iterative way by identifying
-under-sampled regions and adaptively sample those, resulting in a
-feedback loop such as in \autoref{fig:workflow}.
+An example of such a workflow would be a Markov state
+modeling. Grouping molecular simulations together depending on
+characteristics of the result would be the states in such a Markov
+state. The characteristics can be any property of molecules, including
+the its shape. A large number, in the order of thousands, of
+simulation states would start from different states and gather data
+for the analysis stage. The Markov state model gives a course-grained
+description of a simulated system, resulting in a transition matrix
+between states, and their static statistical weights. This can be used
+in an iterative way by identifying under-sampled regions and
+adaptively sample those, resulting in a feedback loop such as in
+\autoref{fig:workflow}.
 
 %\highlight{example figures ?}
 
@@ -291,17 +294,21 @@ of a project is shown in \myref{figure}{fig:cpcprojectmodel}.
   \label{fig:cpcprojectmodel}
 \end{figure}
 
-In this project Grompp takes inputs and generates topology files. The
-list \verb#conf[]# is the configurations for each
-simulation. \verb#Mdrun# then takes the topology files as inputs and
-runs the simulations. Even though this example does not have a
-feedback to generate more simulations, the Copernicus system is still
-very useful. When having access to limit computation hours on
-different systems, users could just split the list \verb#conf[]# and
-split up the jobs, while just repeating the same workflow with
-different inputs, and still get the same data. If this was not
-possible the user would need save the state of the computation and
-send potentially very large amount of data between the systems.
+Both \emph{Grompp} and \emph{Mdrun} is a part of \emph{Gromacs} which
+is a molecular dynamics package primarily designed for biomolecular
+system. Grompp is a pre-processor for simulations, which include
+checks of validity of the input. Mdrun is the main engine in Gromacs
+where the actual simulation happens. In this project Grompp takes
+inputs and generates topology files. The list \verb#conf[]# is the
+configurations for each simulation. Mdrun then takes the topology
+files as inputs and runs the simulations. Even though this example
+does not have a feedback to generate more simulations, the Copernicus
+system is still very useful. When having access to limit computation
+hours on different systems, users could just split the list
+\verb#conf[]# and split up the jobs, while just repeating the same
+workflow with different inputs, and still get the same data. If this
+was not possible the user would need save the state of the computation
+and send potentially very large amount of data between the systems.
 
 %\highlight{types, monitoring, provenance?}
 
