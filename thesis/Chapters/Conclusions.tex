@@ -1,6 +1,6 @@
 \chapter{Conclusions}
 
-\section{The problem at hand}
+\section{The Problem At Hand}
 As the main objective was to find a solution to Copernicus problem of
 describing its projects, Rheos is an answer to this projects main
 goal. It is possible to describe computational project for Copernicus
@@ -16,24 +16,37 @@ Rheos is simple because of its limited capabilities. The point of the
 DSL is to describe the project and not to execute or evaluate any
 code, but it is still a powerful tool for the users.
 
+\section{State of the Implementation}
+While the Rheos never got to a state where it could be integrated with
+Copernicus, and still has some implementation steps that needs to be
+addressed, the project as a whole got very far. Over the course of the
+last months, Rheos has evolved from just being a replacement for the
+XML-description of Copernicus' input to a much more powerful
+language. Much time was spent on design and re-design of the
+language. New features was continuously added to the language which
+made it hard to for the project to reach the point where Rheos was
+integrated with Copernicus. It is important to have a powerful tool so
+that Rheos is useful to the users, and that is why adding features was
+prioritized. The integration with Copernicus was left to its
+developers.
 
-\section{What Rheos became}
+\section{What Rheos Became}
 
-\subsection{A new approach}
-Rheos is a completely new solution for input to systems type
-Copernicus. The language is designed for Copernicus and its users, but
-using it for different systems would probably not be productive. The
-idea is to fast and easily understand and use Rheos as a minor step
-when using a Copernicus system for computations, which is not the
-purpose for other distributed processing systems. The need for a
-solution like Rheos has probably not been encountered before
-Copernicus was developed.
+\subsection{A New Approach}
+Rheos is a completely new solution for input to systems like
+Copernicus. The language is designed specifically for Copernicus and
+its users. The idea is for users to fast and easily understand and use
+Rheos as a minor step when running computations on a Copernicus
+system. This is not the purpose for other distributed processing
+systems. The need for a solution like Rheos has probably not been
+encountered before Copernicus was developed, because of reasons like
+this.
 
 Packages like Hadoop has the intention of building application which
 interfaces with a distributed processing system, which is not the
-desired approach of Rheos and Copernicus.
+desired approach for Rheos and Copernicus.
 
-\subsection{Programming style}
+\subsection{Programing Style}
 Using Rheos for describing computational projects is a sort of
 metaprogramming. Rheos describes and manipulates how a Copernicus
 system should evaluate a project. It is not the intention for users
@@ -44,17 +57,19 @@ and send them to a Copernicus system.
 Rheos has a flow-based nature, which is necessary to correctly
 describe projects in Copernicus. There are also some functional
 aspects to the language, which makes describing projects easier and
-provides a good overview of networks as the code will be dense.
+provides a good overview of networks as the code will be dense. The
+user can choose to describe its project as both a workflow and with
+some functional ways of initializing components in the network.
 
 
-\subsection{Powerful description language}
+\subsection{Powerful Description Language}
 The DSL is stronger than just a set of macros. With Rheos it is
 possible to express generic parallel algorithms which is not the case
 with macros for just adding components and connections. Pre-defined
 code would be easier for users to understand and use with the
 definition and the type-system available. As the code describes
-networks they it should be easier to understand what the network
-actually look like. 
+networks it should be easier to understand what the network actually
+look like.
 
 The strong type-system makes Rheos a much safer way of building
 networks compared to the old input system where computations would
@@ -64,11 +79,12 @@ description language. It makes using pre-defined code much easier for
 users, where they can for example map functions with any kind of
 inputs.
 
-\section{State of the implementation}
-While the Rheos never got to a state where it could be integrated with
-Copernicus, and still has some implementation steps that needs to be
-addressed, the project as a whole got very far. Over the course of the
-last months, Rheos has evolved from just being a replacement for the
-XML-description of Copernicus' input to a much more powerful
-language. Much time was spent on design and re-design, which has both
-advantages and disadvantages.
+With Rheos, Copernicus can now be used by non-developer users and they
+can still use it as a powerful tool. This is very important since many
+of the intended users are included in this category, and was the
+inspiration for the entire project. It is still possible to use Rhoes
+in a complicated way, which developers do. Since Rheos supports
+arbitrary executables, developers can easily add new modules to the
+language. In the end Rheos has met the needs of Copernicus and made it
+easy for users to describe complex or big computations in a simple
+way.
