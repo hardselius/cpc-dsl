@@ -42,9 +42,10 @@ systems. The need for a solution like Rheos has probably not been
 encountered before Copernicus was developed, because of reasons like
 this.
 
-Packages like Hadoop has the intention of building application which
-interfaces with a distributed processing system, which is not the
-desired approach for Rheos and Copernicus.
+The intention behind software like Hadoop, is to supply a platform on
+which developers can create new applications without having to worry
+about coordination of resources, since it is taken care of by the
+framework. This is not the desired approach for Rheos and Copernicus.
 
 \subsection{Programing Style}
 Using Rheos for describing computational projects is a sort of
@@ -64,12 +65,12 @@ some functional ways of initializing components in the network.
 
 \subsection{Powerful Description Language}
 The DSL is stronger than just a set of macros. With Rheos it is
-possible to express generic parallel algorithms which is not the case
-with macros for just adding components and connections. Pre-defined
-code would be easier for users to understand and use with the
-definition and the type-system available. As the code describes
-networks it should be easier to understand what the network actually
-look like.
+possible to express generic parallel algorithms, which would be too
+advanced, or even impossible, with ordinary macros for just adding
+components and connections. Pre-defined code would be easier for users
+to understand and use with the definition and the type-system
+available. As the code describes networks it should be easier to
+understand what the network actually look like.
 
 The strong type-system makes Rheos a much safer way of building
 networks compared to the old input system where computations would
