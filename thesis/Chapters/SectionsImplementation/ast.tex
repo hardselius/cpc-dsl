@@ -1,9 +1,9 @@
 The idea behind an abstract syntax tree (AST) is to represent the
 abstract syntactic structure of the source code in tree form. Each
-node in the tree represents some structure occurring in the source. The
-AST provides a good structure for later compiler stages since it omits
-details having to do with the source language, and only contains
-information about the essential structure of the program.
+node in the tree represents some structure occurring in the
+source. The AST provides a good structure for later compiler stages
+since it omits details having to do with the source language, and only
+contains information about the essential structure of the program.
 
 The AST is implemented using node classes for important language
 constructs. All these node classes extends an abstract base
@@ -11,8 +11,8 @@ class. Since Python is dynamically typed, the concept of interfaces
 does not really exist. Interfaces, commonly referred to as
 ``protocols'', are implicit. Determining these interfaces is based on
 implementation introspection. The implementation of the abstract base
-is given in \myref{listing}{code:abstractnode}
-below \citep{pycparser:online}.
+is given in \autoref{code:abstractnode} below
+\citep{pycparser:online}.
 
 \lstset{
   caption = {An abstract base class for AST nodes},
