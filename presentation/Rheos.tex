@@ -1,56 +1,76 @@
 \documentclass[10pt]{beamer}
 \usetheme{Hannover}
 \useinnertheme{circles}
-\usecolortheme{dove}
+\usecolortheme{seagull}
+\usepackage{palatino}
 \usefonttheme{structuresmallcapsserif}
 
+\setbeamercovered{dynamic}
 
 \begin{document}
-
 \title{Rheos}
 \subtitle{A Domain-specific language for high-level sampling tasks in
   high-performance computing}
 \author[Hardselius \and Almqvist]{Martin Hardselius \and Viktor Almqvist}
 
 
+% ******************************************************************
+% TITLE PAGE
+% ******************************************************************
 \begin{frame}
   \titlepage
 \end{frame}
 
 
+% ******************************************************************
+% TOC
+% ******************************************************************
 \begin{frame}
 \frametitle{Outline}
+\pause
 \tableofcontents[pausesections]
 \end{frame}
 
 
-\begin{frame}
-  \frametitle{Frame Title}
-  \framesubtitle{Frame subtitle}
-
-  aolnwfijabnaiwfnwa
-\end{frame}
-
-
+% ******************************************************************
+% INTRODUCTION
+% ******************************************************************
 \section{Introduction}
 \begin{frame}
-  \frametitle{Introduction}
+\frametitle{title}
+\begin{itemize}
+\item Increasing need for computational power
+\pause
+\item Grids and cloud computing
+\pause
+\item Manycore systems
+\end{itemize}
 \end{frame}
 
 
-\subsection{Something...}
-
-
+% **************************************************
+% HIGH-PERFORMANCE COMPUTING
+% **************************************************
+\subsection*{High-performance computing}
 \begin{frame}
-  \frametitle{Introduction}
-  \framesubtitle{Something...}
+  \frametitle{High-performance computing}
+%  \framesubtitle{High-performance computing}
   Foo...
 \end{frame}
 
 
-\subsection{Something else...}
+% **************************************************
+% COPERNICUS
+% **************************************************
+\subsection*{Copernicus}
+\begin{frame}
+  \frametitle{Introduction}
+  \framesubtitle{Copernicus}
+  Foo...
+\end{frame}
 
 
+\subsection*{Something else...}
 \begin{frame}
   \frametitle{Introduction}
   \framesubtitle{Something else...}
@@ -58,36 +78,134 @@
 \end{frame}
 
 
-\section{Copernicus}
-
-
+% ******************************************************************
+% RHEOS
+% ******************************************************************
+\section{Rheos}
 \begin{frame}
-  \frametitle{Copernicus}
-  Copernicus is kind of cool!
+  \frametitle{Rheos}
+  Rheos is awesome!
 \end{frame}
 
 
-\subsection{Copernicus}
-
-
+% **************************************************
+% DOMAIN-SPECIFIC LANGUAGE
+% **************************************************
+\subsection*{Domain-specific language}
 \begin{frame}
-  
+\frametitle{Rheos}
+\framesubtitle{A domain-specific langugage}
+
+\begin{itemize}
+\pause
+\item External DSL
+\pause
+\item Python
+\end{itemize}
+
 \end{frame}
 
 
-\subsection{Copernicus}
-
-
+% **************************************************
+% SYNTAX
+% **************************************************
+\subsection*{Example}
 \begin{frame}
-  
+\frametitle{Language description}
+\framesubtitle{Example code}
 \end{frame}
 
 
-\subsection{Copernicus}
-
-
+% **************************************************
+% TYPING
+% **************************************************
+\subsection*{Types}
 \begin{frame}
-  
+\frametitle{Language description}
+\framesubtitle{Types}
+
+\end{frame}
+
+
+% **************************************************
+% IMPORT STATEMENTS AND NEW TYPES
+% **************************************************
+\subsection*{Imports and New Types}
+\begin{frame}[fragile]
+\frametitle{Language description}
+\framesubtitle{Imports and new Types}
+\pause
+
+\begin{block}{Import statements}
+\begin{verbatim}
+  import path.to.file
+\end{verbatim}
+\end{block}
+\pause
+
+\begin{block}{New types}
+\begin{verbatim}
+type setting (
+  int           : i,
+  float         : f,
+  somenewtype[] : snt_array
+)
+\end{verbatim}
+\end{block}
+\end{frame}
+
+
+% **************************************************
+% COMPONENTS
+% **************************************************
+\subsection*{Components}
+\begin{frame}
+\frametitle{Language description}
+\framesubtitle{Components}
+
+\end{frame}
+
+
+% **********************************
+% ATOMS
+% **********************************
+\subsubsection*{Atoms}
+\begin{frame}
+\frametitle{Components}
+\framesubtitle{Atoms}
+\begin{proof}
+  apap
+\end{proof}
+\end{frame}
+
+
+% **********************************
+% NETWORKS
+% **********************************
+\subsubsection*{Networs}
+\begin{frame}
+\frametitle{Components}
+\framesubtitle{Networks}
+\end{frame}
+
+
+% **********************************
+% NETWORK DESCRIPTION STATEMENTS
+% **********************************
+\subsubsection*{Network description statements}
+\begin{frame}
+\frametitle{Networks}
+\framesubtitle{Network description statements}
+\end{frame}
+
+
+% ******************************************************************
+% CONCLUSIONS
+% ******************************************************************
+\section{Conclusions}
+\begin{frame}
+  \frametitle{Rheos}
+  Rheos is awesome!
 \end{frame}
 
 
