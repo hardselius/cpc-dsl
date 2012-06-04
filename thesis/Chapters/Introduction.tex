@@ -10,11 +10,11 @@ data are often distributed geographically, as are the computing
 resources they rely on.
 
 Both high-performance computing and embedded systems are moving
-towards manycore systems, and in the next few years we can expect to
+towards many-core systems, and in the next few years we can expect to
 see platforms with 100's or more processor cores \citep{leupers:2011},
 maybe even 1000's or tens of 1000's cores. The K Computer, built by
-Fujitsu, contains more than 80,000 CPU's with eight cores
-each. Computational clusters and clouds built out of manycore systems
+Fujitsu, contains more than 80,000 Nodes with eight cores
+each. Computational clusters and clouds built out of many-core systems
 will offer unprecedented quantities of computational
 resources. Scaling software and managing these resources will offer a
 tremendous challenge \citep{csail:2009}.
@@ -23,11 +23,11 @@ tremendous challenge \citep{csail:2009}.
 \section{Background}
 To run computations effectively on modern supercomputers and computer
 clusters the applications need \emph{strong scaling}. In
-high-performance computing, strong scaling is defined as how the time-to-solution
-varies with the number of processor cores available for a fixed
-\emph{total} problem size. When this is a limitation for applications
-the available resources are not used to reach highest possible
-performance.
+high-performance computing, strong scaling is defined as how the
+time-to-solution varies with the number of processor cores available
+for a fixed \emph{total} problem size. When this is a limitation for
+applications, the available resources are not used to reach highest
+possible performance.
 
 Many interesting real-world applications (all that are not
 embarrassingly parallel) require some inter-process communication for
@@ -40,17 +40,22 @@ parallelization limits due to the finite number of particles
 simulated, but there is a possibility to achieve strong scaling, since
 many of these computations are of statistical nature. Relying on
 sampling of many individual simulations makes it possible to
-distribute the workload on supercomputers and compute clusters. This
-is a parallelization of such simulations which gives a significant
+distribute the workload on supercomputers and compute
+clusters. Parallelization of such simulations gives a significant
 performance boost when a high number of cores are at disposal.
 
 The high-level way of parallelizing can generally be described by a very
 simple workflow. The workflow contains a simulation and an analysis
 stage with a feedback. 
 
-\begin{figure}[H]
+\begin{figure}[H]  
   \centering
   \includegraphics{Chapters/IntroductionIncludes/workflow.png}
+%    \xymatrix{
+%      & & &\\
+%      & *+[F]{Simulation}\ar[r] 
+%      & *+[F]{Analysis}\ar 'r[r] '[ru] '[ull] '[ll] [l] &
+%    }
   \caption{Parallelization workflow}
   \label{fig:workflow}
 \end{figure}
@@ -65,13 +70,16 @@ result, i.e. what parts still needs more data. A computation like this
 is highly parallel and modular which gives a possibility of using more
 resources to speed up the entire computation.
 
-An example of a described workflow would be a Markov stat
-modeling. Where the different states are states in molecular
-simulations. A large number of simulation states would start from
-different states and would gather data for the analysis stage. The
-result would be the different probabilities in the Markov state
-model. The feedback would be directed to the states that still need
-more data.%(few simulations ended in that state)
+An example of such a workflow would be a Markov state modeling. Where
+the different states are states in molecular simulations. A large
+number of simulation states would start from different states and
+gather data for the analysis stage. The Markov state model gives a
+course-grained description of a simulated system, resulting in a
+transition matrix between states, and their static statistical
+weights. This can be used in an iterative way by identifying
+under-sampled regions and adaptively sample those, resulting in a
+feedback loop such as in \autoref{fig:workflow}.
+
 
 \highlight{example figures ?}
 
@@ -81,7 +89,9 @@ more data.%(few simulations ended in that state)
 %dynamics (MD) packages such as Gromacs [10, 17] when run on a system
 %with sufficiently low interconnect latency.
 
-clouds are solutions to run computations on high-performing computer
+
+\subsection{Cloud computing}
+Clouds are solutions to run computations on high-performing computer
 systems. \citet{foster:2008} defines cloud computing as:
 
 \begin{quote} \slshape
@@ -93,11 +103,10 @@ systems. \citet{foster:2008} defines cloud computing as:
 \end{quote}
 
 The resources are opaque to the user who use a pre-defined API to run
-and use the system. This means the system can contain different kind
-of computation power and the user is not affected. Running molecular
-dynamics simulations on a cloud computing resource would need high
-parallelization, such as described above, to achieve a performance
-boost.
+and use the system, an abstract layer that hides the underlying
+architecture. Running molecular dynamics simulations on a cloud
+computing resource would need high parallelization, such as described
+above, to achieve a performance boost.
 
 %cloud computing and Grid computing 360-Degree Compared:
 
@@ -142,17 +151,17 @@ adoption and deployments.''\citep{foster:2008}
 
 %PROVENANCE
 
-Provenance in this context is basically a trace of the computations
-with all the necessary information (data sources, intermediate
-states). This is very important for researchers, in order to track the
-project and be able to recreate the results. Without this the an
-experiment would not be as useful to the researchers as it could be,
-for example to validate their findings. Users can save alot of
-computation hours when having access to provenance information. In
-some cases it is of great use to be able to change something and start
-from an intermediate state of a computation instead of starting from
-scratch. Provenance is a relatively unexplored area within cloud
-computing and can be challenging to provide for general applications.
+\emph{Provenance} is basically a trace of the computations with all
+the necessary information (data sources, intermediate states). This is
+very important for researchers, in order to track the project and be
+able to recreate the results. Without this the an experiment would not
+be as useful to the researchers as it could be, for example to
+validate their findings. Users can save alot of computation hours when
+having access to provenance information. In some cases it is of great
+use to be able to change something and start from an intermediate
+state of a computation instead of starting from scratch. Provenance is
+a relatively unexplored area within cloud computing and can be
+challenging to provide for general applications.
 
 %``Provenance refers to the derivation history of a data product,
 %including all the data sources, intermediate data products, and the
@@ -297,16 +306,15 @@ send potentially very large amount of data between the systems.
 
 \highlight{types, monitoring, provenance?}
 
-The problem with Copernicus has been the lack of a good way to
-describe projects. There were no intuitive way of giving input to the
-system, and that is why this project was formed.
+A problem with Copernicus has been the lack of an intuitive way of
+feeding input to the system, and that is why this project was formed.
 
 
 \section{Problem statement}
 The objective is to find and implement a solution for the need of a
 new way of giving Copernicus information of the users projects. The
 developers specifically stated that the wanted a domain-specific
-language(DSL) for this solution, and that they later on want to add a
+language (DSL) for this solution, and that they later on want to add a
 graphical solution using this DSL.
 
 The DSL should allow users of Copernicus to define their computational
@@ -379,11 +387,11 @@ to a cluster of computers to make use of clusters computational
 power. This is a big difference from Copernicus peer-to-peer styled
 networking. It handles failures at the application level.
 
-To link Hadoop with applications a C++ API and library is
+To link Hadoop with applications, a C++ API and library is
 provided. Using an API like this defeats the purpose of having an easy
 and intuitive way of describing computational projects, but for large
-scale commercial implementation used by professional programmers as
-Hadoop seems to be aimed towards it is probably a good solution.
+scale commercial implementation used by professional programmers, as
+Hadoop seems to be aimed towards, this becomes a viable option.
 
 
 \section{Remaining chapters}
