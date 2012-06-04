@@ -1,20 +1,26 @@
-\frametitle {Language description}
-\framesubtitle{Imports and new Types}
-\pause
+\frametitle {Type-parametrized components}
 
-\begin{block}{Import statements}
+Components can take types as inputs, \emph{meta types}, to allow for
+generic descriptions.
+
+\pause
+\begin{block}{Example}
 \begin{verbatim}
-  import path.to.file
+network net <func f, list l, type t>
+  in ( f.in i
+     , l inputs )
+  out (t[] outputs )
+  {
+  ...
+  }
 \end{verbatim}
 \end{block}
-\pause
 
-\begin{block}{New types}
+\pause
+\begin{block}{Usage:}
 \begin{verbatim}
-type setting (
-  int           : i,
-  float         : f,
-  somenewtype[] : snt_array
-)
+...
+myNet = net <someComp, float[], int> (...)
+...
 \end{verbatim}
 \end{block}
