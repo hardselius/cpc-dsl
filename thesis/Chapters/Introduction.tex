@@ -51,11 +51,6 @@ stage with a feedback.
 \begin{figure}[H]  
   \centering
   \includegraphics[scale=0.7]{gfx/simulationfeedback}
-%    \xymatrix{
-%      & & &\\
-%      & *+[F]{Simulation}\ar[r] 
-%      & *+[F]{Analysis}\ar '[r] '[ru] '[ull] '[ll] [l] &
-%    }
   \caption{Parallelization workflow}
   \label{fig:workflow}
 \end{figure}
@@ -218,6 +213,13 @@ supercomputer, and it allows for larger-scale simulations than would
 be possible with purely distributed systems, while it reduces
 time-to-solution significantly.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{gfx/parallelization.pdf}
+  \caption{Copernicus parallelization model}
+  \label{fig:lolol}
+\end{figure}
+
 The idea behind Copernicus is to exploit the inherent parallelism of
 ensemble simulation and to make use of advanced sampling algorithms,
 while keeping the performance advantages of massively parallel
@@ -273,6 +275,13 @@ also announce to servers when it is available. Multiple worker
 processes can be run on the same system, e.g. supercomputers would run
 a great number of workers to use all the available cores.
 
+\begin{figure}[H]  
+  \centering
+  \includegraphics[width=0.8\textwidth]{gfx/arch.pdf}
+  \caption{Copernicus architecture}
+  \label{fig:arch}
+\end{figure}
+
 Copernicus projects are described by building computational
 \emph{data-flow networks}. Data-flow networks are networks which
 describe how streams of data is sent between different executions.  A
@@ -289,7 +298,7 @@ of a project is shown in \autoref{fig:cpcprojectmodel}.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.4]{Chapters/IntroductionIncludes/example.png}
+  \includegraphics[width=0.8\textwidth]{Chapters/IntroductionIncludes/example.png}
   \caption{Copernicus project model}
   \label{fig:cpcprojectmodel}
 \end{figure}
