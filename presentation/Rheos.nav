@@ -12,54 +12,56 @@
 \headcommand {\slideentry {1}{1}{1}{6/11}{High-performance computing}{0}}
 \headcommand {\beamer@framepages {6}{11}}
 \headcommand {\beamer@subsectionentry {0}{1}{2}{12}{Copernicus}}\headcommand {\beamer@subsectionpages {6}{11}}
-\headcommand {\slideentry {1}{2}{1}{12/12}{Copernicus}{0}}
-\headcommand {\beamer@framepages {12}{12}}
-\headcommand {\slideentry {1}{2}{2}{13/13}{Copernicus}{0}}
-\headcommand {\beamer@framepages {13}{13}}
-\headcommand {\beamer@subsectionentry {0}{1}{3}{14}{Problem statement}}\headcommand {\beamer@subsectionpages {12}{13}}
-\headcommand {\slideentry {1}{3}{1}{14/14}{Problem statement}{0}}
-\headcommand {\beamer@framepages {14}{14}}
-\headcommand {\sectionentry {2}{Rheos}{15}{Rheos}{0}}
-\headcommand {\beamer@sectionpages {5}{14}}
-\headcommand {\beamer@subsectionpages {14}{14}}
-\headcommand {\slideentry {2}{0}{2}{15/17}{}{0}}
-\headcommand {\beamer@framepages {15}{17}}
-\headcommand {\beamer@subsectionentry {0}{2}{1}{18}{Domain-specific language}}\headcommand {\beamer@subsectionpages {15}{17}}
-\headcommand {\slideentry {2}{1}{1}{18/21}{Domain-specific language}{0}}
-\headcommand {\beamer@framepages {18}{21}}
-\headcommand {\beamer@subsectionentry {0}{2}{2}{22}{Types}}\headcommand {\beamer@subsectionpages {18}{21}}
-\headcommand {\slideentry {2}{2}{1}{22/26}{Types}{0}}
-\headcommand {\beamer@framepages {22}{26}}
-\headcommand {\slideentry {2}{2}{2}{27/28}{Types}{0}}
-\headcommand {\beamer@framepages {27}{28}}
-\headcommand {\beamer@subsectionentry {0}{2}{3}{29}{Imports and New Types}}\headcommand {\beamer@subsectionpages {22}{28}}
-\headcommand {\slideentry {2}{3}{1}{29/31}{Imports and New Types}{0}}
-\headcommand {\beamer@framepages {29}{31}}
-\headcommand {\beamer@subsectionentry {0}{2}{4}{32}{Components}}\headcommand {\beamer@subsectionpages {29}{31}}
-\headcommand {\slideentry {2}{4}{1}{32/35}{Components}{0}}
-\headcommand {\beamer@framepages {32}{35}}
-\headcommand {\beamer@subsubsectionentry {0}{2}{4}{1}{36}{Atoms}}
-\headcommand {\slideentry {2}{4}{2}{36/41}{Components}{0}}
-\headcommand {\beamer@framepages {36}{41}}
-\headcommand {\beamer@subsubsectionentry {0}{2}{4}{2}{42}{Networs}}
-\headcommand {\slideentry {2}{4}{3}{42/43}{Components}{0}}
-\headcommand {\beamer@framepages {42}{43}}
-\headcommand {\slideentry {2}{4}{4}{44/45}{Components}{0}}
-\headcommand {\beamer@framepages {44}{45}}
-\headcommand {\slideentry {2}{4}{5}{46/47}{Components}{0}}
-\headcommand {\beamer@framepages {46}{47}}
-\headcommand {\slideentry {2}{4}{6}{48/51}{Components}{0}}
-\headcommand {\beamer@framepages {48}{51}}
-\headcommand {\beamer@subsectionentry {0}{2}{5}{52}{Type-parametrized components}}\headcommand {\beamer@subsectionpages {32}{51}}
-\headcommand {\slideentry {2}{5}{1}{52/54}{Type-parametrized components}{0}}
-\headcommand {\beamer@framepages {52}{54}}
-\headcommand {\sectionentry {3}{Conclusion}{55}{Conclusion}{0}}
-\headcommand {\beamer@sectionpages {15}{54}}
-\headcommand {\beamer@subsectionpages {52}{54}}
-\headcommand {\slideentry {3}{0}{2}{55/55}{}{0}}
-\headcommand {\beamer@framepages {55}{55}}
-\headcommand {\beamer@partpages {1}{55}}
-\headcommand {\beamer@subsectionpages {55}{55}}
-\headcommand {\beamer@sectionpages {55}{55}}
-\headcommand {\beamer@documentpages {55}}
-\headcommand {\def \inserttotalframenumber {20}}
+\headcommand {\slideentry {1}{2}{1}{12/13}{Copernicus}{0}}
+\headcommand {\beamer@framepages {12}{13}}
+\headcommand {\slideentry {1}{2}{2}{14/15}{Copernicus}{0}}
+\headcommand {\beamer@framepages {14}{15}}
+\headcommand {\slideentry {1}{2}{3}{16/18}{Copernicus}{0}}
+\headcommand {\beamer@framepages {16}{18}}
+\headcommand {\beamer@subsectionentry {0}{1}{3}{19}{Problem statement}}\headcommand {\beamer@subsectionpages {12}{18}}
+\headcommand {\slideentry {1}{3}{1}{19/19}{Problem statement}{0}}
+\headcommand {\beamer@framepages {19}{19}}
+\headcommand {\sectionentry {2}{Rheos}{20}{Rheos}{0}}
+\headcommand {\beamer@sectionpages {5}{19}}
+\headcommand {\beamer@subsectionpages {19}{19}}
+\headcommand {\slideentry {2}{0}{2}{20/22}{}{0}}
+\headcommand {\beamer@framepages {20}{22}}
+\headcommand {\beamer@subsectionentry {0}{2}{1}{23}{Domain-specific language}}\headcommand {\beamer@subsectionpages {20}{22}}
+\headcommand {\slideentry {2}{1}{1}{23/26}{Domain-specific language}{0}}
+\headcommand {\beamer@framepages {23}{26}}
+\headcommand {\beamer@subsectionentry {0}{2}{2}{27}{Types}}\headcommand {\beamer@subsectionpages {23}{26}}
+\headcommand {\slideentry {2}{2}{1}{27/31}{Types}{0}}
+\headcommand {\beamer@framepages {27}{31}}
+\headcommand {\slideentry {2}{2}{2}{32/33}{Types}{0}}
+\headcommand {\beamer@framepages {32}{33}}
+\headcommand {\beamer@subsectionentry {0}{2}{3}{34}{Imports and New Types}}\headcommand {\beamer@subsectionpages {27}{33}}
+\headcommand {\slideentry {2}{3}{1}{34/36}{Imports and New Types}{0}}
+\headcommand {\beamer@framepages {34}{36}}
+\headcommand {\beamer@subsectionentry {0}{2}{4}{37}{Components}}\headcommand {\beamer@subsectionpages {34}{36}}
+\headcommand {\slideentry {2}{4}{1}{37/40}{Components}{0}}
+\headcommand {\beamer@framepages {37}{40}}
+\headcommand {\beamer@subsubsectionentry {0}{2}{4}{1}{41}{Atoms}}
+\headcommand {\slideentry {2}{4}{2}{41/46}{Components}{0}}
+\headcommand {\beamer@framepages {41}{46}}
+\headcommand {\beamer@subsubsectionentry {0}{2}{4}{2}{47}{Networs}}
+\headcommand {\slideentry {2}{4}{3}{47/48}{Components}{0}}
+\headcommand {\beamer@framepages {47}{48}}
+\headcommand {\slideentry {2}{4}{4}{49/50}{Components}{0}}
+\headcommand {\beamer@framepages {49}{50}}
+\headcommand {\slideentry {2}{4}{5}{51/52}{Components}{0}}
+\headcommand {\beamer@framepages {51}{52}}
+\headcommand {\slideentry {2}{4}{6}{53/56}{Components}{0}}
+\headcommand {\beamer@framepages {53}{56}}
+\headcommand {\beamer@subsectionentry {0}{2}{5}{57}{Type-parametrized components}}\headcommand {\beamer@subsectionpages {37}{56}}
+\headcommand {\slideentry {2}{5}{1}{57/59}{Type-parametrized components}{0}}
+\headcommand {\beamer@framepages {57}{59}}
+\headcommand {\sectionentry {3}{Conclusion}{60}{Conclusion}{0}}
+\headcommand {\beamer@sectionpages {20}{59}}
+\headcommand {\beamer@subsectionpages {57}{59}}
+\headcommand {\slideentry {3}{0}{2}{60/60}{}{0}}
+\headcommand {\beamer@framepages {60}{60}}
+\headcommand {\beamer@partpages {1}{60}}
+\headcommand {\beamer@subsectionpages {60}{60}}
+\headcommand {\beamer@sectionpages {60}{60}}
+\headcommand {\beamer@documentpages {60}}
+\headcommand {\def \inserttotalframenumber {21}}
