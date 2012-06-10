@@ -2,33 +2,19 @@
 
 \begin{frame}
 \frametitle{Rheos}
+\framesubtitle{A Domain-Specific Language}
 
 \begin{itemize}
 \pause
 \item Descriptive domain-specific language
-\pause
-\item Flow-based style
-%\pause
-%\item 
-\end{itemize}
-\end{frame}
-
-
-% **************************************************
-% DOMAIN-SPECIFIC LANGUAGE
-% **************************************************
-\subsection*{Domain-specific language}
-\begin{frame}
-\frametitle{Rheos}
-\framesubtitle{A domain-specific langugage}
-
-\begin{itemize}
 \pause
 \item External DSL
 \pause
 \item Implemented in Python
 \pause
 \item No dependencies! Except PLY...
+\pause
+\item Flow-based style
 \end{itemize}
 
 \end{frame}
@@ -65,7 +51,7 @@ components.
 \end{description}
 
 \pause
-\begin{block}{New types}
+\begin{block}{Type}
 \begin{verbatim}
 type setting (
   int     : i,
@@ -84,14 +70,14 @@ type setting (
 Rheos lets you reference element-types of records.
 
 \pause
-\begin{block}{Some record}
+\begin{example}
 \begin{verbatim}
 type sometype (
   setting.i  : i,
   setting.f* : f
 )
 \end{verbatim}
-\end{block}
+\end{example}
 
 \end{frame}
 
@@ -107,11 +93,11 @@ type sometype (
 Rheos supports importing modules.
 
 \pause
-\begin{block}{Import statements}
+\begin{example}
 \begin{verbatim}
   import path.to.file
 \end{verbatim}
-\end{block}
+\end{example}
 
 \pause
 Right now, each file is its own module.
@@ -126,17 +112,15 @@ Right now, each file is its own module.
 \frametitle{Language description}
 \framesubtitle{Components}
 
-\emph{Components} are the methods or functions of Rheos.\\
-\vspace{10pt}
-\pause
-Two types of components:
-\begin{itemize}
-\pause
-\item Atoms
-\pause
-\item Networks
-\end{itemize}
+\begin{itemize}\pause
+\item \emph{Components} are the methods or functions of Rheos.\pause
 
+\item Two types of components:\pause
+  \begin{itemize}
+  \item Atoms\pause
+  \item Networks
+  \end{itemize}
+\end{itemize}
 \end{frame}
 
 
@@ -182,15 +166,37 @@ Three different kinds of executables:
 % **********************************
 % NETWORKS
 % **********************************
-\subsubsection*{Networs}
+\subsubsection*{Networks}
+\begin{frame}[fragile]{Networks}
+
+\begin{itemize}\pause
+\item Networks are the components that instantiate and connect other
+  components.\pause
+\item A network be dynamic through the use of a controller.\pause
+\item Suppose we want to build a component like this:
+\end{itemize}
+
+\pause
+
+
+\begin{center}
+  \phantom{\includegraphics<1-4>[width=0.6\textwidth]{gfx/network.pdf}}
+  \includegraphics<5>[width=0.6\textwidth]{gfx/network.pdf}
+\end{center}
+
+\end{frame}
+
+
 \begin{frame}[fragile]
 \frametitle{Components}
 \framesubtitle{Networks}
 
-Networks are the components that instantiate and connect other
-components.
+\begin{itemize}\pause
+\item This is what the coreresponding code looks like:
+\end{itemize}
 
 \pause
+
 \begin{block}{Network}
 \begin{verbatim}
 network addmul
@@ -208,25 +214,6 @@ network addmul
 \end{frame}
 
 
-%\begin{frame}[fragile]
-%\frametitle{Networks}
-%\framesubtitle{Network description statements}
-%
-%So far, we have seen \emph{instantiations} and \emph{connections}.
-%
-%\pause
-%\begin{block}{Intantiation}
-%\verb| myAdd = add(...)|
-%\end{block}
-%
-%\pause
-%\begin{block}{Connection}
-%\verb|out.q <- myMul.out.q|  
-%\end{block}
-%
-%\end{frame}
-
-
 \begin{frame}[fragile]
 \frametitle{Networks}
 \framesubtitle{Alternative ways}
@@ -234,7 +221,7 @@ network addmul
 There are alternative ways to instantiate components.
 
 \pause
-\begin{block}{Network alternative}
+\begin{example}
 \begin{verbatim}
 network addmul
   in ( float a
@@ -250,7 +237,7 @@ network addmul
   out.q       <- myMul.out.q
   }
 \end{verbatim}
-\end{block}
+\end{example}
 \end{frame}
 
 
@@ -261,9 +248,10 @@ network addmul
 We can even make implicit instances!
 
 \pause
-\begin{block}{Implicit instance}
-\end{block}
+\begin{example}
 \verb|myAddMul = mul(add(in.a, in.b).out.q, in.c)|
+\end{example}
+
 \end{frame}
 
 
@@ -271,7 +259,9 @@ We can even make implicit instances!
 \frametitle{Networks}
 \framesubtitle{Controllers}
 
-There is a third kind of statement.
+\begin{itemize}\pause
+\item There is a third kind of statement.
+\end{itemize}
 
 \pause
 \begin{block}{Controllers}
@@ -282,26 +272,28 @@ controller(var.in.net, var.out.net)
 \end{verbatim}
 \end{block}
 
-\pause
-Controllers are allowed to alter the internal network.
-\vspace{10pt}
 
-\pause
-The \verb|controller| statement is associated with the compound type
-\verb|network|.
+\begin{itemize}\pause
+\item Controllers are allowed to alter the internal network.\pause
 
+\item The \verb|controller| statement is associated with the compound
+  type \verb|network|.
+\end{itemize}
 \end{frame}
 
 
 \subsection*{Type-parametrized components}
-\begin{frame}[fragile]
+\begin{frame}[shrink=4,fragile]
 \frametitle{Type-parametrized components}
 
-Components can take types as inputs, \emph{meta types}, to allow for
-generic descriptions.
+\begin{itemize}\pause
+\item Components can take types as inputs, \emph{meta types}, to allow for
+  generic descriptions.
+\end{itemize}
 
 \pause
-\begin{block}{Example}
+
+\begin{example}
 \begin{verbatim}
 network net <func f, list l, type t>
   in ( f.in i
@@ -311,9 +303,10 @@ network net <func f, list l, type t>
   ...
   }
 \end{verbatim}
-\end{block}
+\end{example}
 
 \pause
+
 \begin{block}{Usage:}
 \begin{verbatim}
 ...

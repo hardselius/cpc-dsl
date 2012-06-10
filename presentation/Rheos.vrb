@@ -1,10 +1,13 @@
 \frametitle {Type-parametrized components}
 
-Components can take types as inputs, \emph{meta types}, to allow for
-generic descriptions.
+\begin{itemize}\pause
+\item Components can take types as inputs, \emph{meta types}, to allow for
+  generic descriptions.
+\end{itemize}
 
 \pause
-\begin{block}{Example}
+
+\begin{example}
 \begin{verbatim}
 network net <func f, list l, type t>
   in ( f.in i
@@ -14,9 +17,10 @@ network net <func f, list l, type t>
   ...
   }
 \end{verbatim}
-\end{block}
+\end{example}
 
 \pause
+
 \begin{block}{Usage:}
 \begin{verbatim}
 ...
