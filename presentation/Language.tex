@@ -230,8 +230,8 @@ network addmul
   out ( float q)
   {
   myAdd       =  add()
-  myAdd.a     <- in.a
-  myAdd.b     <- in.b
+  myAdd.in.a  <- in.a
+  myAdd.in.b  <- in.b
   myMul       =  mul(in(2))
   myMul.in(1) <- myAdd.out(0)
   out.q       <- myMul.out.q
@@ -258,10 +258,6 @@ We can even make implicit instances!
 \begin{frame}[fragile]
 \frametitle{Networks}
 \framesubtitle{Controllers}
-
-\begin{itemize}\pause
-\item There is a third kind of statement.
-\end{itemize}
 
 \pause
 \begin{block}{Controllers}
