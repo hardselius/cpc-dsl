@@ -1,4 +1,4 @@
-\frametitle {Type-parametrized components}
+\frametitle{Type-parametrized components}
 
 \begin{itemize}\pause
 \item Components can take types as inputs, \emph{meta types}, to allow for
