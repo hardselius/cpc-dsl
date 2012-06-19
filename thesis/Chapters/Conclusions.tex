@@ -16,6 +16,30 @@ Rheos is simple because of its limited capabilities. The point of the
 DSL is to describe the project and not to execute or evaluate any
 code, but it is still a powerful tool for the users.
 
+\section{Rheos versus XML}
+To demonstrate benefit of the simplicity and descriptive difference of
+Rheos compared to XML code, the following Rhoes code and the XML code
+in \autoref{ch:ec} both describes the project in
+\autoref{fig:cpcprojectmodel}.
+
+\begin{verbatim}
+import gromacs
+
+type mdrun_output '''Set of mdrun outputs'''
+  ( file : conf
+  , file : xtc
+  , file : trr
+  , file : edr )
+
+network project_network '''Project network'''
+  in ( file[] conf      '''The simulation parameters'''
+     , file[] mdp
+     , file[] top )
+  out ( mdrun_output[] results )
+  { c = mdrun(grompp(conf, mdp, top).out.tpr)
+    out.results <- c.out.results }
+\end{verbatim}
+
 \section{State of the Implementation}
 While the Rheos never got to a state where it could be integrated with
 Copernicus, and still has some implementation steps that needs to be
