@@ -1,0 +1,68 @@
+\chapter{Example code}\label{ch:ec}
+This is the XML code describing the project network from
+\autoref{fig:cpcprojectmodel}.
+
+
+\begin{verbatim}
+<?xml version="1.0"?>
+<cpc>
+    <import name="gromacs" />
+
+    <type id="conf_array" base="array" member-type="file">
+        <desc>An array of conf files</desc>
+    </type>
+
+    <type id="mdp_array" base="array" member-type="file">
+        <desc>An array of conf files</desc>
+    </type>
+
+    <type id="top_array" base="array" member-type="file">
+        <desc>An array of conf files</desc>
+    </type>
+
+    <type id="mdrun_output" base="record">
+        <desc>Set of mdrun outputs</desc>
+        
+        <field type="file" id="conf" />
+        <field type="file" id="xtc" />
+        <field type="file" id="trr" />
+        <field type="file" id="edr" />
+    </type>
+
+    <type id="mdrun_output_array" base="array" member-type="file">
+        <desc>An array of conf files</desc>
+    </type>
+
+    <function id="project_network" type="network">
+        <desc>Project network</desc>
+        <inputs>
+            <field type="conf_array" id="conf">
+                <desc>The simulation parameters</desc>
+            </field>
+            <field type="mdp_array" id="mdp" />
+            <field type="top_array" id="top" />
+        </inputs>
+        <outputs>
+            <field type="mdrun_output_array" id="results" />
+        </outputs>
+        <network>
+            <instance id="grompp" function="gromacs::grompp"/>
+            <instance id="mdrun" function="gromacs::mdrun"/>
+
+            <connection src="self:ext_in.conf"
+                        dest="grompp:in.conf" />
+            <connection src="self:ext_in.mdp" 
+                        dest="grompp:in.mdp" />
+            <connection src="self:ext_in.top" 
+                        dest="grompp:in.top" />
+
+            <connection src="grompp:out.tpr"
+                        dest="mdrun:in.tpr" />
+
+            <connection src="mdrun:out.results"
+                        dest="self:ext_in.results" />
+        </network>
+    </function>
+
+</cpc>
+\end{verbatim}
