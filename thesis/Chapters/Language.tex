@@ -27,7 +27,7 @@ the different solutions. At each meeting the developers was presented
 with a draft of the latest version of the DSL.
 
 
-\section{General style and features}
+\section{General Style \& Features}
 The DSL is a descriptive language which has four types of top-level
 syntactic definitions: atoms, networks, imports and new types. Atoms
 and networks are \emph{components} which are connected to build
@@ -173,15 +173,15 @@ look like \verb#func.in.length# or \verb#func(0)(1)# which both are
 the same thing.
 
 
-\subsection{The 'network' Type}
+\subsection{The `network' type}
 Besides the syntactic objects \verb#network#, which have types
 described in the previous section, there is a type \verb#network#. The
-type \verb#network# is mainly used with controllers
-(\autoref{sec:control}). The type \verb#network# refers to a record
+type \verb#network# is mainly used with controllers, as seen in
+\autoref{sec:control}. The type \verb#network# refers to a record
 containing a set of instantiated components and a set of connections.
 
 
-\subsection{Meta Types}\label{sec:meta}
+\subsection{Meta types}\label{sec:meta}
 Components can take types as inputs, called meta types, to be able to
 define generic components in networks. The parameters are defined with
 a variable name and a type group. There are currently three different
@@ -240,7 +240,7 @@ library so users do not have to concern themselves with external
 An atom has a header and an option part. The header contains the name
 of the atom, the type parameter definition, the type signature of the
 outputs and inputs, and what type of executable the atom uses.
-Execution is implementation-specific. Currenty, there are three
+Execution is implementation-specific. Currently, there are three
 different types of executables in the current version: \verb#python#,
 \verb#python-extended#, and \verb#external#. \verb#python# means that
 the atom calls built-in functions of python, \verb#python-extended#
@@ -503,7 +503,7 @@ function would transform a record of any number of arrays to an array
 of records. It would also work the other way around. An example of
 when transpose could be used would be when defining a map
 component. One would want to send in a lists for each argument of the
-component in question, and tranpose the argument lists to a list of
+component in question, and transpose the argument lists to a list of
 records. This way each one of the records represents the inputs for a
 single instance of the component. Consider the following two types:
 

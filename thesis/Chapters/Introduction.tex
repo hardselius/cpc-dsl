@@ -78,14 +78,6 @@ in an iterative way by identifying under-sampled regions and
 adaptively sample those, resulting in a feedback loop such as in
 \autoref{fig:workflow}.
 
-%\highlight{example figures ?}
-
-%Molecular dynamics simulations pose significant computaional
-%challanges. The systems are big enough to be parallelized, with
-%100-500 particles assigned to each core in high-performance molecular
-%dynamics (MD) packages such as Gromacs [10, 17] when run on a system
-%with sufficiently low interconnect latency.
-
 
 \subsection{Cloud computing}
 Clouds are solutions to run computations on high-performing computer
@@ -104,12 +96,6 @@ and use the system, an abstract layer that hides the underlying
 architecture. Running molecular dynamics simulations on a cloud
 computing resource would need high parallelization, such as described
 above, to achieve a performance boost.
-
-%cloud computing and Grid computing 360-Degree Compared:
-
-%In a Cload, different levels of services can be offered to an end
-%user, the user is only exposed to a pre-defined API, and the lower
-%level resources are opaque to the user...
 
 There are a few challenges when using clouds. Defining an API for
 users to discover, request and use resources provided by the cloud can
@@ -140,7 +126,7 @@ application. ``Essentially monitoring in clouds requires a fine
 balance of business application monitoring, enterprise server
 management, virtual machine monitoring, and hardware maintenance, and
 will be a significant challenge for cloud computing as it sees wider
-adoption and deployments.''\citep{foster:2008}
+adoption and deployments.'' \citep{foster:2008}
 
 %Another challenge that virtualization brings to clouds is the
 %potention difficulty in fine-control over the monitoring of
@@ -160,41 +146,11 @@ state of a computation instead of starting from scratch. Provenance is
 a relatively unexplored area within cloud computing and can be
 challenging to provide for general applications.
 
-%``Provenance refers to the derivation history of a data product,
-%including all the data sources, intermediate data products, and the
-%procedures that were applied to produce the data product.''
-
-%On the other hand, clouds are becoming the future playground for
-%e-science research, and provenance management is extremely important
-%in order to track the processes and support the reproducibility of
-%scientific results.
-
-%Provenance is still an unexplored area in cloud environments, in
-%which we need to deal with even more challenging issues such as
-%tracking data production across different service providers (with
-%different platform visibility and access policies) and across
-%different software and hardware abstraction layers within one
-%provider.
-
 One way of programming/using a cloud can be to use workflow
 systems. The workflow can be represented as a graph of individual
 executions of applications where the edges are dependencies and how
 data are passed between the applications. Users can submit these
 workflow schemes to the cloud using the API interface.
-
-%PROGRAMMING MODEL
-
-%More specifically, a workflow system allows the composition of
-%individual (single step) components into a complex dependency graph,
-%and it governs the flow of a data and/or control through these
-%components.
-
-
-%The data Grid...
-
-%In an increasing number of scientific disciplines, large data
-%collections are emergin as important community resources.
-
 
 There is a cloud solution for running parallelized molecular
 simulations and it is called Copernicus.
@@ -228,13 +184,6 @@ simulations. Such computations are called projects in the system.
   workstations \citep{pronk:2011}.
 \end{quote}
 
-%\begin{figure}[H]
-%  \centering
-%  \includegraphics[width=0.8\textwidth]{gfx/parallelization.pdf}
-%  \caption{Copernicus parallelization model}
-%  \label{fig:lolol}
-%\end{figure}
-
 To handle projects with many simulations as a single entity Copernicus
 needs to able to
 \renewcommand{\labelitemi}{-}
@@ -266,11 +215,6 @@ servers and workers as seen in \autoref{fig:architecture}.
   \label{fig:architecture}
 \end{figure}
 
-%Copernicus provides an open - but authenticated - peer-to-peer
-%architecture for ensemble simulations in high performinance
-%computing. Currently, Copernicus comes with plugins to run
-%Markiv-State-Model-driven sampling and....
-
 The clients are user interfaces to interact with the system. Users
 will send and start their computational project to a server using the
 client. The server handles projects and controls the work
@@ -291,17 +235,10 @@ is no top-level server in the architecture \citep{pronk:2011}.
   \centering
   \includegraphics[width=0.8\textwidth]{gfx/peer2peer.pdf}
   \caption{Servers are connected to each other in a peer-to-peer
-    network. If a link goes down, traffic will between servers will
-    dynamically be re-routed.}
+    network. If a link goes down, traffic between servers will be
+    re-routed dynamically.}
   \label{fig:p2p}
 \end{figure}
-
-%\begin{figure}[H]  
-%  \centering
-%  \includegraphics[width=0.8\textwidth]{gfx/arch.pdf}
-%  \caption{Copernicus architecture}
-%  \label{fig:arch}
-%\end{figure}
 
 Copernicus projects are described by building computational
 \emph{data-flow networks}. Data-flow networks are networks which
@@ -340,7 +277,6 @@ workflow with different inputs, and still get the same data. If this
 was not possible the user would need save the state of the computation
 and send potentially very large amount of data between the systems.
 
-%\highlight{types, monitoring, provenance?}
 
 A problem with Copernicus has been the lack of an intuitive way of
 feeding input to the system, and that is why this project was formed.
